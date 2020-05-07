@@ -1,0 +1,121 @@
+<template>
+  <div class="about-main-container col-5">
+    <h2 class="title disclaimer-header">
+      About this site
+    </h2>
+
+    <p class="paragraph-text">
+      This site allows you to get a random agent to play from a list of agents
+      you selected. You can use this to get a new agent to play when you are not
+      sure which one to chose, or to get a random new one to try/improve.
+    </p>
+
+    <h2 class="title disclaimer-header">
+      Contact me
+    </h2>
+
+    <p class="paragraph-text">
+      If you have feedback, suggestions, comments about the site or you just
+      want to say something to me, reach out at valorantpicker [at] gmail [dot]
+      com.
+    </p>
+
+    <h2 class="title disclaimer-header">
+      Disclaimer
+    </h2>
+
+    <p class="paragraph-text">
+      This is a fan-site for Valorant and it is not affiliated with Riot Games.
+      All rights belong to their respective owners. Below are the relevant
+      copyright notices:
+    </p>
+
+    <p class="paragraph-text copyright-notice">
+      Valorant Agent Picker was created under Riot Games' "Legal Jibber Jabber"
+      policy using assets owned by Riot Games. Riot Games does not endorse or
+      sponsor this project.
+    </p>
+  </div>
+</template>
+
+<script>
+import { sendEvent } from "../services/events";
+
+export default {
+  name: "AboutContent",
+  created() {
+    sendEvent("Page", "Visit", "About");
+  },
+};
+</script>
+
+<style scoped>
+.disclaimer-header {
+  text-align: start;
+}
+
+p,
+.copyright-notice-header {
+  text-align: start;
+}
+
+a {
+  font-family: inherit;
+}
+
+/* unvisited link */
+a:link {
+  color: orange;
+}
+
+/* visited link */
+a:visited {
+  color: orangered;
+}
+
+/* mouse over link */
+a:hover {
+  color: orangered;
+}
+
+/* selected link */
+a:active {
+  color: orange;
+}
+
+.about-main-container {
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1000px) {
+  .about-main-container {
+    max-width: 100%;
+  }
+}
+
+.title {
+  color: rgb(248, 158, 74);
+  text-decoration: underline;
+}
+
+.paragraph-text {
+  font-size: 1.1em;
+}
+
+.copyright-notice {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.9em;
+}
+
+.copyright-notice-header {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+form {
+  text-align: center;
+}
+</style>
