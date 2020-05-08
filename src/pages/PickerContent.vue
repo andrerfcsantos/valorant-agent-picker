@@ -339,6 +339,16 @@ export default {
   }
 }
 
+@media (max-width: 400px) {
+  .all-button {
+    font-size: 0.5rem;
+  }
+
+  .role-header {
+    font-size: 1em;
+  }
+}
+
 .filter-description {
   display: block;
   font-size: 1.3rem;

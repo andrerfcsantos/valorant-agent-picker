@@ -68,4 +68,13 @@ img {
   padding-right: 0.5em;
   vertical-align: top;
 }
+
+@media (max-width: 500px) {
+  .title-text {
+    font-size: 1rem;
+  }
+  .navbar {
+    flex-direction: column;
+  }
+}
 </style>
