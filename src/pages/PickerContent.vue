@@ -351,7 +351,7 @@ export default {
 
 .filter-description {
   display: block;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   user-select: text;
   margin: 0;
 }
