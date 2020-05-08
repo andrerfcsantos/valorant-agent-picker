@@ -44,7 +44,7 @@ const state = {
     },
     sova: {
       name: "Sova",
-      role: "SENTINEL",
+      role: "INITIATOR",
       selected: false,
       key: "sova",
     },
@@ -53,6 +53,12 @@ const state = {
       role: "CONTROLLER",
       selected: false,
       key: "viper",
+    },
+    raze: {
+      name: "Raze",
+      role: "DUELIST",
+      selected: false,
+      key: "raze",
     },
   },
 };
