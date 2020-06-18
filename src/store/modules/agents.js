@@ -60,6 +60,12 @@ const state = {
       selected: false,
       key: "raze",
     },
+	reyna: {
+      name: "Reyna",
+      role: "DUELIST",
+      selected: false,
+      key: "reyna",
+    },
   },
 };
 
