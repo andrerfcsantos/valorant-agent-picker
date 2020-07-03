@@ -311,6 +311,7 @@ export default {
   color: white;
   background-color: orangered;
   border-color: orangered;
+  -webkit-appearance: none;
 }
 
 .right-content {
