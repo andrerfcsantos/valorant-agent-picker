@@ -66,6 +66,12 @@ const state = {
       selected: false,
       key: "reyna",
     },
+    killjoy: {
+      name: "Killjoy",
+      role: "SENTINEL",
+      selected: false,
+      key: "killjoy",
+    },
   },
 };
 

@@ -12,17 +12,17 @@
     "preinstall": "npx npm-force-resolutions"
   },
   "dependencies": {
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
     "es6-promise": "^4.2.8",
     "vue": "^2.6.11",
-    "vue-router": "^3.3.4",
+    "vue-router": "^3.4.3",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.4.6",
-    "@vue/cli-plugin-eslint": "^4.4.6",
-    "@vue/cli-service": "^4.4.6",
+    "@vue/cli-plugin-babel": "^4.5.3",
+    "@vue/cli-plugin-eslint": "^4.5.3",
+    "@vue/cli-service": "^4.5.3",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
