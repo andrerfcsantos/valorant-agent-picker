@@ -15,7 +15,7 @@
       image below (or
       <a href="https://www.buymeacoffee.com/heropickers" target="_blank">here</a
       >)! You can choose to make a one-time donation or become a member and
-      donate monthly/anually. The money will be used to cover the costs of
+      donate monthly/annually. The money will be used to cover the costs of
       keeping the site up, free for everyone and with no ads.
     </p>
 
