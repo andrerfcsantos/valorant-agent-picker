@@ -1,8 +1,6 @@
 <template>
   <div class="about-main-container col-5">
-    <h2 class="title disclaimer-header">
-      About this site
-    </h2>
+    <h2 class="title disclaimer-header">About this site</h2>
 
     <p class="paragraph-text">
       This site allows you to get a random agent to play from a list of agents
@@ -10,24 +8,42 @@
       sure which one to chose, or to get a random new one to try/improve.
     </p>
 
-    <h2 class="title disclaimer-header">
-      Contact me
-    </h2>
+    <h2 class="title">Donate</h2>
+
+    <p class="paragraph-text">
+      If you like this project, consider making a donation by clicking on the
+      image below (or
+      <a href="https://www.buymeacoffee.com/heropickers" target="_blank">here</a
+      >)! You can choose to make a one-time donation or become a member and
+      donate monthly/anually. The money will be used to cover the costs of
+      keeping the site up, free for everyone and with no ads.
+    </p>
+
+    <a
+      class="bmc"
+      href="https://www.buymeacoffee.com/heropickers"
+      target="_blank"
+    >
+      <img
+        class="bmc-logo img-fluid"
+        src="../../public/assets/imgs/navbar/bmc.svg"
+      />
+    </a>
+
+    <h2 class="title disclaimer-header">Contact me</h2>
 
     <p class="paragraph-text">
       If you have feedback, suggestions, comments about the site or you just
-      want to say something to me, reach out at valorantpicker [at] gmail [dot]
+      want to say something to me, reach out at heropickers [at] gmail [dot]
       com.
     </p>
 
-    <h2 class="title disclaimer-header">
-      Disclaimer
-    </h2>
+    <h2 class="title disclaimer-header">Disclaimer</h2>
 
     <p class="paragraph-text">
       This is a fan-site for Valorant and it is not affiliated with Riot Games.
       All rights belong to their respective owners. Below are the relevant
-      copyright notices:
+      copyright notice:
     </p>
 
     <p class="paragraph-text copyright-notice">
@@ -50,8 +66,16 @@ export default {
 </script>
 
 <style scoped>
-.disclaimer-header {
-  text-align: start;
+.about-main-container {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  padding-left: 20%;
+  padding-right: 20%;
+  padding-top: 2em;
+  margin-bottom: 3em;
+  height: 81vh;
 }
 
 p,
@@ -87,6 +111,7 @@ a:active {
   color: white;
   display: flex;
   flex-direction: column;
+  text-align: start;
 }
 
 @media (max-width: 1000px) {
@@ -109,13 +134,15 @@ a:active {
   font-size: 0.9em;
 }
 
-.copyright-notice-header {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1em;
-  font-weight: bold;
+form {
+  text-align: center;
 }
 
-form {
+img {
+  width: 20em;
+}
+
+.bmc {
   text-align: center;
 }
 </style>

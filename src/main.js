@@ -6,19 +6,17 @@ import "es6-promise/auto";
 import store from "./store";
 import VueRouter from "vue-router";
 import { routes } from "./router/routes";
+import { NavbarPlugin } from "bootstrap-vue";
 
 Vue.config.productionTip = false;
 
 // Vue router
 Vue.use(VueRouter);
+Vue.use(NavbarPlugin);
 
 const router = new VueRouter({
   routes,
 });
-
-// Local storage old keys cleanup
-let old_keys = ["someNumber", "alertDismissed"];
-old_keys.forEach((key) => localStorage.removeItem(key));
 
 new Vue({
   render: (h) => h(App),
