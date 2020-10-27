@@ -72,6 +72,12 @@ const state = {
       selected: false,
       key: "killjoy",
     },
+    skye: {
+      name: "Skye",
+      role: "INITIATOR",
+      selected: false,
+      key: "skye",
+    },
   },
 };
 

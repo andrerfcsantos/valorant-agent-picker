@@ -2,9 +2,7 @@
   <div class="main-container col-12 h-100 m-0 p-0 unselectable">
     <div class="row col-12 m-0 p-0">
       <div class="left-content col-lg-3">
-        <h1 class="left-title">
-          You should play
-        </h1>
+        <h1 class="left-title">You should play</h1>
 
         <div>
           <input
@@ -48,9 +46,7 @@
       </div>
 
       <div class="right-content col-lg-9">
-        <h1 class="right-title">
-          Filter Agents
-        </h1>
+        <h1 class="right-title">Filter Agents</h1>
 
         <p class="filter-description">
           Select the agents you wish to play and click in the "Get Random Agent"
@@ -82,9 +78,7 @@
             alt="Tank role icon"
             src="assets/imgs/roles/controller.png"
           />
-          <h2 class="role-header">
-            Controller
-          </h2>
+          <h2 class="role-header">Controller</h2>
           <button
             class="all-button select-all-button"
             @click="selectByRole('CONTROLLER')"
@@ -111,9 +105,7 @@
             alt="Damage role icon"
             src="assets/imgs/roles/sentinel.png"
           />
-          <h2 class="role-header">
-            Sentinel
-          </h2>
+          <h2 class="role-header">Sentinel</h2>
           <button
             class="all-button select-all-button"
             @click="selectByRole('SENTINEL')"
@@ -140,9 +132,7 @@
             alt="Support role icon"
             src="assets/imgs/roles/initiator.png"
           />
-          <h2 class="role-header">
-            Initiator
-          </h2>
+          <h2 class="role-header">Initiator</h2>
           <button
             class="all-button select-all-button"
             @click="selectByRole('INITIATOR')"
@@ -168,9 +158,7 @@
             alt="Support role icon"
             src="assets/imgs/roles/duelist.png"
           />
-          <h2 class="role-header">
-            Duelist
-          </h2>
+          <h2 class="role-header">Duelist</h2>
           <button
             class="all-button select-all-button"
             @click="selectByRole('DUELIST')"
@@ -279,6 +267,7 @@ export default {
   overflow-x: hidden;
   color: white;
   display: flex;
+  min-height: 87vh;
 }
 
 .left-content {
