@@ -78,6 +78,12 @@ const state = {
       selected: false,
       key: "skye",
     },
+    yoru: {
+      name: "Yoru",
+      role: "DUELIST",
+      selected: false,
+      key: "yoru",
+    },
   },
 };
 
