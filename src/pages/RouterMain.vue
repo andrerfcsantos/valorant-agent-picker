@@ -35,6 +35,7 @@ span a {
 
 p {
   font-size: 1.25em;
+  margin: 0;
 }
 
 footer {
