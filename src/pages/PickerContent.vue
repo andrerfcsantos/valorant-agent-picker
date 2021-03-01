@@ -315,7 +315,6 @@ export default {
 }
 .selected-agents-text {
   margin: 0;
-  font-color: orange;
 }
 
 /** Large breakpoint or smaller */
