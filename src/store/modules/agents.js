@@ -84,6 +84,12 @@ const state = {
       selected: false,
       key: "yoru",
     },
+    astra: {
+      name: "Astra",
+      role: "CONTROLLER",
+      selected: false,
+      key: "astra",
+    },
   },
 };
 
