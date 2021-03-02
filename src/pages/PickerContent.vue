@@ -19,22 +19,27 @@
             >Show agent portrait</label
           >
         </div>
+        <div style="min-height: 33%">
+          <transition name="agent-name-transition" mode="out-in">
+            <img
+              v-if="showPortrait"
+              :key="`agent-image ${selectedAgent.key}`"
+              class="chosen-agent-image img-fluid"
+              :src="
+                'assets/imgs/agents/portraits/' + selectedAgent.key + '.png'
+              "
+            />
+          </transition>
 
-        <img
-          v-if="showPortrait"
-          key="agent-image"
-          class="chosen-agent-image img-fluid"
-          :src="'assets/imgs/agents/portraits/' + selectedAgent.key + '.png'"
-        />
-
-        <transition name="agent-name-transition" mode="out-in">
-          <h2
-            :key="`agent-name-${selectedAgent.name}-${agentCount}`"
-            class="chosen-agent-name"
-          >
-            {{ selectedAgent.name }}
-          </h2>
-        </transition>
+          <transition name="agent-name-transition" mode="out-in">
+            <h2
+              :key="`agent-name-${selectedAgent.name}-${agentCount}`"
+              class="chosen-agent-name"
+            >
+              {{ selectedAgent.name }}
+            </h2>
+          </transition>
+        </div>
 
         <div
           type="button"
@@ -402,7 +407,7 @@ export default {
 
 .agent-name-transition-enter,
 .agent-name-transition-leave-to {
-  transform: scaleY(0) translateZ(0);
+  transform: scaleY(1) translateZ(0);
   opacity: 0;
 }
 
