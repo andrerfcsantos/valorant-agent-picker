@@ -90,6 +90,12 @@ const state = {
       selected: false,
       key: "astra",
     },
+    kayo: {
+      name: "KAY/O",
+      role: "INITIATOR",
+      selected: false,
+      key: "kayo",
+    },
   },
 };
 
