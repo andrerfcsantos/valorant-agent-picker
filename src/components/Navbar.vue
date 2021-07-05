@@ -6,7 +6,7 @@
       <b-navbar-brand to="/">
         <img
           class="ow-logo img-fluid"
-          src="../../public/assets/imgs/navbar/v-logo-red.png"
+          src="assets/imgs/navbar/v-logo-red.png"
         />
         <span class="title-text">Valorant Agent Picker</span>
       </b-navbar-brand>
@@ -23,10 +23,7 @@
           href="https://www.buymeacoffee.com/heropickers"
           target="_blank"
         >
-          <img
-            class="bmc-logo img-fluid"
-            src="../../public/assets/imgs/navbar/bmc.svg"
-          />
+          <img class="bmc-logo img-fluid" src="assets/imgs/navbar/bmc.svg" />
         </b-nav-item>
       </b-navbar-nav>
     </b-collapse>

@@ -37,27 +37,107 @@
           content="Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection. Completely ad-free!"/>
     <meta name="twitter:title" content="Valorant Random Agent Picker"/>
     <meta name="twitter:image" content="<%= BASE_URL %>assets/imgs/agents/icons/brimstone.png"/>
-    <link rel="icon" type="image/x-icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="preload" as="image" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 
 
     <!-- PRELOAD -->
-    <link rel="preload" href="assets/imgs/agents/portraits/astra.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/breach.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/brimstone.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/cypher.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/jett.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/killjoy.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/omen.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/phoenix.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/raze.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/reyna.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/sage.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/skye.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/sova.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/viper.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/yoru.png" as="image">
-    <link rel="preload" href="assets/imgs/agents/portraits/kayo.png" as="image">
+    <link rel="preload" href="assets/imgs/navbar/bmc.svg" as="image">
+    <link rel="preload" href="assets/imgs/navbar/v-logo-red.png" as="image">
 
+    <link rel="preload" href="assets/imgs/roles/controller.png" as="image">
+    <link rel="preload" href="assets/imgs/roles/sentinel.png" as="image">
+    <link rel="preload" href="assets/imgs/roles/initiator.png" as="image">
+    <link rel="preload" href="assets/imgs/roles/duelist.png" as="image">
+
+    <link rel="preload" href="assets/imgs/agents/icons/astra.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/breach.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/brimstone.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/cypher.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/jett.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/killjoy.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/omen.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/phoenix.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/raze.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/reyna.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/sage.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/skye.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/sova.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/viper.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/yoru.png" as="image">
+    <link rel="preload" href="assets/imgs/agents/icons/kayo.png" as="image">
+
+    <link rel="preload" href="assets/fonts/Tungsten-Bold/tugsten-bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/Valorant/valorant-regular-webfont.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/DINNext/dinnext.woff2" as="font" type="font/woff2" crossorigin>
+
+    <!-- PREFETCH -->
+    <link rel="prefetch" href="assets/imgs/agents/portraits/astra.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/breach.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/brimstone.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/cypher.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/jett.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/killjoy.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/omen.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/phoenix.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/raze.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/reyna.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/sage.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/skye.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/sova.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/viper.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/yoru.png" as="image">
+    <link rel="prefetch" href="assets/imgs/agents/portraits/kayo.png" as="image">
+
+    <style>
+        @font-face {
+            font-family: "Valorant-Regular";
+            src: url("assets/fonts/Valorant/valorant-regular-webfont.woff2")
+            format("woff2"),
+            url("assets/fonts/Valorant/valorant-regular-webfont.woff")
+            format("woff"),
+            url("assets/fonts/Valorant/valorant-regular-webfont.ttf")
+            format("truetype"),
+            url("assets/fonts/Valorant/valorant-regular-webfont.svg#Valorant-Regular")
+            format("svg");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "DIN Next LT W04 Medium";
+            src: url("assets/fonts/DINNext/dinnext.eot"); /* IE9*/
+            src: url("assets/fonts/DINNext/dinnext.eot?#iefix")
+            format("embedded-opentype"),
+                /* IE6-IE8 */ url("assets/fonts/DINNext/dinnext.woff2")
+            format("woff2"),
+                /* chrome、firefox */ url("assets/fonts/DINNext/dinnext.woff")
+            format("woff"),
+                /* chrome、firefox */ url("assets/fonts/DINNext/dinnext.ttf")
+            format("truetype"),
+                /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+            url("assets/fonts/DINNext/dinnext.svg#DIN Next LT W04 Medium")
+            format("svg"); /* iOS 4.1- */
+        }
+
+        @font-face {
+            font-family: "Tungsten-Bold";
+            src: url("assets/fonts/Tungsten-Bold/tugsten-bold.eot"); /* IE9*/
+            src: url("assets/fonts/Tungsten-Bold/tugsten-bold.eot?#iefix")
+            format("embedded-opentype"),
+                /* IE6-IE8 */ url("assets/fonts/Tungsten-Bold/tugsten-bold.woff2")
+            format("woff2"),
+                /* chrome、firefox */
+            url("assets/fonts/Tungsten-Bold/tugsten-bold.woff")
+            format("woff"),
+                /* chrome、firefox */
+            url("assets/fonts/Tungsten-Bold/tugsten-bold.ttf")
+            format("truetype"),
+                /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+            url("assets/fonts/Tungsten-Bold/tugsten-bold.svg#Tungsten-Bold")
+            format("svg"); /* iOS 4.1- */
+        }
+    </style>
 </head>
 <body>
 <noscript>
