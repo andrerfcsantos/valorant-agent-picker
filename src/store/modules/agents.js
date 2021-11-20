@@ -96,6 +96,12 @@ const state = {
       selected: false,
       key: "kayo",
     },
+    chamber: {
+      name: "Chamber",
+      role: "SENTINEL",
+      selected: false,
+      key: "chamber",
+    },
   },
 };
 
