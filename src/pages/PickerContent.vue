@@ -306,6 +306,7 @@ export default {
 .right-content {
   display: block;
   text-align: start;
+  max-width: 60%;
 }
 
 .selected-agents-info {
@@ -318,13 +319,26 @@ export default {
 }
 
 /** Large breakpoint or smaller */
+@media (max-width: 1600px) {
+  .right-content {
+    max-width: 70%;
+  }
+}
+
+/** Large breakpoint or smaller */
 @media (max-width: 991.98px) {
   .right-content {
-    text-align: center;
+    max-width: 90%;
   }
 
   .right-title {
     margin-top: 5%;
+  }
+}
+
+@media (max-width: 700px) {
+  .right-content {
+    max-width: 95%;
   }
 }
 
@@ -335,6 +349,9 @@ export default {
 
   .role-header {
     font-size: 1em;
+  }
+  .right-content {
+    max-width: 100%;
   }
 }
 

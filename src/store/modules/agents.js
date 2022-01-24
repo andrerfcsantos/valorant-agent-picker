@@ -102,6 +102,12 @@ const state = {
       selected: false,
       key: "chamber",
     },
+    neon: {
+      name: "Neon",
+      role: "DUELIST",
+      selected: false,
+      key: "neon",
+    },
   },
 };
 
