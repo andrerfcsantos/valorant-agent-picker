@@ -55,11 +55,11 @@ export default {
 .agent-card {
   display: inline-flex;
   margin: 0.25em;
-  width: 14.5em;
+  width: 14em;
   background-color: #0192c7;
   align-items: center;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .agent-card.selected {
