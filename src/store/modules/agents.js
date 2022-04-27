@@ -108,6 +108,12 @@ const state = {
       selected: false,
       key: "neon",
     },
+    fade: {
+      name: "Fade",
+      role: "INITIATOR",
+      selected: false,
+      key: "fade",
+    },
   },
 };
 
