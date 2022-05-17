@@ -75,7 +75,7 @@ export default {
   padding-right: 20%;
   padding-top: 2em;
   margin-bottom: 3em;
-  height: 81vh;
+  height: 80vh;
 }
 
 p,

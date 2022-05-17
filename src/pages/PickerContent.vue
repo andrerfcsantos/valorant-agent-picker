@@ -267,7 +267,7 @@ export default {
   overflow-x: hidden;
   color: white;
   display: flex;
-  min-height: 87vh;
+  min-height: 85vh;
 }
 
 .left-content {
