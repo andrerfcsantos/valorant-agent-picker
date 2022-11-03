@@ -114,6 +114,12 @@ const state = {
       selected: false,
       key: "fade",
     },
+    harbor: {
+      name: "Harbor",
+      role: "CONTROLLER",
+      selected: false,
+      key: "harbor",
+    },
   },
 };
 
