@@ -120,6 +120,12 @@ const state = {
       selected: false,
       key: "harbor",
     },
+    gekko: {
+      name: "Gekko",
+      role: "INITIATOR",
+      selected: false,
+      key: "gekko",
+    },
   },
 };
 
