@@ -126,6 +126,12 @@ const state = {
       selected: false,
       key: "gekko",
     },
+    deadlock: {
+      name: "Deadlock ",
+      role: "SENTINEL",
+      selected: false,
+      key: "deadlock",
+    },
   },
 };
 
