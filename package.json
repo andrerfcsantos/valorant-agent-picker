@@ -12,6 +12,7 @@
     "preinstall": "npx npm-force-resolutions"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.0.2",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
     "es6-promise": "^4.2.8",
