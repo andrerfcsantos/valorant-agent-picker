@@ -132,6 +132,12 @@ const state = {
       selected: false,
       key: "deadlock",
     },
+    iso: {
+      name: "Iso ",
+      role: "DUELIST",
+      selected: false,
+      key: "iso",
+    },
   },
 };
 
