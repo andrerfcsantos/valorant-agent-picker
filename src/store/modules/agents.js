@@ -138,6 +138,12 @@ const state = {
       selected: false,
       key: "iso",
     },
+    clove: {
+      name: "Clove ",
+      role: "CONTROLLER",
+      selected: false,
+      key: "clove",
+    },
   },
 };
 
