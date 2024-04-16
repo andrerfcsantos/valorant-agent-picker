@@ -133,10 +133,16 @@ const state = {
       key: "deadlock",
     },
     iso: {
-      name: "Iso ",
+      name: "Iso",
       role: "DUELIST",
       selected: false,
       key: "iso",
+    },
+    clove: {
+      name: "Clove",
+      role: "CONTROLLER",
+      selected: false,
+      key: "clove",
     },
   },
 };
