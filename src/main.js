@@ -7,9 +7,6 @@ import store from "./store";
 import VueRouter from "vue-router";
 import { routes } from "./router/routes";
 import { NavbarPlugin } from "bootstrap-vue";
-import { inject } from "@vercel/analytics";
-
-inject();
 
 Vue.config.productionTip = false;
 
