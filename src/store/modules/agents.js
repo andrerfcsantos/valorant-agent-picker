@@ -144,6 +144,12 @@ const state = {
       selected: false,
       key: "clove",
     },
+    vyse: {
+      name: "Vyse",
+      role: "SENTINEL",
+      selected: false,
+      key: "vyse",
+    },
   },
 };
 
