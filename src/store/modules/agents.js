@@ -150,6 +150,12 @@ const state = {
       selected: false,
       key: "vyse",
     },
+    tejo: {
+      name: "Tejo",
+      role: "INITIATOR",
+      selected: false,
+      key: "tejo",
+    },
   },
 };
 
