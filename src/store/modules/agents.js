@@ -155,7 +155,7 @@ const state = {
       role: "INITIATOR",
       selected: false,
       key: "tejo",
-    }
+    },
   },
 };
 
