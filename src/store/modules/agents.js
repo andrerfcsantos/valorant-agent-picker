@@ -156,6 +156,12 @@ const state = {
       selected: false,
       key: "tejo",
     },
+    waylay: {
+      name: "Waylay",
+      role: "DUELIST",
+      selected: false,
+      key: "waylay",
+    },
   },
 };
 
