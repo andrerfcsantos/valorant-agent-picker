@@ -8,6 +8,13 @@
       sure which one to chose, or to get a random new one to try/improve.
     </p>
 
+    <h2 class="title">Discord</h2>
+
+    <p class="paragraph-text">
+      Join the Discord server:
+      <a href="https://discord.gg/2yb3ZPzjve">https://discord.gg/2yb3ZPzjve</a>
+    </p>
+
     <h2 class="title">Donate</h2>
 
     <p class="paragraph-text">
@@ -35,7 +42,8 @@
     <p class="paragraph-text">
       If you have feedback, suggestions, comments about the site or you just
       want to say something to me, reach out at heropickers [at] gmail [dot]
-      com.
+      com. You can also contact me via the
+      <a href="https://discord.gg/2yb3ZPzjve">Discord server</a>.
     </p>
 
     <h2 class="title disclaimer-header">Disclaimer</h2>
