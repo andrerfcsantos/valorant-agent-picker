@@ -54,8 +54,9 @@ footer {
 }
 
 .vercel-logo {
-  width: 9em;
-  height: auto;
+  width: auto;
+  height: 2em;
+  margin: 0 0.5em;
 }
 
 @media (max-width: 1220px) {
