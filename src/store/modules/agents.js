@@ -162,6 +162,12 @@ const state = {
       selected: false,
       key: "waylay",
     },
+    veto: {
+      name: "Veto",
+      role: "SENTINEL",
+      selected: false,
+      key: "veto",
+    },
   },
 };
 
