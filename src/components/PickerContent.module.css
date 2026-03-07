@@ -19,6 +19,8 @@
 .leftContent {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   padding: 0 3%;
   width: 25%;
 }
@@ -27,6 +29,7 @@
 .rightTitle {
   color: white;
   text-decoration: underline;
+  font-size: 2rem;
 }
 
 .chosenAgentImage {
@@ -37,6 +40,7 @@
 
 .chosenAgentName {
   margin: 1rem;
+  font-size: 2.5rem;
 }
 
 .randomAgentButton {

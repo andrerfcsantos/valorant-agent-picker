@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AGENTS, ROLES, getAgentsByRole, getAllAgents } from "@/data/agents";
 import type { Agent, Role } from "@/data/agents";
 import {
@@ -21,36 +21,26 @@ function pickRandom(selected: Set<string>): Agent {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-const emptySubscribe = () => () => {};
-
-function useIsClient() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false,
-  );
-}
-
-function getInitialSelected(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  return loadSelectedAgents();
-}
-
-function getInitialPortrait(): boolean {
-  if (typeof window === "undefined") return true;
-  return loadShowPortrait();
-}
-
 export default function PickerContent() {
-  const isClient = useIsClient();
-  const [selectedAgents, setSelectedAgents] = useState<Set<string>>(getInitialSelected);
-  const [chosenAgent, setChosenAgent] = useState<Agent | null>(() =>
-    typeof window === "undefined" ? null : pickRandom(getInitialSelected()),
+  const [selectedAgents, setSelectedAgents] = useState<Set<string>>(
+    () => new Set(),
   );
+  const [chosenAgent, setChosenAgent] = useState<Agent | null>(null);
   const [agentCount, setAgentCount] = useState(0);
-  const [showPortrait, setShowPortrait] = useState<boolean>(getInitialPortrait);
+  const [showPortrait, setShowPortrait] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
   const nameRef = useRef<HTMLHeadingElement>(null);
+
+  // Hydrate from localStorage on mount (client only)
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => {
+    const saved = loadSelectedAgents();
+    setSelectedAgents(saved);
+    setShowPortrait(loadShowPortrait());
+    setChosenAgent(pickRandom(saved));
+    setHydrated(true);
+  }, []);
 
   const handleGetRandom = () => {
     setNameVisible(false);
@@ -140,7 +130,7 @@ export default function PickerContent() {
             key={`agent-name-${chosenAgent?.name}-${agentCount}`}
             className={`${styles.chosenAgentName} ${nameVisible ? "agent-name-visible" : "agent-name-enter"}`}
           >
-            {isClient ? chosenAgent?.name ?? "" : ""}
+            {hydrated ? chosenAgent?.name ?? "" : ""}
           </h2>
 
           <div
@@ -164,18 +154,26 @@ export default function PickerContent() {
             Agent&quot; button to get a random agent from the selected ones.
           </p>
 
-          <div className={`${styles.filterDescription} ${styles.selectedAgentsInfo}`}>
+          <div
+            className={`${styles.filterDescription} ${styles.selectedAgentsInfo}`}
+          >
             {numberOfSelected === 0 ? (
-              <p className={`${styles.filterDescription} ${styles.selectedAgentsText}`}>
+              <p
+                className={`${styles.filterDescription} ${styles.selectedAgentsText}`}
+              >
                 You have no agents selected, so all agents are being considered
                 by default.
               </p>
             ) : numberOfSelected === 1 ? (
-              <p className={`${styles.filterDescription} ${styles.selectedAgentsText}`}>
+              <p
+                className={`${styles.filterDescription} ${styles.selectedAgentsText}`}
+              >
                 You have {numberOfSelected} agent selected.
               </p>
             ) : (
-              <p className={`${styles.filterDescription} ${styles.selectedAgentsText}`}>
+              <p
+                className={`${styles.filterDescription} ${styles.selectedAgentsText}`}
+              >
                 You have {numberOfSelected} agents selected.
               </p>
             )}
