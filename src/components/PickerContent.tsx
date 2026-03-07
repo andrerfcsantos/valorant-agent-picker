@@ -102,20 +102,25 @@ export default function PickerContent() {
         <div className={styles.leftContent}>
           <h1 className={styles.leftTitle}>You should play</h1>
 
-          <div>
-            <input
-              id="checkbox-show-portrait"
-              type="checkbox"
-              checked={showPortrait}
-              onChange={(e) => handleShowPortrait(e.target.checked)}
-            />
-            <label
-              htmlFor="checkbox-show-portrait"
-              className={styles.showPortraitLabel}
-            >
-              Show agent portrait
-            </label>
-          </div>
+          <details className={styles.optionsDetails}>
+            <summary className={styles.optionsSummary}>
+              &#9881; Options <span className={styles.optionsArrow}></span>
+            </summary>
+            <div className={styles.optionsContent}>
+              <input
+                id="checkbox-show-portrait"
+                type="checkbox"
+                checked={showPortrait}
+                onChange={(e) => handleShowPortrait(e.target.checked)}
+              />
+              <label
+                htmlFor="checkbox-show-portrait"
+                className={styles.showPortraitLabel}
+              >
+                Show agent portrait
+              </label>
+            </div>
+          </details>
 
           {showPortrait && chosenAgent && (
             <img
