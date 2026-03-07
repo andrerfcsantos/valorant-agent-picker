@@ -122,12 +122,17 @@ export default function PickerContent() {
             </div>
           </details>
 
-          {showPortrait && chosenAgent && (
-            <img
-              className={styles.chosenAgentImage}
-              src={`/imgs/agents/portraits/${chosenAgent.key}.png`}
-              alt={`${chosenAgent.name} portrait`}
-            />
+          {showPortrait && (
+            <div className={styles.portraitContainer}>
+              {chosenAgent && (
+                <img
+                  key={`portrait-${chosenAgent.key}-${agentCount}`}
+                  className={styles.chosenAgentImage}
+                  src={`/imgs/agents/portraits/${chosenAgent.key}.png`}
+                  alt={`${chosenAgent.name} portrait`}
+                />
+              )}
+            </div>
           )}
 
           <h2
