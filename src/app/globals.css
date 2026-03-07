@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Valorant-Regular";
+  src: url("/fonts/valorant-regular-webfont.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DIN Next LT W04 Medium";
+  src: url("/fonts/dinnext.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tungsten-Bold";
+  src: url("/fonts/tugsten-bold.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  background-color: #2c3e50;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: "DIN Next LT W04 Medium", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #2c3e50;
+  color: #2c3e50;
+}
+
+.unselectable {
+  user-select: none;
+}
+
+/* Agent name transition */
+.agent-name-enter {
+  transform: scaleY(0) translateZ(0);
+  opacity: 0;
+}
+
+.agent-name-visible {
+  transform: scaleY(1) translateZ(0);
+  opacity: 1;
+  transition: all 0.1s ease-out;
+}
