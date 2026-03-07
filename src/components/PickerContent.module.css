@@ -34,8 +34,7 @@
 
 .portraitContainer {
   width: 75%;
-  aspect-ratio: 3 / 4;
-  position: relative;
+  aspect-ratio: 1 / 1;
 }
 
 .chosenAgentImage {
