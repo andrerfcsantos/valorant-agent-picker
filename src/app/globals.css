@@ -9,17 +9,51 @@
 }
 
 @font-face {
-  font-family: "DIN Next LT W04 Medium";
-  src: url("/fonts/dinnext.woff2") format("woff2");
+  font-family: "DINNextW1G";
+  src:
+    url("/fonts/DINNextW1G-Regular.woff2") format("woff2"),
+    url("/fonts/DINNextW1G-Regular.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Tungsten-Bold";
-  src: url("/fonts/tugsten-bold.woff2") format("woff2");
+  font-family: "DINNextW1G";
+  src:
+    url("/fonts/DINNextW1G-Bold.woff2") format("woff2"),
+    url("/fonts/DINNextW1G-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DINNextW1G";
+  src:
+    url("/fonts/DINNextW1G-Italic.woff2") format("woff2"),
+    url("/fonts/DINNextW1G-Italic.woff") format("woff");
   font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DINNextW1G";
+  src:
+    url("/fonts/DINNextW1G-BoldItalic.woff2") format("woff2"),
+    url("/fonts/DINNextW1G-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tungsten-Bold";
+  src:
+    url("/fonts/Tungsten-Bold.woff2") format("woff2"),
+    url("/fonts/Tungsten-Bold.woff") format("woff");
+  font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
@@ -32,11 +66,24 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  font-family: "DIN Next LT W04 Medium", Helvetica, Arial, sans-serif;
+  font-family: "DINNextW1G", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #2c3e50;
   color: #2c3e50;
+}
+
+h1,
+h2 {
+  font-family: "Tungsten-Bold", "DINNextW1G", Helvetica, Arial, sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
 }
 
 .unselectable {

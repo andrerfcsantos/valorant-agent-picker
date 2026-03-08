@@ -28,7 +28,6 @@
 .leftTitle,
 .rightTitle {
   color: white;
-  text-decoration: underline;
   font-size: 2rem;
 }
 
@@ -59,7 +58,7 @@
 }
 
 .randomAgentButton {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #ece8e1;
   background-color: #ff4655;
   border: none;
@@ -116,7 +115,8 @@
 }
 
 .roleHeader {
-  margin: 0.5em 0.5em 0.5em 0;
+  margin: 0 0.5em 0 0;
+  font-size: 1.5rem;
 }
 
 .filterHeader {

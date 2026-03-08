@@ -7,7 +7,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="flex flex-wrap items-center justify-between bg-[#111111] px-4 py-2 min-h-[5vh]">
+    <nav className="flex flex-wrap items-center justify-between bg-[#111111] px-4 py-2 min-h-[5vh] font-[family-name:var(--font-inter)]">
       <button
         className="lg:hidden text-white text-2xl border border-gray-500 rounded px-2 py-1"
         onClick={() => setIsOpen(!isOpen)}

@@ -152,7 +152,7 @@ export default function PickerContent() {
               if (e.key === "Enter" || e.key === " ") handleGetRandom();
             }}
           >
-            Get Random Agent
+            Randomize Agent
           </div>
         </div>
 
@@ -160,7 +160,7 @@ export default function PickerContent() {
           <h1 className={styles.rightTitle}>Filter Agents</h1>
 
           <p className={styles.filterDescription}>
-            Select the agents you wish to play and click in the &quot;Get Random
+            Select the agents you wish to play and click the &quot;Randomize
             Agent&quot; button to get a random agent from the selected ones.
           </p>
 
