@@ -17,13 +17,13 @@ const inter = localFont({
 export const metadata: Metadata = {
   title: "Valorant Random Agent Picker",
   description:
-    'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection. Completely ad-free!',
+    'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
   openGraph: {
     locale: "en_US",
     type: "website",
     title: "Valorant Random Agent Picker",
     description:
-      'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection. Completely ad-free!',
+      'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
     url: "https://www.valorantpicker.com/",
     siteName: "Valorant Random Agent Picker",
     images: ["/imgs/agents/icons/brimstone.png"],
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Valorant Random Agent Picker",
     description:
-      'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection. Completely ad-free!',
+      'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
     images: ["/imgs/agents/icons/brimstone.png"],
   },
   icons: {
@@ -73,6 +73,12 @@ export default function RootLayout({
           <link key={`prefetch-portrait-${key}`} rel="prefetch" href={`/imgs/agents/portraits/${key}.png`} as="image" />
         ))}
 
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4006903176175824"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=UA-28576677-4"
           strategy="afterInteractive"
