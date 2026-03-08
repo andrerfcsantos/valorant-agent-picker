@@ -3,7 +3,10 @@ import Script from "next/script";
 import localFont from "next/font/local";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { AGENTS } from "@/data/agents";
 import "./globals.css";
+
+const agentKeys = Object.keys(AGENTS);
 
 const inter = localFont({
   src: "../../public/fonts/Inter-Variable.woff2",
@@ -45,6 +48,31 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
+        {/* Preload fonts */}
+        <link rel="preload" href="/fonts/Tungsten-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/valorant-regular-webfont.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/DINNextW1G-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+
+        {/* Preload navbar assets */}
+        <link rel="preload" href="/imgs/navbar/bmc.svg" as="image" />
+        <link rel="preload" href="/imgs/navbar/v-logo-red.png" as="image" />
+
+        {/* Preload role icons */}
+        <link rel="preload" href="/imgs/roles/controller.png" as="image" />
+        <link rel="preload" href="/imgs/roles/sentinel.png" as="image" />
+        <link rel="preload" href="/imgs/roles/initiator.png" as="image" />
+        <link rel="preload" href="/imgs/roles/duelist.png" as="image" />
+
+        {/* Preload agent icons */}
+        {agentKeys.map((key) => (
+          <link key={`preload-icon-${key}`} rel="preload" href={`/imgs/agents/icons/${key}.png`} as="image" />
+        ))}
+
+        {/* Prefetch agent portraits (lower priority, shown on interaction) */}
+        {agentKeys.map((key) => (
+          <link key={`prefetch-portrait-${key}`} rel="prefetch" href={`/imgs/agents/portraits/${key}.png`} as="image" />
+        ))}
+
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=UA-28576677-4"
           strategy="afterInteractive"
