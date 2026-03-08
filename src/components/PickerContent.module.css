@@ -154,6 +154,10 @@
   transform: scale(0.95);
 }
 
+.justThisRoleButton {
+  margin-left: 0.3em;
+}
+
 .optionsDetails {
   width: 100%;
 }

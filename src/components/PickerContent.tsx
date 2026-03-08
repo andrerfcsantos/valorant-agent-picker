@@ -101,6 +101,14 @@ export default function PickerContent() {
     });
   };
 
+  const selectOnlyRole = (role: Role) => {
+    const next = new Set<string>();
+    getAgentsByRole(role).forEach((a) => next.add(a.key));
+    setSelectedAgents(next);
+    saveSelectedAgents(next);
+    sendEvent("Filter", "SelectOnlyRole", role);
+  };
+
   const handleShowPortrait = (checked: boolean) => {
     setShowPortrait(checked);
     saveShowPortrait(checked);
@@ -241,6 +249,12 @@ export default function PickerContent() {
                   onClick={() => unselectByRole(role.key)}
                 >
                   Unselect All
+                </button>
+                <button
+                  className={`${styles.allButton} ${styles.justThisRoleButton}`}
+                  onClick={() => selectOnlyRole(role.key)}
+                >
+                  Just This Role
                 </button>
               </div>
 
