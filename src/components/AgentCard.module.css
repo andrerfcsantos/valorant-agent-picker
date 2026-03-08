@@ -6,13 +6,41 @@
   align-items: center;
   cursor: pointer;
   font-size: 0.8rem;
+  position: relative;
+  border-left: 3px solid transparent;
+  opacity: 0.5;
+  filter: saturate(0.4);
+  transition: opacity 0.15s ease, filter 0.15s ease, border-color 0.15s ease;
 }
 
 .card.selected {
-  background-color: green;
+  opacity: 1;
+  filter: saturate(1);
+  border-left: 3px solid rgb(255, 70, 85);
+}
+
+.card.selected::after {
+  content: "\2713";
+  position: absolute;
+  top: -0.15em;
+  right: 0.1em;
+  font-size: 1.6em;
+  font-family: Arial, sans-serif;
+  color: rgb(255, 70, 85);
+  font-weight: bold;
+  pointer-events: none;
+  line-height: 1;
 }
 
 .card:hover {
+  box-shadow: 0px 0px 0.5em #21c0fa;
+  opacity: 0.75;
+  filter: saturate(0.7);
+}
+
+.card.selected:hover {
+  opacity: 1;
+  filter: saturate(1);
   box-shadow: 0px 0px 0.5em #21c0fa;
 }
 
