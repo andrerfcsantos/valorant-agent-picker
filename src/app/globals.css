@@ -86,6 +86,36 @@ h2 {
   font-size: 1.5rem;
 }
 
+/* Info icon tooltip */
+.info-icon {
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: help;
+  position: relative;
+  margin-left: 0.3em;
+}
+
+.info-icon:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.info-icon:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  font-size: 0.8rem;
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  padding: 0.3em 0.6em;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
 .unselectable {
   user-select: none;
 }

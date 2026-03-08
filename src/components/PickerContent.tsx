@@ -136,6 +136,7 @@ export default function PickerContent() {
               >
                 Show agent portrait
               </label>
+              <span className="info-icon" data-tip="Show or hide the agent portrait image">ⓘ</span>
               <br />
               <input
                 id="checkbox-non-repeating"
@@ -149,6 +150,7 @@ export default function PickerContent() {
               >
                 Non-repeating mode
               </label>
+              <span className="info-icon" data-tip="Prevent the same agent from being picked twice in a row">ⓘ</span>
             </div>
           </details>
 
