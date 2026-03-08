@@ -8,16 +8,26 @@ import {
   saveSelectedAgents,
   loadShowPortrait,
   saveShowPortrait,
+  loadNonRepeating,
+  saveNonRepeating,
 } from "@/lib/localStorage";
 import { sendEvent } from "@/lib/analytics";
 import AgentCard from "./AgentCard";
 import styles from "./PickerContent.module.css";
 
-function pickRandom(selected: Set<string>): Agent {
+function pickRandom(
+  selected: Set<string>,
+  previousKey?: string | null,
+  nonRepeating?: boolean,
+): Agent {
   const pool =
     selected.size > 0
       ? getAllAgents().filter((a) => selected.has(a.key))
       : getAllAgents();
+  if (nonRepeating && previousKey && pool.length > 1) {
+    const filtered = pool.filter((a) => a.key !== previousKey);
+    return filtered[Math.floor(Math.random() * filtered.length)];
+  }
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
@@ -28,6 +38,7 @@ export default function PickerContent() {
   const [chosenAgent, setChosenAgent] = useState<Agent | null>(null);
   const [agentCount, setAgentCount] = useState(0);
   const [showPortrait, setShowPortrait] = useState(true);
+  const [nonRepeating, setNonRepeating] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
   const nameRef = useRef<HTMLHeadingElement>(null);
@@ -38,6 +49,7 @@ export default function PickerContent() {
     const saved = loadSelectedAgents();
     setSelectedAgents(saved);
     setShowPortrait(loadShowPortrait());
+    setNonRepeating(loadNonRepeating());
     setChosenAgent(pickRandom(saved));
     setHydrated(true);
   }, []);
@@ -45,7 +57,7 @@ export default function PickerContent() {
   const handleGetRandom = () => {
     setNameVisible(false);
     setTimeout(() => {
-      const agent = pickRandom(selectedAgents);
+      const agent = pickRandom(selectedAgents, chosenAgent?.key, nonRepeating);
       setChosenAgent(agent);
       setAgentCount((c) => c + 1);
       setNameVisible(true);
@@ -94,6 +106,11 @@ export default function PickerContent() {
     saveShowPortrait(checked);
   };
 
+  const handleNonRepeating = (checked: boolean) => {
+    setNonRepeating(checked);
+    saveNonRepeating(checked);
+  };
+
   const numberOfSelected = selectedAgents.size;
 
   return (
@@ -118,6 +135,19 @@ export default function PickerContent() {
                 className={styles.showPortraitLabel}
               >
                 Show agent portrait
+              </label>
+              <br />
+              <input
+                id="checkbox-non-repeating"
+                type="checkbox"
+                checked={nonRepeating}
+                onChange={(e) => handleNonRepeating(e.target.checked)}
+              />
+              <label
+                htmlFor="checkbox-non-repeating"
+                className={styles.showPortraitLabel}
+              >
+                Non-repeating mode
               </label>
             </div>
           </details>

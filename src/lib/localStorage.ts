@@ -38,3 +38,17 @@ export function loadShowPortrait(): boolean {
 export function saveShowPortrait(show: boolean) {
   localStorage.setItem("showPortrait", String(show));
 }
+
+export function loadNonRepeating(): boolean {
+  try {
+    const val = localStorage.getItem("nonRepeating");
+    if (val === null) return false;
+    return val === "true";
+  } catch {
+    return false;
+  }
+}
+
+export function saveNonRepeating(enabled: boolean) {
+  localStorage.setItem("nonRepeating", String(enabled));
+}
