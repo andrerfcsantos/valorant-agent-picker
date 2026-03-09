@@ -206,6 +206,7 @@
   .rightContent {
     max-width: 90%;
     width: 100%;
+    margin: 0 auto;
   }
 
   .rightTitle {
@@ -215,7 +216,10 @@
 
 @media (max-width: 700px) {
   .rightContent {
-    max-width: 95%;
+    max-width: none;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
   }
 }
 
@@ -225,10 +229,6 @@
   }
 
   .roleHeader {
-    font-size: 1em;
-  }
-
-  .rightContent {
-    max-width: 100%;
+    font-size: 1.75rem;
   }
 }
