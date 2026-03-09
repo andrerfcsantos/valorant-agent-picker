@@ -1,6 +1,7 @@
 "use client";
 
 import type { Agent } from "@/data/agents";
+import SpriteIcon from "./SpriteIcon";
 import styles from "./AgentCard.module.css";
 
 interface AgentCardProps {
@@ -15,9 +16,10 @@ export default function AgentCard({ agent, selected, onToggle }: AgentCardProps)
       className={`${styles.card} ${selected ? styles.selected : ""}`}
       onClick={onToggle}
     >
-      <img
+      <SpriteIcon
         className={styles.image}
-        src={`/imgs/agents/icons/${agent.key}.webp`}
+        agentKey={agent.key}
+        type="icon"
         alt={`${agent.name} icon`}
       />
       <div className={styles.name}>{agent.name}</div>

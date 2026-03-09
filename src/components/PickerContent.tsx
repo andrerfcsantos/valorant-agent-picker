@@ -13,6 +13,7 @@ import {
 } from "@/lib/localStorage";
 import { sendEvent } from "@/lib/analytics";
 import AgentCard from "./AgentCard";
+import SpriteIcon from "./SpriteIcon";
 import styles from "./PickerContent.module.css";
 
 function pickRandom(
@@ -165,10 +166,11 @@ export default function PickerContent() {
           {showPortrait && (
             <div className={styles.portraitContainer}>
               {chosenAgent && (
-                <img
+                <SpriteIcon
                   key={`portrait-${chosenAgent.key}-${agentCount}`}
                   className={styles.chosenAgentImage}
-                  src={`/imgs/agents/portraits/${chosenAgent.key}.webp`}
+                  agentKey={chosenAgent.key}
+                  type="portrait"
                   alt={`${chosenAgent.name} portrait`}
                 />
               )}

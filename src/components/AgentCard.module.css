@@ -50,6 +50,8 @@
 
 .image {
   height: 3em;
+  aspect-ratio: 1 / 1;
+  display: inline-block;
   vertical-align: bottom;
   background-color: #343a40;
 }

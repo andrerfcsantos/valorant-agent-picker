@@ -3,10 +3,7 @@ import Script from "next/script";
 import localFont from "next/font/local";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { AGENTS } from "@/data/agents";
 import "./globals.css";
-
-const agentKeys = Object.keys(AGENTS);
 
 const inter = localFont({
   src: "../../public/fonts/Inter-Variable.woff2",
@@ -63,15 +60,11 @@ export default function RootLayout({
         <link rel="preload" href="/imgs/roles/initiator.webp" as="image" type="image/webp" />
         <link rel="preload" href="/imgs/roles/duelist.webp" as="image" type="image/webp" />
 
-        {/* Preload agent icons */}
-        {agentKeys.map((key) => (
-          <link key={`preload-icon-${key}`} rel="preload" href={`/imgs/agents/icons/${key}.webp`} as="image" type="image/webp" />
-        ))}
+        {/* Preload agent icon sprite */}
+        <link rel="preload" href="/imgs/agents/agent-icons-sprite.webp" as="image" type="image/webp" />
 
-        {/* Prefetch agent portraits (lower priority, shown on interaction) */}
-        {agentKeys.map((key) => (
-          <link key={`prefetch-portrait-${key}`} rel="prefetch" href={`/imgs/agents/portraits/${key}.webp`} as="image" type="image/webp" />
-        ))}
+        {/* Prefetch agent portrait sprite (lower priority, shown on interaction) */}
+        <link rel="prefetch" href="/imgs/agents/agent-portraits-sprite.webp" as="image" type="image/webp" />
 
         <Script
           async
