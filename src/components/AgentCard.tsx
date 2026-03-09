@@ -17,7 +17,7 @@ export default function AgentCard({ agent, selected, onToggle }: AgentCardProps)
     >
       <img
         className={styles.image}
-        src={`/imgs/agents/icons/${agent.key}.png`}
+        src={`/imgs/agents/icons/${agent.key}.webp`}
         alt={`${agent.name} icon`}
       />
       <div className={styles.name}>{agent.name}</div>

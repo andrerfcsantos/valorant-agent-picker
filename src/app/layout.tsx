@@ -26,14 +26,14 @@ export const metadata: Metadata = {
       'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
     url: "https://www.valorantpicker.com/",
     siteName: "Valorant Random Agent Picker",
-    images: ["/imgs/agents/icons/brimstone.png"],
+    images: ["/imgs/agents/icons/brimstone.webp"],
   },
   twitter: {
     card: "summary",
     title: "Valorant Random Agent Picker",
     description:
       'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
-    images: ["/imgs/agents/icons/brimstone.png"],
+    images: ["/imgs/agents/icons/brimstone.webp"],
   },
   icons: {
     icon: "/favicon.ico",
@@ -55,22 +55,22 @@ export default function RootLayout({
 
         {/* Preload navbar assets */}
         <link rel="preload" href="/imgs/navbar/bmc.svg" as="image" />
-        <link rel="preload" href="/imgs/navbar/v-logo-red.png" as="image" />
+        <link rel="preload" href="/imgs/navbar/v-logo-red.webp" as="image" type="image/webp" />
 
         {/* Preload role icons */}
-        <link rel="preload" href="/imgs/roles/controller.png" as="image" />
-        <link rel="preload" href="/imgs/roles/sentinel.png" as="image" />
-        <link rel="preload" href="/imgs/roles/initiator.png" as="image" />
-        <link rel="preload" href="/imgs/roles/duelist.png" as="image" />
+        <link rel="preload" href="/imgs/roles/controller.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/imgs/roles/sentinel.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/imgs/roles/initiator.webp" as="image" type="image/webp" />
+        <link rel="preload" href="/imgs/roles/duelist.webp" as="image" type="image/webp" />
 
         {/* Preload agent icons */}
         {agentKeys.map((key) => (
-          <link key={`preload-icon-${key}`} rel="preload" href={`/imgs/agents/icons/${key}.png`} as="image" />
+          <link key={`preload-icon-${key}`} rel="preload" href={`/imgs/agents/icons/${key}.webp`} as="image" type="image/webp" />
         ))}
 
         {/* Prefetch agent portraits (lower priority, shown on interaction) */}
         {agentKeys.map((key) => (
-          <link key={`prefetch-portrait-${key}`} rel="prefetch" href={`/imgs/agents/portraits/${key}.png`} as="image" />
+          <link key={`prefetch-portrait-${key}`} rel="prefetch" href={`/imgs/agents/portraits/${key}.webp`} as="image" type="image/webp" />
         ))}
 
         <Script

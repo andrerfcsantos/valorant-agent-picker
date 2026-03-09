@@ -22,7 +22,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-end no-underline text-white">
           <img
             className="h-[2em] pr-2"
-            src="/imgs/navbar/v-logo-red.png"
+            src="/imgs/navbar/v-logo-red.webp"
             alt="Valorant logo"
           />
           <span
@@ -55,7 +55,7 @@ export default function Navbar() {
           >
             <img
               className="h-[2em]"
-              src="/imgs/discord.png"
+              src="/imgs/discord.webp"
               alt="Discord"
             />
           </a>

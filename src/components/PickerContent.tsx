@@ -168,7 +168,7 @@ export default function PickerContent() {
                 <img
                   key={`portrait-${chosenAgent.key}-${agentCount}`}
                   className={styles.chosenAgentImage}
-                  src={`/imgs/agents/portraits/${chosenAgent.key}.png`}
+                  src={`/imgs/agents/portraits/${chosenAgent.key}.webp`}
                   alt={`${chosenAgent.name} portrait`}
                 />
               )}
