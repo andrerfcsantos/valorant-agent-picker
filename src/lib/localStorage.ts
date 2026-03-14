@@ -52,3 +52,54 @@ export function loadNonRepeating(): boolean {
 export function saveNonRepeating(enabled: boolean) {
   localStorage.setItem("nonRepeating", String(enabled));
 }
+
+interface StoredSlotConfig {
+  name: string;
+  agentFilters: string[];
+}
+
+export interface SlotConfig {
+  name: string;
+  disabledAgents: Set<string>;
+}
+
+export function loadSquadSlotConfigs(): SlotConfig[] {
+  try {
+    const raw = localStorage.getItem("squadSlotConfigs");
+    if (!raw) return defaultSlotConfigs();
+    const parsed: StoredSlotConfig[] = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length !== 5) return defaultSlotConfigs();
+    return parsed.map((s) => ({
+      name: s.name ?? "",
+      disabledAgents: new Set(s.agentFilters ?? []),
+    }));
+  } catch {
+    return defaultSlotConfigs();
+  }
+}
+
+export function saveSquadSlotConfigs(configs: SlotConfig[]) {
+  const data: StoredSlotConfig[] = configs.map((c) => ({
+    name: c.name,
+    agentFilters: Array.from(c.disabledAgents),
+  }));
+  localStorage.setItem("squadSlotConfigs", JSON.stringify(data));
+}
+
+function defaultSlotConfigs(): SlotConfig[] {
+  return Array.from({ length: 5 }, () => ({ name: "", disabledAgents: new Set<string>() }));
+}
+
+export function loadSquadSize(): number {
+  try {
+    const val = localStorage.getItem("squadSize");
+    const n = val ? parseInt(val, 10) : 5;
+    return n >= 1 && n <= 5 ? n : 5;
+  } catch {
+    return 5;
+  }
+}
+
+export function saveSquadSize(size: number) {
+  localStorage.setItem("squadSize", String(size));
+}
