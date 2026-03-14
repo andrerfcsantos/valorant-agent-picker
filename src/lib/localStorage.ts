@@ -89,3 +89,17 @@ export function saveSquadSlotConfigs(configs: SlotConfig[]) {
 function defaultSlotConfigs(): SlotConfig[] {
   return Array.from({ length: 5 }, () => ({ name: "", roleFilters: new Set<string>() }));
 }
+
+export function loadSquadSize(): number {
+  try {
+    const val = localStorage.getItem("squadSize");
+    const n = val ? parseInt(val, 10) : 5;
+    return n >= 1 && n <= 5 ? n : 5;
+  } catch {
+    return 5;
+  }
+}
+
+export function saveSquadSize(size: number) {
+  localStorage.setItem("squadSize", String(size));
+}

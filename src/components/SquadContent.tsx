@@ -6,6 +6,8 @@ import type { Agent, Role } from "@/data/agents";
 import {
   loadSquadSlotConfigs,
   saveSquadSlotConfigs,
+  loadSquadSize,
+  saveSquadSize,
 } from "@/lib/localStorage";
 import type { SlotConfig } from "@/lib/localStorage";
 import SquadSlot from "./SquadSlot";
@@ -34,12 +36,14 @@ export default function SquadContent() {
   const [slotAgents, setSlotAgents] = useState<(Agent | null)[]>([
     null, null, null, null, null,
   ]);
+  const [squadSize, setSquadSize] = useState(5);
   const [hydrated, setHydrated] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const saved = loadSquadSlotConfigs();
     setSlotConfigs(saved);
+    setSquadSize(loadSquadSize());
     setHydrated(true);
   }, []);
 
@@ -47,14 +51,20 @@ export default function SquadContent() {
     setSlotAgents(() => {
       const taken = new Set<string>();
       const result: (Agent | null)[] = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < squadSize; i++) {
         const agent = pickForSlot(slotConfigs[i].roleFilters, taken);
         result.push(agent);
         if (agent) taken.add(agent.key);
       }
+      for (let i = squadSize; i < 5; i++) result.push(null);
       return result;
     });
-  }, [slotConfigs]);
+  }, [slotConfigs, squadSize]);
+
+  const handleSizeChange = useCallback((size: number) => {
+    setSquadSize(size);
+    saveSquadSize(size);
+  }, []);
 
   const randomizeSingle = useCallback(
     (index: number) => {
@@ -106,6 +116,18 @@ export default function SquadContent() {
     <div className={`${styles.container} unselectable`}>
       <h1 className={styles.title}>Build Your Squad</h1>
 
+      <div className={styles.sizeSelector}>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            className={`${styles.sizeButton} ${squadSize === n ? styles.sizeButtonActive : ""}`}
+            onClick={() => handleSizeChange(n)}
+          >
+            {n}
+          </button>
+        ))}
+      </div>
+
       <div className={styles.buttonRow}>
         <button className={styles.randomizeButton} onClick={randomizeAll}>
           Randomize Squad
@@ -116,7 +138,7 @@ export default function SquadContent() {
       </div>
 
       <div className={styles.slotsRow}>
-        {slotConfigs.map((config, i) => (
+        {slotConfigs.slice(0, squadSize).map((config, i) => (
           <SquadSlot
             key={i}
             index={i}
