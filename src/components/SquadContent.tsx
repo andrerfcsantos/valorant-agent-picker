@@ -29,6 +29,18 @@ function pickForSlot(
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+function computeRandomAgents(configs: SlotConfig[], size: number): (Agent | null)[] {
+  const taken = new Set<string>();
+  const result: (Agent | null)[] = [];
+  for (let i = 0; i < size; i++) {
+    const agent = pickForSlot(configs[i].roleFilters, taken);
+    result.push(agent);
+    if (agent) taken.add(agent.key);
+  }
+  for (let i = size; i < 5; i++) result.push(null);
+  return result;
+}
+
 export default function SquadContent() {
   const [slotConfigs, setSlotConfigs] = useState<SlotConfig[]>(
     Array.from({ length: 5 }, () => ({ name: "", roleFilters: new Set<string>() })),
@@ -42,8 +54,10 @@ export default function SquadContent() {
 
   useEffect(() => {
     const saved = loadSquadSlotConfigs();
+    const size = loadSquadSize();
     setSlotConfigs(saved);
-    setSquadSize(loadSquadSize());
+    setSquadSize(size);
+    setSlotAgents(computeRandomAgents(saved, size));
     setHydrated(true);
   }, []);
 
@@ -64,7 +78,8 @@ export default function SquadContent() {
   const handleSizeChange = useCallback((size: number) => {
     setSquadSize(size);
     saveSquadSize(size);
-  }, []);
+    setSlotAgents(computeRandomAgents(slotConfigs, size));
+  }, [slotConfigs]);
 
   const randomizeSingle = useCallback(
     (index: number) => {
