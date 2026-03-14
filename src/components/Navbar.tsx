@@ -26,30 +26,41 @@ export default function Navbar() {
       <div
         className={`${isOpen ? "flex" : "hidden"} lg:flex flex-col lg:flex-row w-full lg:w-auto items-center lg:justify-between flex-1`}
       >
-        <Link href="/" className="flex items-end no-underline text-white">
-          <img
-            className="h-[2em] pr-2"
-            src="/imgs/navbar/v-logo-red.webp"
-            alt="Valorant logo"
-          />
-          <span
-            className="text-2xl no-underline"
-            style={{ fontFamily: "Valorant-Regular, Arial, Helvetica, sans-serif" }}
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-end no-underline text-white mr-4">
+            <img
+              className="h-[2em] pr-2"
+              src="/imgs/navbar/v-logo-red.webp"
+              alt="Valorant logo"
+            />
+            <span
+              className="text-2xl no-underline"
+              style={{ fontFamily: "Valorant-Regular, Arial, Helvetica, sans-serif" }}
+            >
+              Valorant Agent Picker
+            </span>
+          </Link>
+          <Link
+            href="/"
+            className={navLinkClass("/")}
+            style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
-            Valorant Agent Picker
-          </span>
-        </Link>
-
-        <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-4 mt-2 lg:mt-0">
-          <Link href="/" className={navLinkClass("/")}>
             Solo
           </Link>
-          <Link href="/squad" className={navLinkClass("/squad")}>
+          <Link
+            href="/squad"
+            className={navLinkClass("/squad")}
+            style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
+          >
             Squad
           </Link>
+        </div>
+
+        <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-4 mt-2 lg:mt-0">
           <Link
             href="/about"
             className={navLinkClass("/about")}
+            style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
             About
           </Link>
@@ -58,6 +69,7 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-white no-underline hover:text-gray-300"
+            style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
             Github
           </a>
