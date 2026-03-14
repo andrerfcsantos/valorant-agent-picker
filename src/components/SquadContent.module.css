@@ -12,6 +12,12 @@
   margin: 0 0 1.5rem 0;
 }
 
+.randomizeWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
 .buttonRow {
   display: flex;
   gap: 1rem;
@@ -43,16 +49,20 @@
 }
 
 .copyButton {
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   color: #ece8e1;
   background-color: #0f1923;
   border: 1px solid #2a3a4a;
-  padding: 0.6rem 1.5rem;
+  padding: 0.45rem 1rem;
   cursor: pointer;
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
   transition: background-color 0.2s ease, color 0.2s ease;
+  min-width: 13rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .copyButton:hover {
@@ -99,6 +109,19 @@
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
+}
+
+@media (min-width: 769px) {
+  .container {
+    flex-wrap: wrap;
+  }
+
+  .randomizeWrapper {
+    order: 10;
+    margin-top: 2rem;
+    margin-bottom: 0;
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {

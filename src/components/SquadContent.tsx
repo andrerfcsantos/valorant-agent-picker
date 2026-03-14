@@ -11,6 +11,7 @@ import {
 } from "@/lib/localStorage";
 import type { SlotConfig } from "@/lib/localStorage";
 import SquadSlot from "./SquadSlot";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import styles from "./SquadContent.module.css";
 
 function pickForSlot(
@@ -109,6 +110,8 @@ export default function SquadContent() {
     [],
   );
 
+  useKeyboardShortcuts({ r: randomizeAll });
+
   const handleCopy = useCallback(() => {
     const parts = slotAgents
       .map((agent, i) => {
@@ -143,11 +146,18 @@ export default function SquadContent() {
         ))}
       </div>
 
-      <div className={styles.buttonRow}>
+      <div className={styles.randomizeWrapper}>
         <button className={styles.randomizeButton} onClick={randomizeAll}>
           Randomize Squad
         </button>
+      </div>
+
+      <div className={styles.buttonRow}>
         <button className={styles.copyButton} onClick={handleCopy}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "0.4rem", flexShrink: 0 }}>
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
           {copied ? "Copied!" : "Copy to Clipboard"}
         </button>
       </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
-const shortcuts = [
+const soloShortcuts = [
   { key: "R", description: "Randomize agent" },
   { key: "S", description: "Toggle all Sentinels" },
   { key: "I", description: "Toggle all Initiators" },
@@ -11,9 +12,15 @@ const shortcuts = [
   { key: "U", description: "Unselect all agents" },
 ];
 
+const squadShortcuts = [
+  { key: "R", description: "Randomize squad" },
+];
+
 export default function KeyboardShortcutHint() {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const shortcuts = pathname === "/squad" ? squadShortcuts : soloShortcuts;
 
   useEffect(() => {
     if (!open) return;
