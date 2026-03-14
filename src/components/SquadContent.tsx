@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getAllAgents } from "@/data/agents";
+import { getAllAgents, getAgentsByRole } from "@/data/agents";
 import type { Agent, Role } from "@/data/agents";
 import {
   loadSquadSlotConfigs,
@@ -15,17 +15,12 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import styles from "./SquadContent.module.css";
 
 function pickForSlot(
-  roleFilters: Set<string>,
+  disabledAgents: Set<string>,
   taken: Set<string>,
 ): Agent | null {
   const all = getAllAgents();
-  let pool = roleFilters.size > 0
-    ? all.filter((a) => roleFilters.has(a.role) && !taken.has(a.key))
-    : all.filter((a) => !taken.has(a.key));
-
-  if (pool.length === 0) {
-    pool = all.filter((a) => !taken.has(a.key));
-  }
+  let pool = all.filter((a) => !disabledAgents.has(a.key) && !taken.has(a.key));
+  if (pool.length === 0) pool = all.filter((a) => !taken.has(a.key));
   if (pool.length === 0) return null;
   return pool[Math.floor(Math.random() * pool.length)];
 }
@@ -34,7 +29,7 @@ function computeRandomAgents(configs: SlotConfig[], size: number): (Agent | null
   const taken = new Set<string>();
   const result: (Agent | null)[] = [];
   for (let i = 0; i < size; i++) {
-    const agent = pickForSlot(configs[i].roleFilters, taken);
+    const agent = pickForSlot(configs[i].disabledAgents, taken);
     result.push(agent);
     if (agent) taken.add(agent.key);
   }
@@ -44,7 +39,7 @@ function computeRandomAgents(configs: SlotConfig[], size: number): (Agent | null
 
 export default function SquadContent() {
   const [slotConfigs, setSlotConfigs] = useState<SlotConfig[]>(
-    Array.from({ length: 5 }, () => ({ name: "", roleFilters: new Set<string>() })),
+    Array.from({ length: 5 }, () => ({ name: "", disabledAgents: new Set<string>() })),
   );
   const [slotAgents, setSlotAgents] = useState<(Agent | null)[]>([
     null, null, null, null, null,
@@ -67,7 +62,7 @@ export default function SquadContent() {
       const taken = new Set<string>();
       const result: (Agent | null)[] = [];
       for (let i = 0; i < squadSize; i++) {
-        const agent = pickForSlot(slotConfigs[i].roleFilters, taken);
+        const agent = pickForSlot(slotConfigs[i].disabledAgents, taken);
         result.push(agent);
         if (agent) taken.add(agent.key);
       }
@@ -89,7 +84,7 @@ export default function SquadContent() {
         prev.forEach((a, i) => {
           if (a && i !== index) taken.add(a.key);
         });
-        const agent = pickForSlot(slotConfigs[index].roleFilters, taken);
+        const agent = pickForSlot(slotConfigs[index].disabledAgents, taken);
         const next = [...prev];
         next[index] = agent;
         return next;
@@ -172,12 +167,25 @@ export default function SquadContent() {
             onNameChange={(name) =>
               updateSlotConfig(i, (prev) => ({ ...prev, name }))
             }
-            onToggleRole={(role: Role) =>
+            onToggleAgent={(agentKey: string) =>
               updateSlotConfig(i, (prev) => {
-                const next = new Set(prev.roleFilters);
-                if (next.has(role)) next.delete(role);
-                else next.add(role);
-                return { ...prev, roleFilters: next };
+                const next = new Set(prev.disabledAgents);
+                if (next.has(agentKey)) next.delete(agentKey);
+                else next.add(agentKey);
+                return { ...prev, disabledAgents: next };
+              })
+            }
+            onToggleRoleAll={(role: Role) =>
+              updateSlotConfig(i, (prev) => {
+                const roleAgents = getAgentsByRole(role);
+                const allEnabled = roleAgents.every((a) => !prev.disabledAgents.has(a.key));
+                const next = new Set(prev.disabledAgents);
+                if (allEnabled) {
+                  roleAgents.forEach((a) => next.add(a.key));
+                } else {
+                  roleAgents.forEach((a) => next.delete(a.key));
+                }
+                return { ...prev, disabledAgents: next };
               })
             }
             onReroll={() => randomizeSingle(i)}

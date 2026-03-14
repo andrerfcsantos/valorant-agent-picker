@@ -55,12 +55,12 @@ export function saveNonRepeating(enabled: boolean) {
 
 interface StoredSlotConfig {
   name: string;
-  roleFilters: string[];
+  agentFilters: string[];
 }
 
 export interface SlotConfig {
   name: string;
-  roleFilters: Set<string>;
+  disabledAgents: Set<string>;
 }
 
 export function loadSquadSlotConfigs(): SlotConfig[] {
@@ -71,7 +71,7 @@ export function loadSquadSlotConfigs(): SlotConfig[] {
     if (!Array.isArray(parsed) || parsed.length !== 5) return defaultSlotConfigs();
     return parsed.map((s) => ({
       name: s.name ?? "",
-      roleFilters: new Set(s.roleFilters ?? []),
+      disabledAgents: new Set(s.agentFilters ?? []),
     }));
   } catch {
     return defaultSlotConfigs();
@@ -81,13 +81,13 @@ export function loadSquadSlotConfigs(): SlotConfig[] {
 export function saveSquadSlotConfigs(configs: SlotConfig[]) {
   const data: StoredSlotConfig[] = configs.map((c) => ({
     name: c.name,
-    roleFilters: Array.from(c.roleFilters),
+    agentFilters: Array.from(c.disabledAgents),
   }));
   localStorage.setItem("squadSlotConfigs", JSON.stringify(data));
 }
 
 function defaultSlotConfigs(): SlotConfig[] {
-  return Array.from({ length: 5 }, () => ({ name: "", roleFilters: new Set<string>() }));
+  return Array.from({ length: 5 }, () => ({ name: "", disabledAgents: new Set<string>() }));
 }
 
 export function loadSquadSize(): number {

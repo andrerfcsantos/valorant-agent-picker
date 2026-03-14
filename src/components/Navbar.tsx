@@ -45,14 +45,14 @@ export default function Navbar() {
             className={navLinkClass("/")}
             style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
-            Solo
+            Solo Agent
           </Link>
           <Link
             href="/squad"
             className={navLinkClass("/squad")}
             style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
-            Squad
+            Squad Generator
           </Link>
         </div>
 

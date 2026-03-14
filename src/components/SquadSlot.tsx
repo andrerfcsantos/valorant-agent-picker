@@ -1,5 +1,5 @@
 import type { Agent, Role } from "@/data/agents";
-import { ROLES } from "@/data/agents";
+import { ROLES, getAgentsByRole } from "@/data/agents";
 import type { SlotConfig } from "@/lib/localStorage";
 import SpriteIcon from "./SpriteIcon";
 import styles from "./SquadSlot.module.css";
@@ -9,7 +9,8 @@ interface SquadSlotProps {
   config: SlotConfig;
   agent: Agent | null;
   onNameChange: (name: string) => void;
-  onToggleRole: (role: Role) => void;
+  onToggleAgent: (agentKey: string) => void;
+  onToggleRoleAll: (role: Role) => void;
   onReroll: () => void;
 }
 
@@ -18,7 +19,8 @@ export default function SquadSlot({
   config,
   agent,
   onNameChange,
-  onToggleRole,
+  onToggleAgent,
+  onToggleRoleAll,
   onReroll,
 }: SquadSlotProps) {
   return (
@@ -57,19 +59,61 @@ export default function SquadSlot({
 
       <details className={styles.filtersDetails}>
         <summary className={styles.filtersSummary}>
-          Filters<span className={styles.filtersArrow}></span>
+          Filters{config.disabledAgents.size > 0 && ` (${config.disabledAgents.size})`}
+          <span className={styles.filtersArrow}></span>
         </summary>
-        <div className={styles.filtersContent}>
-          {ROLES.map((role) => (
-            <label key={role.key} className={styles.roleCheckbox}>
-              <input
-                type="checkbox"
-                checked={config.roleFilters.has(role.key)}
-                onChange={() => onToggleRole(role.key)}
-              />
-              {role.label}
-            </label>
-          ))}
+        <div className={styles.filtersPanel}>
+          {ROLES.map((role) => {
+            const roleAgents = getAgentsByRole(role.key);
+            const disabledCount = roleAgents.filter((a) => config.disabledAgents.has(a.key)).length;
+            const allEnabled = disabledCount === 0;
+            const someDisabled = disabledCount > 0 && disabledCount < roleAgents.length;
+
+            return (
+              <div key={role.key} className={styles.roleSection}>
+                <div
+                  className={styles.roleHeader}
+                  onClick={() => onToggleRoleAll(role.key)}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={role.icon}
+                    alt={role.label}
+                    className={styles.roleIcon}
+                  />
+                  <span className={styles.roleLabel}>{role.label}</span>
+                  <input
+                    type="checkbox"
+                    checked={allEnabled}
+                    ref={(el) => {
+                      if (el) el.indeterminate = someDisabled;
+                    }}
+                    onChange={() => onToggleRoleAll(role.key)}
+                    onClick={(e) => e.stopPropagation()}
+                    className={styles.roleCheckbox}
+                  />
+                </div>
+                <div className={styles.agentList}>
+                  {roleAgents.map((a) => (
+                    <label key={a.key} className={styles.agentItem}>
+                      <SpriteIcon
+                        className={styles.agentItemIcon}
+                        agentKey={a.key}
+                        type="icon"
+                        alt={a.name}
+                      />
+                      <span className={styles.agentItemName}>{a.name}</span>
+                      <input
+                        type="checkbox"
+                        checked={!config.disabledAgents.has(a.key)}
+                        onChange={() => onToggleAgent(a.key)}
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </details>
     </div>

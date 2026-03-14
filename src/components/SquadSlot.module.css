@@ -7,6 +7,7 @@
   width: 180px;
   gap: 0.6rem;
   transition: border-color 0.2s ease;
+  position: relative;
 }
 
 .slot:hover {
@@ -108,28 +109,103 @@
   content: " ▾";
 }
 
-.filtersContent {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  margin-top: 0.4rem;
+.filtersPanel {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  min-width: 220px;
+  background: #0f1923;
+  border: 1px solid #2a3a4a;
+  padding: 0.5rem;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-.roleCheckbox {
+.roleSection {
+  margin-bottom: 0.4rem;
+}
+
+.roleSection:last-child {
+  margin-bottom: 0;
+}
+
+.roleHeader {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.8rem;
-  color: #ece8e1;
+  padding: 0.25rem 0.2rem;
+  border-bottom: 1px solid #2a3a4a;
   cursor: pointer;
+  user-select: none;
 }
 
-.roleCheckbox input {
+.roleHeader:hover {
+  background: #1a2332;
+}
+
+.roleIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.roleLabel {
+  font-size: 0.75rem;
+  color: #9aa8b5;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex: 1;
+}
+
+.roleCheckbox {
   cursor: pointer;
+  flex-shrink: 0;
+}
+
+.agentList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  padding-top: 0.1rem;
+}
+
+.agentItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.2rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #ece8e1;
+}
+
+.agentItem:hover {
+  background: #1a2332;
+}
+
+.agentItemIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.agentItemName {
+  flex: 1;
+}
+
+.agentItem input[type="checkbox"] {
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
   .slot {
     width: 100%;
+  }
+
+  .filtersPanel {
+    min-width: 100%;
   }
 }
