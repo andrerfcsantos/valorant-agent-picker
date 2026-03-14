@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navLinkClass = (href: string) => {
+    const active = pathname === href;
+    return `no-underline hover:text-gray-300 ${active ? "text-[#ff4655] border-b-2 border-[#ff4655]" : "text-white"}`;
+  };
 
   return (
     <nav className="flex flex-wrap items-center justify-between bg-[#111111] px-4 py-2 min-h-[5vh] font-[family-name:var(--font-inter)]">
@@ -34,9 +41,15 @@ export default function Navbar() {
         </Link>
 
         <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-4 mt-2 lg:mt-0">
+          <Link href="/" className={navLinkClass("/")}>
+            Solo
+          </Link>
+          <Link href="/squad" className={navLinkClass("/squad")}>
+            Squad
+          </Link>
           <Link
             href="/about"
-            className="text-white no-underline hover:text-gray-300"
+            className={navLinkClass("/about")}
           >
             About
           </Link>

@@ -52,3 +52,40 @@ export function loadNonRepeating(): boolean {
 export function saveNonRepeating(enabled: boolean) {
   localStorage.setItem("nonRepeating", String(enabled));
 }
+
+interface StoredSlotConfig {
+  name: string;
+  roleFilters: string[];
+}
+
+export interface SlotConfig {
+  name: string;
+  roleFilters: Set<string>;
+}
+
+export function loadSquadSlotConfigs(): SlotConfig[] {
+  try {
+    const raw = localStorage.getItem("squadSlotConfigs");
+    if (!raw) return defaultSlotConfigs();
+    const parsed: StoredSlotConfig[] = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length !== 5) return defaultSlotConfigs();
+    return parsed.map((s) => ({
+      name: s.name ?? "",
+      roleFilters: new Set(s.roleFilters ?? []),
+    }));
+  } catch {
+    return defaultSlotConfigs();
+  }
+}
+
+export function saveSquadSlotConfigs(configs: SlotConfig[]) {
+  const data: StoredSlotConfig[] = configs.map((c) => ({
+    name: c.name,
+    roleFilters: Array.from(c.roleFilters),
+  }));
+  localStorage.setItem("squadSlotConfigs", JSON.stringify(data));
+}
+
+function defaultSlotConfigs(): SlotConfig[] {
+  return Array.from({ length: 5 }, () => ({ name: "", roleFilters: new Set<string>() }));
+}

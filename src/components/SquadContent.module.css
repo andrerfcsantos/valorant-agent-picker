@@ -1,0 +1,86 @@
+.container {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 85vh;
+  padding: 2rem 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.randomizeButton {
+  font-size: 1.1rem;
+  color: #ece8e1;
+  background-color: #ff4655;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.randomizeButton:hover {
+  color: #0f1923;
+  background-color: #ece8e1;
+}
+
+.randomizeButton:active {
+  transform: scale(0.97);
+}
+
+.copyButton {
+  font-size: 1.1rem;
+  color: #ece8e1;
+  background-color: #0f1923;
+  border: 1px solid #2a3a4a;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.copyButton:hover {
+  color: #0f1923;
+  background-color: #ece8e1;
+}
+
+.copyButton:active {
+  transform: scale(0.97);
+}
+
+.slotsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .slotsRow {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+}
