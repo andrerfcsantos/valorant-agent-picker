@@ -131,3 +131,100 @@ h2 {
   opacity: 1;
   transition: all 0.1s ease-out;
 }
+
+/* Keyboard shortcut hint */
+.shortcut-hint-container {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 50;
+}
+
+.shortcut-hint-button {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.15rem;
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.shortcut-hint-button:hover {
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  border-color: rgba(255, 70, 85, 0.6);
+}
+
+.shortcut-popover {
+  position: absolute;
+  bottom: 3rem;
+  right: 0;
+  background: rgba(20, 25, 35, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  min-width: 14rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  animation: popoverFadeIn 0.15s ease-out;
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shortcut-popover-title {
+  margin: 0 0 0.5rem 0;
+  color: #ff4655;
+  font-size: 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.4rem;
+}
+
+.shortcut-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.shortcut-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6rem;
+  height: 1.5rem;
+  padding: 0 0.3rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.25rem;
+  color: #ff4655;
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.shortcut-desc {
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}

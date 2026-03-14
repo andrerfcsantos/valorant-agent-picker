@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AGENTS, ROLES, getAgentsByRole, getAllAgents } from "@/data/agents";
 import type { Agent, Role } from "@/data/agents";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import {
   loadSelectedAgents,
   saveSelectedAgents,
@@ -119,6 +120,34 @@ export default function PickerContent() {
     setNonRepeating(checked);
     saveNonRepeating(checked);
   };
+
+  const unselectAll = useCallback(() => {
+    setSelectedAgents(new Set());
+    saveSelectedAgents(new Set());
+    sendEvent("Filter", "UnselectAll", "All");
+  }, []);
+
+  const toggleRole = useCallback(
+    (role: Role) => {
+      const allOfRole = getAgentsByRole(role);
+      const selectedOfRole = allOfRole.filter((a) => selectedAgents.has(a.key));
+      if (selectedOfRole.length === allOfRole.length) {
+        unselectByRole(role);
+      } else {
+        selectByRole(role);
+      }
+    },
+    [selectedAgents, selectByRole, unselectByRole],
+  );
+
+  useKeyboardShortcuts({
+    r: handleGetRandom,
+    s: () => toggleRole("SENTINEL"),
+    i: () => toggleRole("INITIATOR"),
+    d: () => toggleRole("DUELIST"),
+    c: () => toggleRole("CONTROLLER"),
+    u: unselectAll,
+  });
 
   const numberOfSelected = selectedAgents.size;
 

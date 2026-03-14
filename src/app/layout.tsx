@@ -3,6 +3,7 @@ import Script from "next/script";
 import localFont from "next/font/local";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
 import "./globals.css";
 
 const inter = localFont({
@@ -89,6 +90,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <KeyboardShortcutHint />
       </body>
     </html>
   );
