@@ -1,5 +1,5 @@
 import type { Agent, Role } from "@/data/agents";
-import { ROLES, getAgentsByRole } from "@/data/agents";
+import { ROLES, getAllAgents, getAgentsByRole } from "@/data/agents";
 import type { SlotConfig } from "@/lib/localStorage";
 import SpriteIcon from "./SpriteIcon";
 import styles from "./SquadSlot.module.css";
@@ -59,7 +59,7 @@ export default function SquadSlot({
 
       <details className={styles.filtersDetails}>
         <summary className={styles.filtersSummary}>
-          Filters{config.disabledAgents.size > 0 && ` (${config.disabledAgents.size})`}
+          Filters ({getAllAgents().length - config.disabledAgents.size})
           <span className={styles.filtersArrow}></span>
         </summary>
         <div className={styles.filtersPanel}>
