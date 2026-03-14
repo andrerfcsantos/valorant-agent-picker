@@ -10,9 +10,7 @@
 
 @font-face {
   font-family: "DINNextW1G";
-  src:
-    url("/fonts/DINNextW1G-Regular.woff2") format("woff2"),
-    url("/fonts/DINNextW1G-Regular.woff") format("woff");
+  src: url("/fonts/DINNextW1G-Regular.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -20,9 +18,7 @@
 
 @font-face {
   font-family: "DINNextW1G";
-  src:
-    url("/fonts/DINNextW1G-Bold.woff2") format("woff2"),
-    url("/fonts/DINNextW1G-Bold.woff") format("woff");
+  src: url("/fonts/DINNextW1G-Bold.otf") format("opentype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -30,9 +26,7 @@
 
 @font-face {
   font-family: "DINNextW1G";
-  src:
-    url("/fonts/DINNextW1G-Italic.woff2") format("woff2"),
-    url("/fonts/DINNextW1G-Italic.woff") format("woff");
+  src: url("/fonts/DINNextW1G-Italic.otf") format("opentype");
   font-weight: normal;
   font-style: italic;
   font-display: swap;
@@ -40,9 +34,7 @@
 
 @font-face {
   font-family: "DINNextW1G";
-  src:
-    url("/fonts/DINNextW1G-BoldItalic.woff2") format("woff2"),
-    url("/fonts/DINNextW1G-BoldItalic.woff") format("woff");
+  src: url("/fonts/DINNextW1G-BoldItalic.otf") format("opentype");
   font-weight: bold;
   font-style: italic;
   font-display: swap;

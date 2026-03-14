@@ -49,7 +49,7 @@ export default function RootLayout({
         {/* Preload fonts */}
         <link rel="preload" href="/fonts/Tungsten-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/valorant-regular-webfont.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/fonts/DINNextW1G-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/DINNextW1G-Regular.otf" as="font" type="font/otf" crossOrigin="anonymous" />
 
         {/* Preload navbar assets */}
         <link rel="preload" href="/imgs/navbar/bmc.svg" as="image" />
