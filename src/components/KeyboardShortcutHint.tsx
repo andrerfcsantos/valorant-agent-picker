@@ -14,6 +14,7 @@ const soloShortcuts = [
 
 const squadShortcuts = [
   { key: "R", description: "Randomize squad" },
+  { key: "Ctrl+C", description: "Copy squad to clipboard" },
 ];
 
 export default function KeyboardShortcutHint() {

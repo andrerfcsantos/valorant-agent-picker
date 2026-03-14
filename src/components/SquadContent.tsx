@@ -105,8 +105,6 @@ export default function SquadContent() {
     [],
   );
 
-  useKeyboardShortcuts({ r: randomizeAll });
-
   const handleCopy = useCallback(() => {
     const parts = slotAgents
       .map((agent, i) => {
@@ -122,6 +120,8 @@ export default function SquadContent() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [slotAgents, slotConfigs]);
+
+  useKeyboardShortcuts({ r: randomizeAll, "ctrl+c": handleCopy });
 
   if (!hydrated) return null;
 
