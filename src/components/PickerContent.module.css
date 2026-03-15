@@ -31,6 +31,13 @@
   font-size: 2rem;
 }
 
+.pageDescription {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+
 .portraitContainer {
   width: 75%;
   aspect-ratio: 1 / 1;
@@ -57,6 +64,7 @@
 }
 
 .randomAgentButton {
+  user-select: none;
   font-size: 1.2rem;
   color: #ece8e1;
   background-color: #ff4655;
@@ -104,7 +112,6 @@
 .filterDescription {
   display: block;
   font-size: 1.1rem;
-  user-select: text;
   margin: 0;
 }
 
@@ -125,6 +132,7 @@
 }
 
 .allButton {
+  user-select: none;
   color: #ece8e1;
   border: none;
   font-size: 0.85rem;
@@ -162,6 +170,7 @@
 }
 
 .optionsSummary {
+  user-select: none;
   cursor: pointer;
   color: grey;
   font-size: 1.1rem;

@@ -3,17 +3,17 @@ interface StoredAgent {
   selected: boolean;
 }
 
-export function loadSelectedAgents(): Set<string> {
+export function loadSelectedAgents(): Set<string> | null {
   try {
     const raw = localStorage.getItem("selectedAgents");
-    if (!raw) return new Set();
+    if (!raw) return null;
     const parsed: StoredAgent[] = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return new Set();
+    if (!Array.isArray(parsed)) return null;
     return new Set(
       parsed.filter((a) => a.selected).map((a) => a.key),
     );
   } catch {
-    return new Set();
+    return null;
   }
 }
 

@@ -13,25 +13,23 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Valorant Random Agent Picker",
+  metadataBase: new URL("https://www.valorantpicker.com"),
+  title: {
+    default: "Valorant Random Agent Picker",
+    template: "%s | Valorant Picker",
+  },
   description:
-    'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
+    "Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.",
   openGraph: {
     locale: "en_US",
     type: "website",
-    title: "Valorant Random Agent Picker",
-    description:
-      'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
     url: "https://www.valorantpicker.com/",
     siteName: "Valorant Random Agent Picker",
-    images: ["/imgs/agents/icons/brimstone.webp"],
+    images: ["/imgs/navbar/v-logo-red.webp"],
   },
   twitter: {
     card: "summary",
-    title: "Valorant Random Agent Picker",
-    description:
-      'Valorant Agent Picker/Randomizer. Select the agents you want to play and get a random one from the selection.',
-    images: ["/imgs/agents/icons/brimstone.webp"],
+    images: ["/imgs/navbar/v-logo-red.webp"],
   },
   icons: {
     icon: "/favicon.ico",

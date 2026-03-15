@@ -46,9 +46,10 @@ export default function PickerContent() {
   const nameRef = useRef<HTMLHeadingElement>(null);
 
   // Hydrate from localStorage on mount (client only)
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+
   useEffect(() => {
-    const saved = loadSelectedAgents();
+    const saved =
+      loadSelectedAgents() ?? new Set(getAllAgents().map((a) => a.key));
     setSelectedAgents(saved);
     setShowPortrait(loadShowPortrait());
     setNonRepeating(loadNonRepeating());
@@ -152,7 +153,7 @@ export default function PickerContent() {
   const numberOfSelected = selectedAgents.size;
 
   return (
-    <div className={`${styles.mainContainer} unselectable`}>
+    <div className={styles.mainContainer}>
       <div className={styles.row}>
         <div className={styles.leftContent}>
           <h1 className={styles.leftTitle}>You should play</h1>
@@ -174,7 +175,12 @@ export default function PickerContent() {
               >
                 Show agent portrait
               </label>
-              <span className="info-icon" data-tip="Show or hide the agent portrait image">ⓘ</span>
+              <span
+                className="info-icon"
+                data-tip="Show or hide the agent portrait image"
+              >
+                ⓘ
+              </span>
               <br />
               <input
                 id="checkbox-non-repeating"
@@ -188,7 +194,12 @@ export default function PickerContent() {
               >
                 Non-repeating mode
               </label>
-              <span className="info-icon" data-tip="Prevent the same agent from being picked twice in a row">ⓘ</span>
+              <span
+                className="info-icon"
+                data-tip="Prevent the same agent from being picked twice in a row"
+              >
+                ⓘ
+              </span>
             </div>
           </details>
 
@@ -211,7 +222,7 @@ export default function PickerContent() {
             key={`agent-name-${chosenAgent?.name}-${agentCount}`}
             className={`${styles.chosenAgentName} ${nameVisible ? "agent-name-visible" : "agent-name-enter"}`}
           >
-            {hydrated ? chosenAgent?.name ?? "" : ""}
+            {hydrated ? (chosenAgent?.name ?? "") : ""}
           </h2>
 
           <div
@@ -229,6 +240,15 @@ export default function PickerContent() {
 
         <div className={styles.rightContent}>
           <h1 className={styles.rightTitle}>Filter Agents</h1>
+
+          <p className={styles.pageDescription}>
+            Select which agents you want to include for the random selection,
+            then hit <strong>Randomize Agent</strong> to get your pick.
+            <br />
+            You can select/unselect agents individually or by role. Keyboard
+            shortcuts are available — click <strong>?</strong> on the bottom of
+            the page to see the full list.
+          </p>
 
           <div
             className={`${styles.filterDescription} ${styles.selectedAgentsInfo}`}

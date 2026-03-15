@@ -64,6 +64,7 @@
 }
 
 .rerollButton {
+  user-select: none;
   background: #0f1923;
   border: 1px solid #2a3a4a;
   color: #ece8e1;
@@ -172,6 +173,7 @@
 }
 
 .agentItem {
+  user-select: none;
   display: flex;
   align-items: center;
   gap: 0.4rem;

@@ -25,7 +25,10 @@ function pickForSlot(
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function computeRandomAgents(configs: SlotConfig[], size: number): (Agent | null)[] {
+function computeRandomAgents(
+  configs: SlotConfig[],
+  size: number,
+): (Agent | null)[] {
   const taken = new Set<string>();
   const result: (Agent | null)[] = [];
   for (let i = 0; i < size; i++) {
@@ -39,10 +42,17 @@ function computeRandomAgents(configs: SlotConfig[], size: number): (Agent | null
 
 export default function SquadContent() {
   const [slotConfigs, setSlotConfigs] = useState<SlotConfig[]>(
-    Array.from({ length: 5 }, () => ({ name: "", disabledAgents: new Set<string>() })),
+    Array.from({ length: 5 }, () => ({
+      name: "",
+      disabledAgents: new Set<string>(),
+    })),
   );
   const [slotAgents, setSlotAgents] = useState<(Agent | null)[]>([
-    null, null, null, null, null,
+    null,
+    null,
+    null,
+    null,
+    null,
   ]);
   const [squadSize, setSquadSize] = useState(5);
   const [hydrated, setHydrated] = useState(false);
@@ -71,11 +81,14 @@ export default function SquadContent() {
     });
   }, [slotConfigs, squadSize]);
 
-  const handleSizeChange = useCallback((size: number) => {
-    setSquadSize(size);
-    saveSquadSize(size);
-    setSlotAgents(computeRandomAgents(slotConfigs, size));
-  }, [slotConfigs]);
+  const handleSizeChange = useCallback(
+    (size: number) => {
+      setSquadSize(size);
+      saveSquadSize(size);
+      setSlotAgents(computeRandomAgents(slotConfigs, size));
+    },
+    [slotConfigs],
+  );
 
   const randomizeSingle = useCallback(
     (index: number) => {
@@ -126,8 +139,18 @@ export default function SquadContent() {
   if (!hydrated) return null;
 
   return (
-    <div className={`${styles.container} unselectable`}>
+    <div className={styles.container}>
       <h1 className={styles.title}>Build Your Squad</h1>
+
+      <p className={styles.pageDescription}>
+        Choose your squad size and hit <strong>Randomize Squad</strong> to get a
+        random squad.
+        <br />
+        You can select the pool of random agents for each slot and give it a
+        name.
+        <br />
+        <strong>Copy to clipboard</strong> to share the squad with others!
+      </p>
 
       <div className={styles.sizeSelector}>
         {[1, 2, 3, 4, 5].map((n) => (
@@ -149,7 +172,18 @@ export default function SquadContent() {
 
       <div className={styles.buttonRow}>
         <button className={styles.copyButton} onClick={handleCopy}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "0.4rem", flexShrink: 0 }}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ marginRight: "0.4rem", flexShrink: 0 }}
+          >
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
@@ -178,7 +212,9 @@ export default function SquadContent() {
             onToggleRoleAll={(role: Role) =>
               updateSlotConfig(i, (prev) => {
                 const roleAgents = getAgentsByRole(role);
-                const allEnabled = roleAgents.every((a) => !prev.disabledAgents.has(a.key));
+                const allEnabled = roleAgents.every(
+                  (a) => !prev.disabledAgents.has(a.key),
+                );
                 const next = new Set(prev.disabledAgents);
                 if (allEnabled) {
                   roleAgents.forEach((a) => next.add(a.key));
