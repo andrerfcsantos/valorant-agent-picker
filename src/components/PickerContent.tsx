@@ -153,7 +153,7 @@ export default function PickerContent() {
   const numberOfSelected = selectedAgents.size;
 
   return (
-    <div className={`${styles.mainContainer} unselectable`}>
+    <div className={styles.mainContainer}>
       <div className={styles.row}>
         <div className={styles.leftContent}>
           <h1 className={styles.leftTitle}>You should play</h1>

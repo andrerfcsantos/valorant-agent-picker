@@ -64,6 +64,7 @@
 }
 
 .randomAgentButton {
+  user-select: none;
   font-size: 1.2rem;
   color: #ece8e1;
   background-color: #ff4655;
@@ -111,7 +112,6 @@
 .filterDescription {
   display: block;
   font-size: 1.1rem;
-  user-select: text;
   margin: 0;
 }
 
@@ -132,6 +132,7 @@
 }
 
 .allButton {
+  user-select: none;
   color: #ece8e1;
   border: none;
   font-size: 0.85rem;
@@ -169,6 +170,7 @@
 }
 
 .optionsSummary {
+  user-select: none;
   cursor: pointer;
   color: grey;
   font-size: 1.1rem;

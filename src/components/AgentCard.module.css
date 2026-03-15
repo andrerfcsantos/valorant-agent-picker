@@ -1,4 +1,5 @@
 .card {
+  user-select: none;
   display: inline-flex;
   margin: 0.25em;
   width: 14em;

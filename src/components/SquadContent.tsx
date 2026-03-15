@@ -139,7 +139,7 @@ export default function SquadContent() {
   if (!hydrated) return null;
 
   return (
-    <div className={`${styles.container} unselectable`}>
+    <div className={styles.container}>
       <h1 className={styles.title}>Build Your Squad</h1>
 
       <p className={styles.pageDescription}>

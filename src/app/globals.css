@@ -108,9 +108,6 @@ h2 {
   pointer-events: none;
 }
 
-.unselectable {
-  user-select: none;
-}
 
 /* Agent name transition */
 .agent-name-enter {

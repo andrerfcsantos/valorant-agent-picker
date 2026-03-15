@@ -35,6 +35,7 @@
 }
 
 .randomizeButton {
+  user-select: none;
   font-size: 1.1rem;
   color: #ece8e1;
   background-color: #ff4655;
@@ -57,6 +58,7 @@
 }
 
 .copyButton {
+  user-select: none;
   font-size: 0.85rem;
   color: #ece8e1;
   background-color: #0f1923;
@@ -90,6 +92,7 @@
 }
 
 .sizeButton {
+  user-select: none;
   font-size: 1rem;
   width: 2.5rem;
   height: 2.5rem;
