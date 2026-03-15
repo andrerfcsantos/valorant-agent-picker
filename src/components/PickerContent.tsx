@@ -48,7 +48,7 @@ export default function PickerContent() {
   // Hydrate from localStorage on mount (client only)
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    const saved = loadSelectedAgents();
+    const saved = loadSelectedAgents() ?? new Set(getAllAgents().map((a) => a.key));
     setSelectedAgents(saved);
     setShowPortrait(loadShowPortrait());
     setNonRepeating(loadNonRepeating());
