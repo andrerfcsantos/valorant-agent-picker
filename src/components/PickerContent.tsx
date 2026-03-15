@@ -245,10 +245,9 @@ export default function PickerContent() {
             Select which agents you want to include for the random selection,
             then hit <strong>Randomize Agent</strong> to get your pick.
             <br />
-            You can select/unselect agents individually or by role.
-            <br />
-            Keyboard shortcuts are available — click <strong>?</strong> on the
-            bottom of the page to see the full list.
+            You can select/unselect agents individually or by role. Keyboard
+            shortcuts are available — click <strong>?</strong> on the bottom of
+            the page to see the full list.
           </p>
 
           <div
