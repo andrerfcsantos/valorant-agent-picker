@@ -25,11 +25,9 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://www.valorantpicker.com/",
     siteName: "Valorant Random Agent Picker",
-    images: ["/imgs/navbar/v-logo-red.webp"],
   },
   twitter: {
-    card: "summary",
-    images: ["/imgs/navbar/v-logo-red.webp"],
+    card: "summary_large_image",
   },
   icons: {
     icon: "/favicon.ico",
