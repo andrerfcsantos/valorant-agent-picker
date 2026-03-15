@@ -9,7 +9,15 @@
 
 .title {
   font-size: 2.5rem;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 0.5rem 0;
+}
+
+.pageDescription {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  max-width: 50%;
+  line-height: 1.5;
 }
 
 .randomizeWrapper {
