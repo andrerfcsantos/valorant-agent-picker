@@ -70,6 +70,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
         <Script
+          async
           src="https://www.googletagmanager.com/gtag/js?id=UA-28576677-4"
           strategy="afterInteractive"
         />
