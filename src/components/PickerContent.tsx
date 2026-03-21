@@ -128,6 +128,13 @@ export default function PickerContent() {
     sendEvent("Filter", "UnselectAll", "All");
   }, []);
 
+  const selectAll = useCallback(() => {
+    const next = new Set(Object.keys(AGENTS));
+    setSelectedAgents(next);
+    saveSelectedAgents(next);
+    sendEvent("Filter", "SelectAll", "All");
+  }, []);
+
   const toggleRole = useCallback(
     (role: Role) => {
       const allOfRole = getAgentsByRole(role);
@@ -273,6 +280,14 @@ export default function PickerContent() {
                 You have {numberOfSelected} agents selected.
               </p>
             )}
+            <div className={styles.globalSelectionButtons}>
+              <button className={styles.allButton} onClick={selectAll}>
+                Select All
+              </button>
+              <button className={styles.allButton} onClick={unselectAll}>
+                Unselect All
+              </button>
+            </div>
           </div>
 
           {ROLES.map((role) => (
