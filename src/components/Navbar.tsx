@@ -27,7 +27,7 @@ export default function Navbar() {
         className={`${isOpen ? "flex" : "hidden"} lg:flex flex-col lg:flex-row w-full lg:w-auto items-center lg:justify-between flex-1`}
       >
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-end no-underline text-white mr-4">
+          <Link href="/" prefetch={false} className="flex items-end no-underline text-white mr-4">
             <img
               className="h-[2em] pr-2"
               src="/imgs/navbar/v-logo-red.webp"
@@ -42,6 +42,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/"
+            prefetch={false}
             className={navLinkClass("/")}
             style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
@@ -49,6 +50,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/squad"
+            prefetch={false}
             className={navLinkClass("/squad")}
             style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
@@ -59,6 +61,7 @@ export default function Navbar() {
         <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-4 mt-2 lg:mt-0">
           <Link
             href="/about"
+            prefetch={false}
             className={navLinkClass("/about")}
             style={{ fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" }}
           >
