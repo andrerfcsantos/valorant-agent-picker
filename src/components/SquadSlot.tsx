@@ -2,6 +2,7 @@ import type { Agent, Role } from "@/data/agents";
 import { ROLES, getAllAgents, getAgentsByRole } from "@/data/agents";
 import type { SlotConfig } from "@/lib/localStorage";
 import SpriteIcon from "./SpriteIcon";
+import RoleSpriteIcon from "./RoleSpriteIcon";
 import styles from "./SquadSlot.module.css";
 
 interface SquadSlotProps {
@@ -75,9 +76,8 @@ export default function SquadSlot({
                   className={styles.roleHeader}
                   onClick={() => onToggleRoleAll(role.key)}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={role.icon}
+                  <RoleSpriteIcon
+                    roleKey={role.key}
                     alt={role.label}
                     className={styles.roleIcon}
                   />

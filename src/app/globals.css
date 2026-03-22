@@ -10,41 +10,16 @@
 
 @font-face {
   font-family: "DINNextW1G";
-  src: url("/fonts/DINNextW1G-Regular.otf") format("opentype");
+  src: url("/fonts/DINNextW1G-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: "DINNextW1G";
-  src: url("/fonts/DINNextW1G-Bold.otf") format("opentype");
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "DINNextW1G";
-  src: url("/fonts/DINNextW1G-Italic.otf") format("opentype");
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "DINNextW1G";
-  src: url("/fonts/DINNextW1G-BoldItalic.otf") format("opentype");
-  font-weight: bold;
-  font-style: italic;
-  font-display: swap;
-}
 
 @font-face {
   font-family: "Tungsten-Bold";
-  src:
-    url("/fonts/Tungsten-Bold.woff2") format("woff2"),
-    url("/fonts/Tungsten-Bold.woff") format("woff");
+  src: url("/fonts/Tungsten-Bold.woff2") format("woff2");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -208,7 +183,7 @@ h2 {
   color: #ff4655;
   font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
   font-size: 0.85rem;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .shortcut-desc {

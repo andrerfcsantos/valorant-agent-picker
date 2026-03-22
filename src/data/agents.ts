@@ -38,11 +38,11 @@ export const AGENTS: Record<string, Agent> = {
   miks: { name: "Miks", role: "CONTROLLER", key: "miks" },
 };
 
-export const ROLES: { key: Role; label: string; icon: string }[] = [
-  { key: "CONTROLLER", label: "Controller", icon: "/imgs/roles/controller.webp" },
-  { key: "SENTINEL", label: "Sentinel", icon: "/imgs/roles/sentinel.webp" },
-  { key: "INITIATOR", label: "Initiator", icon: "/imgs/roles/initiator.webp" },
-  { key: "DUELIST", label: "Duelist", icon: "/imgs/roles/duelist.webp" },
+export const ROLES: { key: Role; label: string }[] = [
+  { key: "CONTROLLER", label: "Controller" },
+  { key: "SENTINEL", label: "Sentinel" },
+  { key: "INITIATOR", label: "Initiator" },
+  { key: "DUELIST", label: "Duelist" },
 ];
 
 export function getAllAgents(): Agent[] {

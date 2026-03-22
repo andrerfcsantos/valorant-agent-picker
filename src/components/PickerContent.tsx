@@ -15,6 +15,7 @@ import {
 import { sendEvent } from "@/lib/analytics";
 import AgentCard from "./AgentCard";
 import SpriteIcon from "./SpriteIcon";
+import RoleSpriteIcon from "./RoleSpriteIcon";
 import styles from "./PickerContent.module.css";
 
 function pickRandom(
@@ -293,10 +294,10 @@ export default function PickerContent() {
           {ROLES.map((role) => (
             <div key={role.key}>
               <div className={styles.filterHeader}>
-                <img
+                <RoleSpriteIcon
                   className={styles.roleIcon}
                   alt={`${role.label} role icon`}
-                  src={role.icon}
+                  roleKey={role.key}
                 />
                 <h2 className={styles.roleHeader}>{role.label}</h2>
                 <button

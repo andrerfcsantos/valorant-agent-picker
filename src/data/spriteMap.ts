@@ -12,6 +12,18 @@ export const PORTRAIT_SPRITE = {
   rows: 3,
 } as const;
 
+export const ROLE_SPRITE = {
+  src: "/imgs/roles/role-icons-sprite.webp",
+  columns: 4,
+} as const;
+
+export const roleSpritePositions: Record<string, number> = {
+  controller: 0,
+  sentinel: 1,
+  initiator: 2,
+  duelist: 3,
+};
+
 export const spritePositions: Record<string, { col: number; row: number }> = {
   astra: { col: 0, row: 0 },
   breach: { col: 1, row: 0 },

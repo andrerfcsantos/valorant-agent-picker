@@ -8,7 +8,7 @@ export const contentType = "image/png";
 
 export default async function Image() {
   const publicDir = join(process.cwd(), "public");
-  const fontsDir = join(publicDir, "fonts");
+  const ogFontsDir = join(process.cwd(), "src", "assets", "fonts");
   const iconsDir = join(publicDir, "imgs", "agents", "icons");
 
   const iconFiles = (await readdir(iconsDir))
@@ -16,8 +16,8 @@ export default async function Image() {
     .sort();
 
   const [tungstenBold, dinNext, ...iconBuffers] = await Promise.all([
-    readFile(join(fontsDir, "Tungsten-Bold.woff")),
-    readFile(join(fontsDir, "DINNextW1G-Regular.otf")),
+    readFile(join(ogFontsDir, "Tungsten-Bold.ttf")),
+    readFile(join(ogFontsDir, "DINNextW1G-Regular.ttf")),
     ...iconFiles.map((f) => readFile(join(iconsDir, f))),
   ]);
 
