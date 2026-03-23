@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import { sendEvent } from "@/lib/analytics";
 import styles from "./about.module.css";
 
@@ -51,10 +52,13 @@ export default function AboutContent() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img
+        <Image
           className={styles.bmcLogo}
           src="/imgs/navbar/bmc.svg"
+          width={32}
+          height={32}
           alt="Buy Me A Coffee"
+          unoptimized
         />
       </a>
 

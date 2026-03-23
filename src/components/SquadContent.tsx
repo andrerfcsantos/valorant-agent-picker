@@ -129,7 +129,7 @@ export default function SquadContent() {
 
     if (parts.length === 0) return;
 
-    navigator.clipboard.writeText(parts.join(" | "));
+    void navigator.clipboard.writeText(parts.join(" | "));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [slotAgents, slotConfigs]);

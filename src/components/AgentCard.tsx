@@ -12,7 +12,8 @@ interface AgentCardProps {
 
 export default function AgentCard({ agent, selected, onToggle }: AgentCardProps) {
   return (
-    <div
+    <button
+      type="button"
       className={`${styles.card} ${selected ? styles.selected : ""}`}
       onClick={onToggle}
     >
@@ -23,6 +24,6 @@ export default function AgentCard({ agent, selected, onToggle }: AgentCardProps)
         alt={`${agent.name} icon`}
       />
       <div className={styles.name}>{agent.name}</div>
-    </div>
+    </button>
   );
 }

@@ -150,12 +150,14 @@ export default async function Image() {
                   }}
                 >
                   {rowIcons.map((src, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       key={i}
                       src={src}
                       width={ICON_SIZE}
                       height={ICON_SIZE}
                       style={{ display: "flex" }}
+                      alt=""
                     />
                   ))}
                 </div>

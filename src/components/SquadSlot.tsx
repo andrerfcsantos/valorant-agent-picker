@@ -72,7 +72,8 @@ export default function SquadSlot({
 
             return (
               <div key={role.key} className={styles.roleSection}>
-                <div
+                <button
+                  type="button"
                   className={styles.roleHeader}
                   onClick={() => onToggleRoleAll(role.key)}
                 >
@@ -92,7 +93,7 @@ export default function SquadSlot({
                     onClick={(e) => e.stopPropagation()}
                     className={styles.roleCheckbox}
                   />
-                </div>
+                </button>
                 <div className={styles.agentList}>
                   {roleAgents.map((a) => (
                     <label key={a.key} className={styles.agentItem}>

@@ -85,7 +85,7 @@ export default function PickerContent() {
     });
   };
 
-  const selectByRole = (role: Role) => {
+  const selectByRole = useCallback((role: Role) => {
     setSelectedAgents((prev) => {
       const next = new Set(prev);
       getAgentsByRole(role).forEach((a) => next.add(a.key));
@@ -93,9 +93,9 @@ export default function PickerContent() {
       sendEvent("Filter", "SelectRole", role);
       return next;
     });
-  };
+  }, []);
 
-  const unselectByRole = (role: Role) => {
+  const unselectByRole = useCallback((role: Role) => {
     setSelectedAgents((prev) => {
       const next = new Set(prev);
       getAgentsByRole(role).forEach((a) => next.delete(a.key));
@@ -103,7 +103,7 @@ export default function PickerContent() {
       sendEvent("Filter", "UnselectRole", role);
       return next;
     });
-  };
+  }, []);
 
   const selectOnlyRole = (role: Role) => {
     const next = new Set<string>();
@@ -233,17 +233,13 @@ export default function PickerContent() {
             {hydrated ? (chosenAgent?.name ?? "") : ""}
           </h2>
 
-          <div
+          <button
+            type="button"
             className={styles.randomAgentButton}
-            role="button"
-            tabIndex={0}
             onClick={handleGetRandom}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") handleGetRandom();
-            }}
           >
             Randomize Agent
-          </div>
+          </button>
         </div>
 
         <div className={styles.rightContent}>

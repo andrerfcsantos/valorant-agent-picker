@@ -139,4 +139,4 @@ async function main() {
   console.log(`Done! ${agentKeys.length} agents processed.`);
 }
 
-main();
+void main();

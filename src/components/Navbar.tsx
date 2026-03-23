@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -28,9 +29,11 @@ export default function Navbar() {
       >
         <div className="flex items-center gap-4">
           <Link href="/" prefetch={false} className="flex items-end no-underline text-white mr-4">
-            <img
-              className="h-[2em] pr-2"
+            <Image
+              className="h-[2em] w-auto pr-2"
               src="/imgs/navbar/v-logo-red.webp"
+              width={4000}
+              height={2251}
               alt="Valorant logo"
             />
             <span
@@ -81,9 +84,11 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
-              className="h-[2em]"
+            <Image
+              className="h-[2em] w-auto"
               src="/imgs/discord.webp"
+              width={512}
+              height={512}
               alt="Discord"
             />
           </a>
@@ -92,10 +97,13 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
-              className="h-[2em]"
+            <Image
+              className="h-[2em] w-auto"
               src="/imgs/navbar/bmc.svg"
+              width={32}
+              height={32}
               alt="Buy Me A Coffee"
+              unoptimized
             />
           </a>
         </div>
