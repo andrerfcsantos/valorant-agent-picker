@@ -7,27 +7,40 @@
     "build": "next build",
     "start": "next start",
     "lint": "vp lint",
-    "generate-sprites": "npx tsx scripts/generate-sprites.ts"
+    "generate-sprites": "npx tsx scripts/generate-sprites.ts",
+    "deps:check": "node scripts/deps.mts",
+    "deps:update": "vp update && node scripts/deps.mts",
+    "deps:update:major": "vp update --latest --interactive && node scripts/deps.mts"
   },
   "dependencies": {
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "next": "^16.1.6",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint-config-next": "16.1.6",
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint-config-next": "^16.1.6",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4",
-    "typescript": "^5",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
     "vite-plus": "latest"
   },
   "packageManager": "npm@11.12.0",
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "engines": {
+    "node": "^24.0.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.0.0",
+      "onFail": "download"
+    }
   }
 }

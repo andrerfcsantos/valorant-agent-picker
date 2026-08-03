@@ -73,4 +73,26 @@ These commands map to their corresponding tools. For example, `vp dev --port 300
 
 - [ ] Run `vp install` after pulling remote changes and before getting started.
 - [ ] Run `vp check` and `vp test` to validate changes.
+
 <!--VITE PLUS END-->
+
+# Dependencies
+
+Dependencies use caret ranges; the lockfile holds the exact versions. Do not
+replace a range with an exact version — that is what blocks `vp update`.
+
+- `npm run deps:check` - report Node.js alignment plus pending minor/patch and major updates
+- `npm run deps:update` - apply everything the existing ranges allow (lockfile-only, non-breaking)
+- `npm run deps:update:major` - interactively cross major boundaries; requires review and testing
+
+Never apply a major update without reading its changelog and running `vp check`
+and `npm run build`.
+
+## Node.js version
+
+The target Node.js major is declared in three places that must always agree:
+`engines.node`, `devEngines.runtime.version` (both in `package.json`), and the
+`@types/node` major. `npm run deps:check` verifies this and reports a mismatch.
+
+Changing it is a deliberate, standalone change: run `vp env pin <major>`, then
+update `engines.node` and `@types/node` to match in the same commit.
