@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "vp lint",
     "generate-sprites": "npx tsx scripts/generate-sprites.ts",
+    "preview": "next build && wrangler dev",
+    "deploy": "next build && wrangler deploy",
+    "upload": "next build && wrangler versions upload",
     "deps:check": "node scripts/deps.mts",
     "deps:update": "vp update && node scripts/deps.mts",
     "deps:update:major": "vp update --latest --interactive && node scripts/deps.mts"
@@ -26,7 +29,8 @@
     "sharp": "^0.34.5",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "vite-plus": "latest"
+    "vite-plus": "latest",
+    "wrangler": "^4.120.0"
   },
   "packageManager": "npm@11.12.0",
   "overrides": {

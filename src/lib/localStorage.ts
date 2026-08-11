@@ -1,3 +1,6 @@
+import { MAX_SLOTS, emptySlotConfig } from "@/lib/squadService";
+import type { SlotConfig } from "@/lib/squadService";
+
 interface StoredAgent {
   key: string;
   selected: boolean;
@@ -9,9 +12,7 @@ export function loadSelectedAgents(): Set<string> | null {
     if (!raw) return null;
     const parsed: StoredAgent[] = JSON.parse(raw);
     if (!Array.isArray(parsed)) return null;
-    return new Set(
-      parsed.filter((a) => a.selected).map((a) => a.key),
-    );
+    return new Set(parsed.filter((a) => a.selected).map((a) => a.key));
   } catch {
     return null;
   }
@@ -58,17 +59,14 @@ interface StoredSlotConfig {
   agentFilters: string[];
 }
 
-export interface SlotConfig {
-  name: string;
-  disabledAgents: Set<string>;
-}
-
 export function loadSquadSlotConfigs(): SlotConfig[] {
   try {
     const raw = localStorage.getItem("squadSlotConfigs");
     if (!raw) return defaultSlotConfigs();
     const parsed: StoredSlotConfig[] = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length !== 5) return defaultSlotConfigs();
+    if (!Array.isArray(parsed) || parsed.length !== MAX_SLOTS) {
+      return defaultSlotConfigs();
+    }
     return parsed.map((s) => ({
       name: s.name ?? "",
       disabledAgents: new Set(s.agentFilters ?? []),
@@ -87,16 +85,16 @@ export function saveSquadSlotConfigs(configs: SlotConfig[]) {
 }
 
 function defaultSlotConfigs(): SlotConfig[] {
-  return Array.from({ length: 5 }, () => ({ name: "", disabledAgents: new Set<string>() }));
+  return Array.from({ length: MAX_SLOTS }, () => emptySlotConfig());
 }
 
 export function loadSquadSize(): number {
   try {
     const val = localStorage.getItem("squadSize");
-    const n = val ? parseInt(val, 10) : 5;
-    return n >= 1 && n <= 5 ? n : 5;
+    const n = val ? parseInt(val, 10) : MAX_SLOTS;
+    return n >= 1 && n <= MAX_SLOTS ? n : MAX_SLOTS;
   } catch {
-    return 5;
+    return MAX_SLOTS;
   }
 }
 

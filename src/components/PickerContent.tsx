@@ -12,8 +12,13 @@ import {
   loadNonRepeating,
   saveNonRepeating,
 } from "@/lib/localStorage";
+import { tryDecodeShare } from "@/lib/share/codec";
+import { PickerPreset } from "@/lib/share/types";
+import { readShareParam, shareUrl, stripShareParam } from "@/lib/share/urls";
 import { sendEvent } from "@/lib/analytics";
 import AgentCard from "./AgentCard";
+import ShareButton from "./ShareButton";
+import SharedPresetNotice from "./SharedPresetNotice";
 import SpriteIcon from "./SpriteIcon";
 import RoleSpriteIcon from "./RoleSpriteIcon";
 import styles from "./PickerContent.module.css";
@@ -34,6 +39,12 @@ function pickRandom(
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+interface PickerSetup {
+  selected: Set<string>;
+  showPortrait: boolean;
+  nonRepeating: boolean;
+}
+
 export default function PickerContent() {
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(
     () => new Set(),
@@ -44,19 +55,51 @@ export default function PickerContent() {
   const [nonRepeating, setNonRepeating] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
+  const [sharedPresetApplied, setSharedPresetApplied] = useState(false);
   const nameRef = useRef<HTMLHeadingElement>(null);
+  const setupBeforeShare = useRef<PickerSetup | null>(null);
 
-  // Hydrate from localStorage on mount (client only)
+  const applySetup = useCallback((setup: PickerSetup) => {
+    setSelectedAgents(setup.selected);
+    setShowPortrait(setup.showPortrait);
+    setNonRepeating(setup.nonRepeating);
 
-  useEffect(() => {
-    const saved =
-      loadSelectedAgents() ?? new Set(getAllAgents().map((a) => a.key));
-    setSelectedAgents(saved);
-    setShowPortrait(loadShowPortrait());
-    setNonRepeating(loadNonRepeating());
-    setChosenAgent(pickRandom(saved));
-    setHydrated(true);
+    saveSelectedAgents(setup.selected);
+    saveShowPortrait(setup.showPortrait);
+    saveNonRepeating(setup.nonRepeating);
+
+    setChosenAgent(pickRandom(setup.selected));
   }, []);
+
+  // Hydrate from localStorage on mount, unless the URL carries a shared preset.
+  useEffect(() => {
+    const saved: PickerSetup = {
+      selected:
+        loadSelectedAgents() ?? new Set(getAllAgents().map((a) => a.key)),
+      showPortrait: loadShowPortrait(),
+      nonRepeating: loadNonRepeating(),
+    };
+
+    const shared = tryDecodeShare(readShareParam(window.location.search));
+    if (shared.ok && shared.payload.kind === "picker-preset") {
+      const preset = shared.payload.picker;
+      setupBeforeShare.current = saved;
+      applySetup({
+        selected: new Set(preset.selected),
+        showPortrait: preset.showPortrait,
+        nonRepeating: preset.nonRepeating,
+      });
+      setSharedPresetApplied(true);
+      stripShareParam();
+    } else {
+      setSelectedAgents(saved.selected);
+      setShowPortrait(saved.showPortrait);
+      setNonRepeating(saved.nonRepeating);
+      setChosenAgent(pickRandom(saved.selected));
+    }
+
+    setHydrated(true);
+  }, [applySetup]);
 
   const handleGetRandom = () => {
     setNameVisible(false);
@@ -136,6 +179,36 @@ export default function PickerContent() {
     sendEvent("Filter", "SelectAll", "All");
   }, []);
 
+  const currentPreset = useCallback(
+    (): PickerPreset => ({
+      selected: Array.from(selectedAgents),
+      showPortrait,
+      nonRepeating,
+    }),
+    [selectedAgents, showPortrait, nonRepeating],
+  );
+
+  const buildResultUrl = useCallback(
+    () =>
+      shareUrl({
+        kind: "agent-result",
+        picker: currentPreset(),
+        result: { agentKey: chosenAgent?.key ?? null },
+      }),
+    [currentPreset, chosenAgent],
+  );
+
+  const buildPresetUrl = useCallback(
+    () => shareUrl({ kind: "picker-preset", picker: currentPreset() }),
+    [currentPreset],
+  );
+
+  const handleUndoShared = useCallback(() => {
+    const previous = setupBeforeShare.current;
+    if (previous) applySetup(previous);
+    setSharedPresetApplied(false);
+  }, [applySetup]);
+
   const toggleRole = useCallback(
     (role: Role) => {
       const allOfRole = getAgentsByRole(role);
@@ -163,6 +236,16 @@ export default function PickerContent() {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.row}>
+        {sharedPresetApplied && (
+          <div className={styles.noticeRow}>
+            <SharedPresetNotice
+              message="Filters and options from a shared link have been applied, replacing your own."
+              onUndo={handleUndoShared}
+              onDismiss={() => setSharedPresetApplied(false)}
+            />
+          </div>
+        )}
+
         <div className={styles.leftContent}>
           <h1 className={styles.leftTitle}>You should play</h1>
 
@@ -211,27 +294,41 @@ export default function PickerContent() {
             </div>
           </details>
 
-          {showPortrait && (
-            <div className={styles.portraitContainer}>
-              {chosenAgent && (
-                <SpriteIcon
-                  key={`portrait-${chosenAgent.key}-${agentCount}`}
-                  className={styles.chosenAgentImage}
-                  agentKey={chosenAgent.key}
-                  type="portrait"
-                  alt={`${chosenAgent.name} portrait`}
-                />
-              )}
-            </div>
-          )}
+          <div className={styles.resultCard}>
+            {showPortrait && (
+              <div className={styles.portraitContainer}>
+                {chosenAgent && (
+                  <SpriteIcon
+                    key={`portrait-${chosenAgent.key}-${agentCount}`}
+                    className={styles.chosenAgentImage}
+                    agentKey={chosenAgent.key}
+                    type="portrait"
+                    alt={`${chosenAgent.name} portrait`}
+                  />
+                )}
+              </div>
+            )}
 
-          <h2
-            ref={nameRef}
-            key={`agent-name-${chosenAgent?.name}-${agentCount}`}
-            className={`${styles.chosenAgentName} ${nameVisible ? "agent-name-visible" : "agent-name-enter"}`}
-          >
-            {hydrated ? (chosenAgent?.name ?? "") : ""}
-          </h2>
+            <h2
+              ref={nameRef}
+              key={`agent-name-${chosenAgent?.name}-${agentCount}`}
+              className={`${styles.chosenAgentName} ${nameVisible ? "agent-name-visible" : "agent-name-enter"}`}
+            >
+              {hydrated ? (chosenAgent?.name ?? "") : ""}
+            </h2>
+
+            {hydrated && chosenAgent && (
+              <div className={styles.resultActions}>
+                <ShareButton
+                  className={styles.allButton}
+                  buildUrl={buildResultUrl}
+                  label="Share this agent"
+                  copiedLabel="Agent link copied!"
+                  title="Copy a link that reveals this agent"
+                />
+              </div>
+            )}
+          </div>
 
           <button
             type="button"
@@ -284,6 +381,13 @@ export default function PickerContent() {
               <button className={styles.allButton} onClick={unselectAll}>
                 Unselect All
               </button>
+              <ShareButton
+                className={styles.allButton}
+                buildUrl={buildPresetUrl}
+                label="Share these filters"
+                copiedLabel="Filter link copied!"
+                title="Copy a link that sets up these filters and options"
+              />
             </div>
           </div>
 

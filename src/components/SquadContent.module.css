@@ -23,19 +23,46 @@
 .randomizeWrapper {
   display: flex;
   justify-content: center;
+  width: 100%;
   margin-bottom: 1rem;
 }
 
+/* Full-width so it forms its own line in the column container, with the cap
+   applied to the grid inside it. */
 .buttonRow {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+/* Equal-width cells so the export actions share one edge instead of sitting as
+   three centred pills of differing widths. */
+.buttonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 36rem;
+}
+
+/* Below this the three cells wrap to 2 + 1, orphaning the last button at half
+   width. Stack them instead so they keep one shared edge. */
+@media (max-width: 592px) {
+  .buttonGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.buttonGrid :global(.share-fallback-input) {
+  grid-column: 1 / -1;
+  margin: 0 auto;
 }
 
 .randomizeButton {
   user-select: none;
+  width: 100%;
+  max-width: 22rem;
   font-size: 1.1rem;
   color: #ece8e1;
   background-color: #ff4655;
@@ -69,10 +96,11 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   transition: background-color 0.2s ease, color 0.2s ease;
-  min-width: 13rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  line-height: 1.15;
 }
 
 .copyButton:hover {
@@ -132,6 +160,14 @@
     margin-top: 2rem;
     margin-bottom: 0;
     width: 100%;
+  }
+
+  /* Follows the call to action rather than floating above the slots it acts
+     on. */
+  .buttonRow {
+    order: 11;
+    margin-top: 0.6rem;
+    margin-bottom: 0;
   }
 }
 

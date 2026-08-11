@@ -16,6 +16,13 @@
   padding: 0;
 }
 
+/* Spans the whole flex row so the notice sits above both columns. */
+.noticeRow {
+  width: 100%;
+  padding: 0.5rem 3% 0;
+  box-sizing: border-box;
+}
+
 .leftContent {
   display: flex;
   flex-direction: column;
@@ -38,8 +45,42 @@
   line-height: 1.5;
 }
 
+/* Result group: agent portrait, name and the actions that operate on them,
+   grouped so the single red call to action below stands on its own. */
+.resultCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 20rem;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.9rem 0.75rem 1rem;
+  margin: 0.5rem 0 0.9rem;
+  box-sizing: border-box;
+}
+
+/* One column today, but a grid so a second action can join it without the two
+   becoming ragged centred pills. */
+.resultActions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.4rem;
+  width: 100%;
+  margin-top: 0.9rem;
+}
+
+.resultActions .allButton {
+  margin: 0;
+  padding: 0.35rem 0.6rem;
+}
+
+.resultActions :global(.share-fallback-input) {
+  grid-column: 1 / -1;
+}
+
 .portraitContainer {
-  width: 75%;
+  width: 80%;
   aspect-ratio: 1 / 1;
 }
 
@@ -59,12 +100,15 @@
 }
 
 .chosenAgentName {
-  margin: 1rem;
+  margin: 0.6rem 0 0;
   font-size: 2.5rem;
+  min-height: 1.2em;
 }
 
 .randomAgentButton {
   user-select: none;
+  width: 100%;
+  max-width: 20rem;
   font-size: 1.2rem;
   color: #ece8e1;
   background-color: #ff4655;
@@ -112,6 +156,7 @@
 .globalSelectionButtons {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 0.25em;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
@@ -147,6 +192,9 @@
 
 .allButton {
   user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #ece8e1;
   border: none;
   font-size: 0.85rem;

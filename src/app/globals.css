@@ -84,6 +84,80 @@ h2 {
 }
 
 
+/* Share link fallback (clipboard unavailable) */
+.share-fallback-input {
+  display: block;
+  width: 100%;
+  max-width: 28rem;
+  margin: 0.4rem auto 0;
+  padding: 0.25rem 0.4rem;
+  background: #0f1923;
+  border: 1px solid rgba(255, 70, 85, 0.5);
+  color: #ece8e1;
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+}
+
+/* Shared preset notice */
+.shared-preset-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  background: rgba(255, 70, 85, 0.12);
+  border: 1px solid rgba(255, 70, 85, 0.45);
+  padding: 0.4rem 0.75rem;
+  margin: 0.5rem auto;
+  max-width: 60rem;
+}
+
+.shared-preset-notice-text {
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  flex: 1;
+  text-align: start;
+}
+
+.shared-preset-notice-undo {
+  user-select: none;
+  background: #ff4655;
+  color: #ece8e1;
+  border: none;
+  padding: 0.2rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.shared-preset-notice-undo:hover {
+  color: #0f1923;
+  background-color: #ece8e1;
+}
+
+.shared-preset-notice-undo:active {
+  transform: scale(0.96);
+}
+
+.shared-preset-notice-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0 0.2rem;
+}
+
+.shared-preset-notice-dismiss:hover {
+  color: white;
+}
+
 /* Agent name transition */
 .agent-name-enter {
   transform: scaleY(0) translateZ(0);

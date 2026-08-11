@@ -1,6 +1,6 @@
 import type { Agent, Role } from "@/data/agents";
 import { ROLES, getAllAgents, getAgentsByRole } from "@/data/agents";
-import type { SlotConfig } from "@/lib/localStorage";
+import type { SlotConfig } from "@/lib/squadService";
 import SpriteIcon from "./SpriteIcon";
 import RoleSpriteIcon from "./RoleSpriteIcon";
 import styles from "./SquadSlot.module.css";
