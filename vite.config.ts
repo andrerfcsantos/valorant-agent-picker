@@ -1,6 +1,15 @@
+import path from 'node:path';
+
 import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
+  // Mirrors the `paths` alias in tsconfig.json. Next.js reads that file
+  // directly; `vp test` resolves imports through Vite, so it needs its own copy.
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "src"),
+    },
+  },
   lint: {
     "plugins": [
       "oxc",
