@@ -10,6 +10,7 @@ const soloShortcuts = [
   { key: "D", description: "Toggle all Duelists" },
   { key: "C", description: "Toggle all Controllers" },
   { key: "U", description: "Unselect all agents" },
+  { key: "1–0", description: "Apply preset 1 to 10" },
 ];
 
 const squadShortcuts = [
@@ -27,7 +28,10 @@ export default function KeyboardShortcutHint() {
     if (!open) return;
 
     function handleClickOutside(e: MouseEvent) {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }

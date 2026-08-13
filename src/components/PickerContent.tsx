@@ -1,22 +1,23 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { AGENTS, ROLES, getAgentsByRole, getAllAgents } from "@/data/agents";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { ROLES, getAgentsByRole, getAllAgents } from "@/data/agents";
 import type { Agent, Role } from "@/data/agents";
+import { useAgents } from "@/context/AgentContext";
+import { usePresets } from "@/context/PresetContext";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import {
-  loadSelectedAgents,
-  saveSelectedAgents,
   loadShowPortrait,
   saveShowPortrait,
   loadNonRepeating,
   saveNonRepeating,
 } from "@/lib/localStorage";
-import { tryDecodeShare } from "@/lib/share/codec";
+import { SHORTCUT_COUNT, shortcutForIndex } from "@/lib/presets/types";
 import { PickerPreset } from "@/lib/share/types";
-import { readShareParam, shareUrl, stripShareParam } from "@/lib/share/urls";
+import { shareUrl } from "@/lib/share/urls";
 import { sendEvent } from "@/lib/analytics";
 import AgentCard from "./AgentCard";
+import PresetBar from "./PresetBar";
 import ShareButton from "./ShareButton";
 import SharedPresetNotice from "./SharedPresetNotice";
 import SpriteIcon from "./SpriteIcon";
@@ -39,67 +40,65 @@ function pickRandom(
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-interface PickerSetup {
-  selected: Set<string>;
+interface PickerOptions {
   showPortrait: boolean;
   nonRepeating: boolean;
 }
 
 export default function PickerContent() {
-  const [selectedAgents, setSelectedAgents] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const {
+    selectedAgents,
+    isHydrated,
+    toggleAgent,
+    selectByRole,
+    unselectByRole,
+    selectOnlyRole,
+    selectAll,
+    unselectAll,
+    sharedPreset,
+    sharedPresetApplied,
+    undoSharedPreset,
+    dismissSharedPreset,
+  } = useAgents();
+  const { presets, applyPreset } = usePresets();
+
   const [chosenAgent, setChosenAgent] = useState<Agent | null>(null);
   const [agentCount, setAgentCount] = useState(0);
   const [showPortrait, setShowPortrait] = useState(true);
   const [nonRepeating, setNonRepeating] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
-  const [sharedPresetApplied, setSharedPresetApplied] = useState(false);
   const nameRef = useRef<HTMLHeadingElement>(null);
-  const setupBeforeShare = useRef<PickerSetup | null>(null);
+  const optionsBeforeShare = useRef<PickerOptions | null>(null);
 
-  const applySetup = useCallback((setup: PickerSetup) => {
-    setSelectedAgents(setup.selected);
-    setShowPortrait(setup.showPortrait);
-    setNonRepeating(setup.nonRepeating);
-
-    saveSelectedAgents(setup.selected);
-    saveShowPortrait(setup.showPortrait);
-    saveNonRepeating(setup.nonRepeating);
-
-    setChosenAgent(pickRandom(setup.selected));
+  // Options are the picker's own state; the filters live in the provider. This
+  // runs before the provider hydrates, so a shared preset still wins below.
+  useEffect(() => {
+    setShowPortrait(loadShowPortrait());
+    setNonRepeating(loadNonRepeating());
   }, []);
 
-  // Hydrate from localStorage on mount, unless the URL carries a shared preset.
+  // A shared preset carries options as well as filters. The provider publishes
+  // the decoded preset; putting the options into effect is the picker's job.
   useEffect(() => {
-    const saved: PickerSetup = {
-      selected:
-        loadSelectedAgents() ?? new Set(getAllAgents().map((a) => a.key)),
+    if (!sharedPreset) return;
+    // Read from storage rather than state: the values the link replaced are
+    // still there, and they are what Undo has to put back.
+    optionsBeforeShare.current = {
       showPortrait: loadShowPortrait(),
       nonRepeating: loadNonRepeating(),
     };
+    setShowPortrait(sharedPreset.showPortrait);
+    setNonRepeating(sharedPreset.nonRepeating);
+    saveShowPortrait(sharedPreset.showPortrait);
+    saveNonRepeating(sharedPreset.nonRepeating);
+  }, [sharedPreset]);
 
-    const shared = tryDecodeShare(readShareParam(window.location.search));
-    if (shared.ok && shared.payload.kind === "picker-preset") {
-      const preset = shared.payload.picker;
-      setupBeforeShare.current = saved;
-      applySetup({
-        selected: new Set(preset.selected),
-        showPortrait: preset.showPortrait,
-        nonRepeating: preset.nonRepeating,
-      });
-      setSharedPresetApplied(true);
-      stripShareParam();
-    } else {
-      setSelectedAgents(saved.selected);
-      setShowPortrait(saved.showPortrait);
-      setNonRepeating(saved.nonRepeating);
-      setChosenAgent(pickRandom(saved.selected));
-    }
-
-    setHydrated(true);
-  }, [applySetup]);
+  // The opening roll, once the filters it should respect are known. Later
+  // filter changes leave the agent on screen alone.
+  useEffect(() => {
+    if (!isHydrated) return;
+    setChosenAgent((current) => current ?? pickRandom(selectedAgents));
+  }, [isHydrated, selectedAgents]);
 
   const handleGetRandom = () => {
     setNameVisible(false);
@@ -112,50 +111,6 @@ export default function PickerContent() {
     }, 100);
   };
 
-  const toggleAgent = (key: string) => {
-    setSelectedAgents((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      saveSelectedAgents(next);
-      const agent = AGENTS[key];
-      const event = next.has(key) ? "SelectAgent" : "UnselectAgent";
-      sendEvent("Filter", event, agent.name);
-      return next;
-    });
-  };
-
-  const selectByRole = useCallback((role: Role) => {
-    setSelectedAgents((prev) => {
-      const next = new Set(prev);
-      getAgentsByRole(role).forEach((a) => next.add(a.key));
-      saveSelectedAgents(next);
-      sendEvent("Filter", "SelectRole", role);
-      return next;
-    });
-  }, []);
-
-  const unselectByRole = useCallback((role: Role) => {
-    setSelectedAgents((prev) => {
-      const next = new Set(prev);
-      getAgentsByRole(role).forEach((a) => next.delete(a.key));
-      saveSelectedAgents(next);
-      sendEvent("Filter", "UnselectRole", role);
-      return next;
-    });
-  }, []);
-
-  const selectOnlyRole = (role: Role) => {
-    const next = new Set<string>();
-    getAgentsByRole(role).forEach((a) => next.add(a.key));
-    setSelectedAgents(next);
-    saveSelectedAgents(next);
-    sendEvent("Filter", "SelectOnlyRole", role);
-  };
-
   const handleShowPortrait = (checked: boolean) => {
     setShowPortrait(checked);
     saveShowPortrait(checked);
@@ -165,19 +120,6 @@ export default function PickerContent() {
     setNonRepeating(checked);
     saveNonRepeating(checked);
   };
-
-  const unselectAll = useCallback(() => {
-    setSelectedAgents(new Set());
-    saveSelectedAgents(new Set());
-    sendEvent("Filter", "UnselectAll", "All");
-  }, []);
-
-  const selectAll = useCallback(() => {
-    const next = new Set(Object.keys(AGENTS));
-    setSelectedAgents(next);
-    saveSelectedAgents(next);
-    sendEvent("Filter", "SelectAll", "All");
-  }, []);
 
   const currentPreset = useCallback(
     (): PickerPreset => ({
@@ -204,10 +146,15 @@ export default function PickerContent() {
   );
 
   const handleUndoShared = useCallback(() => {
-    const previous = setupBeforeShare.current;
-    if (previous) applySetup(previous);
-    setSharedPresetApplied(false);
-  }, [applySetup]);
+    const previous = optionsBeforeShare.current;
+    if (previous) {
+      setShowPortrait(previous.showPortrait);
+      saveShowPortrait(previous.showPortrait);
+      setNonRepeating(previous.nonRepeating);
+      saveNonRepeating(previous.nonRepeating);
+    }
+    undoSharedPreset();
+  }, [undoSharedPreset]);
 
   const toggleRole = useCallback(
     (role: Role) => {
@@ -222,6 +169,17 @@ export default function PickerContent() {
     [selectedAgents, selectByRole, unselectByRole],
   );
 
+  // The first ten presets answer to the number row, in list order. The order is
+  // the visitor's to change, on the manage page.
+  const presetShortcuts = useMemo(() => {
+    const map: Record<string, () => void> = {};
+    presets.slice(0, SHORTCUT_COUNT).forEach((preset, index) => {
+      const key = shortcutForIndex(index);
+      if (key) map[key] = () => applyPreset(preset.id);
+    });
+    return map;
+  }, [presets, applyPreset]);
+
   useKeyboardShortcuts({
     r: handleGetRandom,
     s: () => toggleRole("SENTINEL"),
@@ -229,6 +187,7 @@ export default function PickerContent() {
     d: () => toggleRole("DUELIST"),
     c: () => toggleRole("CONTROLLER"),
     u: unselectAll,
+    ...presetShortcuts,
   });
 
   const numberOfSelected = selectedAgents.size;
@@ -241,7 +200,7 @@ export default function PickerContent() {
             <SharedPresetNotice
               message="Filters and options from a shared link have been applied, replacing your own."
               onUndo={handleUndoShared}
-              onDismiss={() => setSharedPresetApplied(false)}
+              onDismiss={dismissSharedPreset}
             />
           </div>
         )}
@@ -314,10 +273,10 @@ export default function PickerContent() {
               key={`agent-name-${chosenAgent?.name}-${agentCount}`}
               className={`${styles.chosenAgentName} ${nameVisible ? "agent-name-visible" : "agent-name-enter"}`}
             >
-              {hydrated ? (chosenAgent?.name ?? "") : ""}
+              {isHydrated ? (chosenAgent?.name ?? "") : ""}
             </h2>
 
-            {hydrated && chosenAgent && (
+            {isHydrated && chosenAgent && (
               <div className={styles.resultActions}>
                 <ShareButton
                   className={styles.allButton}
@@ -346,9 +305,9 @@ export default function PickerContent() {
             Select which agents you want to include for the random selection,
             then hit <strong>Randomize Agent</strong> to get your pick.
             <br />
-            You can select/unselect agents individually or by role. Keyboard
-            shortcuts are available — click <strong>?</strong> on the bottom of
-            the page to see the full list.
+            You can select/unselect agents individually, by role, or in one
+            click with a preset. Keyboard shortcuts are available — click{" "}
+            <strong>?</strong> on the bottom of the page to see the full list.
           </p>
 
           <div
@@ -390,6 +349,8 @@ export default function PickerContent() {
               />
             </div>
           </div>
+
+          <PresetBar />
 
           {ROLES.map((role) => (
             <div key={role.key}>

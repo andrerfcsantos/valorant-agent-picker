@@ -6,6 +6,25 @@ interface StoredAgent {
   selected: boolean;
 }
 
+/** Reads a JSON value, treating anything unreadable as "not stored". */
+export function getJsonFromLS<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return null;
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+export function setJsonToLS(key: string, value: unknown): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Storage can be full or blocked; losing the write is better than throwing.
+  }
+}
+
 export function loadSelectedAgents(): Set<string> | null {
   try {
     const raw = localStorage.getItem("selectedAgents");

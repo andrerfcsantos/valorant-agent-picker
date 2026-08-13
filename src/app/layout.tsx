@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { AgentProvider } from "@/context/AgentContext";
+import { PresetProvider } from "@/context/PresetContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
@@ -36,18 +38,51 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Preload fonts */}
-        <link rel="preload" href="/fonts/Tungsten-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/fonts/valorant-regular-webfont.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/fonts/DINNextW1G-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link
+          rel="preload"
+          href="/fonts/Tungsten-Bold.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/valorant-regular-webfont.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/DINNextW1G-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
 
         {/* Preload navbar assets */}
-        <link rel="preload" href="/imgs/navbar/v-logo-red.webp" as="image" type="image/webp" />
+        <link
+          rel="preload"
+          href="/imgs/navbar/v-logo-red.webp"
+          as="image"
+          type="image/webp"
+        />
 
         {/* Preload role icons sprite */}
-        <link rel="preload" href="/imgs/roles/role-icons-sprite.webp" as="image" type="image/webp" />
+        <link
+          rel="preload"
+          href="/imgs/roles/role-icons-sprite.webp"
+          as="image"
+          type="image/webp"
+        />
 
         {/* Preload agent icon sprite */}
-        <link rel="preload" href="/imgs/agents/agent-icons-sprite.webp" as="image" type="image/webp" />
+        <link
+          rel="preload"
+          href="/imgs/agents/agent-icons-sprite.webp"
+          as="image"
+          type="image/webp"
+        />
 
         <Script
           async
@@ -64,10 +99,14 @@ export default function RootLayout({
         </Script>
       </head>
       <body>
-        <Navbar />
-        {children}
-        <Footer />
-        <KeyboardShortcutHint />
+        <AgentProvider>
+          <PresetProvider>
+            <Navbar />
+            {children}
+            <Footer />
+            <KeyboardShortcutHint />
+          </PresetProvider>
+        </AgentProvider>
       </body>
     </html>
   );
