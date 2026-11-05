@@ -1,8 +1,15 @@
-import path from 'node:path';
+import path from "node:path";
 
-import { defineConfig } from 'vite-plus';
+import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  test: {
+    // Vitest v4 compatibility: preserve mock call history.
+    // Remove after tests no longer rely on calls from setup or earlier tests.
+    // https://viteplus.dev/guide/vitest-v5#remove-unneeded-compatibility-settings
+    // https://vitest.dev/guide/migration/#clearmocks-is-enabled-by-default
+    clearMocks: false,
+  },
   // Mirrors the `paths` alias in tsconfig.json. Next.js reads that file
   // directly; `vp test` resolves imports through Vite, so it needs its own copy.
   resolve: {
@@ -11,26 +18,15 @@ export default defineConfig({
     },
   },
   lint: {
-    "plugins": [
-      "oxc",
-      "typescript",
-      "unicorn",
-      "react",
-      "nextjs"
-    ],
-    "categories": {
-      "correctness": "warn"
+    plugins: ["oxc", "typescript", "unicorn", "react", "nextjs"],
+    categories: {
+      correctness: "warn",
     },
-    "env": {
-      "builtin": true
+    env: {
+      builtin: true,
     },
-    "ignorePatterns": [
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts"
-    ],
-    "rules": {
+    ignorePatterns: [".next/**", "out/**", "build/**", "next-env.d.ts"],
+    rules: {
       "@next/next/no-html-link-for-pages": "error",
       "@next/next/no-sync-scripts": "error",
       "@next/next/inline-script-id": "error",
@@ -58,14 +54,12 @@ export default defineConfig({
       "@typescript-eslint/no-wrapper-object-types": "error",
       "@typescript-eslint/prefer-as-const": "error",
       "@typescript-eslint/prefer-namespace-keyword": "error",
-      "@typescript-eslint/triple-slash-reference": "error"
+      "@typescript-eslint/triple-slash-reference": "error",
     },
-    "overrides": [
+    overrides: [
       {
-        "files": [
-          "**/*.{js,jsx,mjs,ts,tsx,mts,cts}"
-        ],
-        "rules": {
+        files: ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
+        rules: {
           "react/display-name": "error",
           "react/jsx-key": "error",
           "react/jsx-no-comment-textnodes": "error",
@@ -105,46 +99,34 @@ export default defineConfig({
           "jsx-a11y/alt-text": [
             "warn",
             {
-              "elements": [
-                "img"
-              ],
-              "img": [
-                "Image"
-              ]
-            }
+              elements: ["img"],
+              img: ["Image"],
+            },
           ],
           "jsx-a11y/aria-props": "warn",
           "jsx-a11y/aria-proptypes": "warn",
           "jsx-a11y/aria-unsupported-elements": "warn",
           "jsx-a11y/role-has-required-aria-props": "warn",
-          "jsx-a11y/role-supports-aria-props": "warn"
+          "jsx-a11y/role-supports-aria-props": "warn",
         },
-        "globals": {
-          "AudioWorkletGlobalScope": "readonly",
-          "AudioWorkletProcessor": "readonly",
-          "currentFrame": "readonly",
-          "currentTime": "readonly",
-          "registerProcessor": "readonly",
-          "sampleRate": "readonly",
-          "WorkletGlobalScope": "readonly"
+        globals: {
+          AudioWorkletGlobalScope: "readonly",
+          AudioWorkletProcessor: "readonly",
+          currentFrame: "readonly",
+          currentTime: "readonly",
+          registerProcessor: "readonly",
+          sampleRate: "readonly",
+          WorkletGlobalScope: "readonly",
         },
-        "plugins": [
-          "import",
-          "jsx-a11y"
-        ],
-        "env": {
-          "browser": true,
-          "node": true
-        }
+        plugins: ["import", "jsx-a11y"],
+        env: {
+          browser: true,
+          node: true,
+        },
       },
       {
-        "files": [
-          "**/*.ts",
-          "**/*.tsx",
-          "**/*.mts",
-          "**/*.cts"
-        ],
-        "rules": {
+        files: ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+        rules: {
           "constructor-super": "off",
           "getter-return": "off",
           "no-class-assign": "off",
@@ -165,22 +147,22 @@ export default defineConfig({
           "no-with": "off",
           "prefer-const": "error",
           "prefer-rest-params": "error",
-          "prefer-spread": "error"
-        }
-      }
+          "prefer-spread": "error",
+        },
+      },
     ],
-    "options": {
-      "typeAware": true,
-      "typeCheck": true
-    }
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
   },
   fmt: {
-    "semi": true,
-    "singleQuote": false,
-    "tabWidth": 2,
-    "trailingComma": "all",
-    "printWidth": 80,
-    "sortPackageJson": false,
-    "ignorePatterns": []
+    semi: true,
+    singleQuote: false,
+    tabWidth: 2,
+    trailingComma: "all",
+    printWidth: 80,
+    sortPackageJson: false,
+    ignorePatterns: [],
   },
 });
