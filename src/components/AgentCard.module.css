@@ -11,7 +11,10 @@
   border-left: 3px solid transparent;
   opacity: 0.5;
   filter: saturate(0.4);
-  transition: opacity 0.15s ease, filter 0.15s ease, border-color 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    filter 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .card.selected {

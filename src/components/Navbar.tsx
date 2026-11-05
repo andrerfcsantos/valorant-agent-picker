@@ -28,7 +28,11 @@ export default function Navbar() {
         className={`${isOpen ? "flex" : "hidden"} lg:flex flex-col lg:flex-row w-full lg:w-auto items-center lg:justify-between flex-1`}
       >
         <div className="flex items-center gap-4">
-          <Link href="/" prefetch={false} className="flex items-end no-underline text-white mr-4">
+          <Link
+            href="/"
+            prefetch={false}
+            className="flex items-end no-underline text-white mr-4"
+          >
             <Image
               className="h-[2em] w-auto pr-2"
               src="/imgs/navbar/v-logo-red.webp"
@@ -38,7 +42,9 @@ export default function Navbar() {
             />
             <span
               className="text-2xl no-underline"
-              style={{ fontFamily: "Valorant-Regular, Arial, Helvetica, sans-serif" }}
+              style={{
+                fontFamily: "Valorant-Regular, Arial, Helvetica, sans-serif",
+              }}
             >
               Valorant Agent Picker
             </span>

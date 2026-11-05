@@ -122,7 +122,9 @@
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .randomAgentButton:hover {
@@ -209,7 +211,9 @@
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.03em;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .allButton:hover {

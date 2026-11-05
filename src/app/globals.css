@@ -169,6 +169,8 @@ h2 {
 }
 
 /* Keyboard shortcut hint */
+/* Footer.tsx sizes its band from these two values (bottom * 2 + button height)
+   so the button lines up with the footer text; change them together. */
 .shortcut-hint-container {
   position: fixed;
   bottom: 1.25rem;

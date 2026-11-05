@@ -6,11 +6,16 @@ interface RoleSpriteIconProps {
   alt: string;
 }
 
-export default function RoleSpriteIcon({ roleKey, className, alt }: RoleSpriteIconProps) {
+export default function RoleSpriteIcon({
+  roleKey,
+  className,
+  alt,
+}: RoleSpriteIconProps) {
   const col = roleSpritePositions[roleKey.toLowerCase()];
   if (col === undefined) return null;
 
-  const bgPctX = ROLE_SPRITE.columns <= 1 ? 0 : (col / (ROLE_SPRITE.columns - 1)) * 100;
+  const bgPctX =
+    ROLE_SPRITE.columns <= 1 ? 0 : (col / (ROLE_SPRITE.columns - 1)) * 100;
 
   return (
     <div

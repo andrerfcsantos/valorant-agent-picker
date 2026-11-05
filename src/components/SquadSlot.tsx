@@ -66,9 +66,12 @@ export default function SquadSlot({
         <div className={styles.filtersPanel}>
           {ROLES.map((role) => {
             const roleAgents = getAgentsByRole(role.key);
-            const disabledCount = roleAgents.filter((a) => config.disabledAgents.has(a.key)).length;
+            const disabledCount = roleAgents.filter((a) =>
+              config.disabledAgents.has(a.key),
+            ).length;
             const allEnabled = disabledCount === 0;
-            const someDisabled = disabledCount > 0 && disabledCount < roleAgents.length;
+            const someDisabled =
+              disabledCount > 0 && disabledCount < roleAgents.length;
 
             return (
               <div key={role.key} className={styles.roleSection}>
