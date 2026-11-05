@@ -9,4 +9,5 @@
   "observability": {
     "enabled": true,
   },
+  "previews": {},
 }

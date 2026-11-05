@@ -44,6 +44,7 @@ export const SHARE_AGENT_ORDER: readonly string[] = [
   "waylay",
   "veto",
   "miks",
+  "hush",
 ];
 
 /** Marker byte for "no agent in this slot". */

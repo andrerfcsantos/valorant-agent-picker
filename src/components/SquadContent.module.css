@@ -72,7 +72,9 @@
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .randomizeButton:hover {
@@ -95,7 +97,9 @@
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -129,7 +133,9 @@
   border: 1px solid #2a3a4a;
   cursor: pointer;
   font-weight: 700;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .sizeButton:hover {

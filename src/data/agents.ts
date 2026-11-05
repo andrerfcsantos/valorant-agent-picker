@@ -36,6 +36,7 @@ export const AGENTS: Record<string, Agent> = {
   waylay: { name: "Waylay", role: "DUELIST", key: "waylay" },
   veto: { name: "Veto", role: "SENTINEL", key: "veto" },
   miks: { name: "Miks", role: "CONTROLLER", key: "miks" },
+  hush: { name: "Hush", role: "DUELIST", key: "hush" },
 };
 
 export const ROLES: { key: Role; label: string }[] = [

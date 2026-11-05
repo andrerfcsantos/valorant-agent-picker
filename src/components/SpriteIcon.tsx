@@ -14,8 +14,7 @@ interface SpriteIconProps {
 }
 
 function getSpriteStyle(sprite: SpriteConfig, col: number, row: number) {
-  const bgPctX =
-    sprite.columns <= 1 ? 0 : (col / (sprite.columns - 1)) * 100;
+  const bgPctX = sprite.columns <= 1 ? 0 : (col / (sprite.columns - 1)) * 100;
   const bgPctY = sprite.rows <= 1 ? 0 : (row / (sprite.rows - 1)) * 100;
 
   return {

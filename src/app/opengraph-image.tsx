@@ -22,7 +22,7 @@ export default async function Image() {
   ]);
 
   const iconDataUrls = iconBuffers.map(
-    (buf) => `data:image/png;base64,${buf.toString("base64")}`
+    (buf) => `data:image/png;base64,${buf.toString("base64")}`,
   );
 
   const ICON_SIZE = 52;
@@ -30,156 +30,154 @@ export default async function Image() {
   const COLS = 7;
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        backgroundColor: "#0f1923",
+        padding: "60px",
+        position: "relative",
+      }}
+    >
+      {/* Vertical red accent bar */}
       <div
         style={{
-          width: "100%",
-          height: "100%",
+          position: "absolute",
+          left: "44px",
+          top: "60px",
+          bottom: "70px",
+          width: "4px",
+          backgroundColor: "#ff4655",
           display: "flex",
-          backgroundColor: "#0f1923",
-          padding: "60px",
-          position: "relative",
+        }}
+      />
+
+      {/* Left: text content */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          marginLeft: "20px",
+          flex: 1,
+          justifyContent: "center",
         }}
       >
-        {/* Vertical red accent bar */}
+        {/* Headline */}
         <div
           style={{
-            position: "absolute",
-            left: "44px",
-            top: "60px",
-            bottom: "70px",
-            width: "4px",
-            backgroundColor: "#ff4655",
-            display: "flex",
-          }}
-        />
-
-        {/* Left: text content */}
-        <div
-          style={{
+            fontFamily: "Tungsten Bold",
+            fontSize: "88px",
+            color: "#ffffff",
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            lineHeight: 1,
             display: "flex",
             flexDirection: "column",
-            marginLeft: "20px",
-            flex: 1,
-            justifyContent: "center",
           }}
         >
-          {/* Headline */}
+          <span>VALORANT</span>
+          <span>AGENT PICKER</span>
+        </div>
+
+        {/* Subtext */}
+        <div
+          style={{
+            fontFamily: "DIN Next",
+            fontSize: "24px",
+            color: "#ece8e1",
+            marginTop: "24px",
+            display: "flex",
+            flexDirection: "column",
+            lineHeight: 1.5,
+          }}
+        >
+          <span>Get a random agent for you.</span>
+          <span>Randomize a team of agents for your squad.</span>
+        </div>
+
+        {/* CTA button */}
+        <div
+          style={{
+            display: "flex",
+            marginTop: "40px",
+          }}
+        >
           <div
             style={{
-              fontFamily: "Tungsten Bold",
-              fontSize: "88px",
+              backgroundColor: "#ff4655",
               color: "#ffffff",
+              fontFamily: "Tungsten Bold",
+              fontSize: "32px",
+              padding: "10px 40px",
               textTransform: "uppercase",
               letterSpacing: "2px",
-              lineHeight: 1,
               display: "flex",
-              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            <span>VALORANT</span>
-            <span>AGENT PICKER</span>
-          </div>
-
-          {/* Subtext */}
-          <div
-            style={{
-              fontFamily: "DIN Next",
-              fontSize: "24px",
-              color: "#ece8e1",
-              marginTop: "24px",
-              display: "flex",
-              flexDirection: "column",
-              lineHeight: 1.5,
-            }}
-          >
-            <span>Get a random agent for you.</span>
-            <span>Randomize a team of agents for your squad.</span>
-          </div>
-
-          {/* CTA button */}
-          <div
-            style={{
-              display: "flex",
-              marginTop: "40px",
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "#ff4655",
-                color: "#ffffff",
-                fontFamily: "Tungsten Bold",
-                fontSize: "32px",
-                padding: "10px 40px",
-                textTransform: "uppercase",
-                letterSpacing: "2px",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              PICK YOUR AGENT
-            </div>
+            PICK YOUR AGENT
           </div>
         </div>
-
-        {/* Right: agent icons grid */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: `${ICON_GAP}px`,
-            marginLeft: "40px",
-          }}
-        >
-          {Array.from(
-            { length: Math.ceil(iconDataUrls.length / COLS) },
-            (_, rowIdx) => {
-              const rowIcons = iconDataUrls.slice(
-                rowIdx * COLS,
-                rowIdx * COLS + COLS
-              );
-              return (
-                <div
-                  key={rowIdx}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: `${ICON_GAP}px`,
-                  }}
-                >
-                  {rowIcons.map((src, i) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={i}
-                      src={src}
-                      width={ICON_SIZE}
-                      height={ICON_SIZE}
-                      style={{ display: "flex" }}
-                      alt=""
-                    />
-                  ))}
-                </div>
-              );
-            }
-          )}
-        </div>
-
-        {/* Bottom border accent */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: "0",
-            left: "0",
-            right: "0",
-            height: "4px",
-            backgroundColor: "#ff4655",
-            display: "flex",
-          }}
-        />
       </div>
-    ),
+
+      {/* Right: agent icons grid */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: `${ICON_GAP}px`,
+          marginLeft: "40px",
+        }}
+      >
+        {Array.from(
+          { length: Math.ceil(iconDataUrls.length / COLS) },
+          (_, rowIdx) => {
+            const rowIcons = iconDataUrls.slice(
+              rowIdx * COLS,
+              rowIdx * COLS + COLS,
+            );
+            return (
+              <div
+                key={rowIdx}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: `${ICON_GAP}px`,
+                }}
+              >
+                {rowIcons.map((src, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={i}
+                    src={src}
+                    width={ICON_SIZE}
+                    height={ICON_SIZE}
+                    style={{ display: "flex" }}
+                    alt=""
+                  />
+                ))}
+              </div>
+            );
+          },
+        )}
+      </div>
+
+      {/* Bottom border accent */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "0",
+          left: "0",
+          right: "0",
+          height: "4px",
+          backgroundColor: "#ff4655",
+          display: "flex",
+        }}
+      />
+    </div>,
     {
       ...size,
       fonts: [
@@ -196,6 +194,6 @@ export default async function Image() {
           weight: 400,
         },
       ],
-    }
+    },
   );
 }

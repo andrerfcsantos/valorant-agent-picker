@@ -10,7 +10,11 @@ interface AgentCardProps {
   onToggle: () => void;
 }
 
-export default function AgentCard({ agent, selected, onToggle }: AgentCardProps) {
+export default function AgentCard({
+  agent,
+  selected,
+  onToggle,
+}: AgentCardProps) {
   return (
     <button
       type="button"
