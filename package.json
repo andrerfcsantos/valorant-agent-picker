@@ -10,6 +10,7 @@
     "generate-sprites": "npx tsx scripts/generate-sprites.ts",
     "preview": "next build && wrangler dev",
     "deploy": "next build && wrangler deploy",
+    "deploy:preview": "next build && wrangler preview",
     "upload": "next build && wrangler versions upload",
     "deps:check": "node scripts/deps.mts",
     "deps:update": "vp update && node scripts/deps.mts",
