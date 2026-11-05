@@ -7,6 +7,19 @@ export default function Footer() {
           with Riot Games
         </small>
       </p>
+      <p className="text-[1.1em] m-0">
+        <small>
+          Part of{" "}
+          <a
+            href="https://heropickers.com"
+            target="_blank"
+            rel="noopener"
+            className="text-gray-400 hover:text-gray-300"
+          >
+            Hero Pickers
+          </a>
+        </small>
+      </p>
     </footer>
   );
 }

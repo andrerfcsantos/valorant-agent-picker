@@ -62,6 +62,20 @@ export default function AboutContent() {
         />
       </a>
 
+      <h2 className={styles.title}>Other pickers</h2>
+
+      <p className={styles.paragraphText}>
+        This site is part of{" "}
+        <a href="https://heropickers.com" target="_blank" rel="noopener">
+          Hero Pickers
+        </a>
+        , which is also home to the{" "}
+        <a href="https://www.owheropicker.com" target="_blank" rel="noopener">
+          Overwatch Hero Picker
+        </a>{" "}
+        — the same idea, for Overwatch.
+      </p>
+
       <h2 className={styles.title}>Contact me</h2>
 
       <p className={styles.paragraphText}>
