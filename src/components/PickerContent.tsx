@@ -73,6 +73,7 @@ export default function PickerContent() {
   // Options are the picker's own state; the filters live in the provider. This
   // runs before the provider hydrates, so a shared preset still wins below.
   useEffect(() => {
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- saved options are in localStorage, read after mount
     setShowPortrait(loadShowPortrait());
     setNonRepeating(loadNonRepeating());
   }, []);
@@ -87,6 +88,7 @@ export default function PickerContent() {
       showPortrait: loadShowPortrait(),
       nonRepeating: loadNonRepeating(),
     };
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the provider publishes a shared preset after mount
     setShowPortrait(sharedPreset.showPortrait);
     setNonRepeating(sharedPreset.nonRepeating);
     saveShowPortrait(sharedPreset.showPortrait);
@@ -97,6 +99,7 @@ export default function PickerContent() {
   // filter changes leave the agent on screen alone.
   useEffect(() => {
     if (!isHydrated) return;
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the opening roll is random, so it waits for the client
     setChosenAgent((current) => current ?? pickRandom(selectedAgents));
   }, [isHydrated, selectedAgents]);
 

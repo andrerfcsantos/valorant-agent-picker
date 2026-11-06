@@ -63,6 +63,7 @@ export default function SquadContent() {
     if (shared.ok && shared.payload.kind === "squad-preset") {
       const preset = shared.payload.squad;
       setupBeforeShare.current = saved;
+      // oxlint-disable-next-line react-hooks/set-state-in-effect -- localStorage and the URL are only read after mount
       applySetup({
         size: preset.size,
         configs: slotConfigsFromEnabled(preset.slots, preset.names),
