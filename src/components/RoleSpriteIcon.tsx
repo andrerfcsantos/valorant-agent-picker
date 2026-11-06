@@ -19,6 +19,7 @@ export default function RoleSpriteIcon({
 
   return (
     <div
+      // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a slice of a sprite sheet, which <img> cannot show
       role="img"
       aria-label={alt}
       className={className}

@@ -27,15 +27,15 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint-config-next": "^16.1.6",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.2.1",
-    "typescript": "^5.9.3",
-    "vite-plus": "1.5.0",
+    "typescript": "^7.0.2",
+    "vite-plus": "^1.5.0",
     "wrangler": "^4.158.0"
   },
   "packageManager": "npm@11.12.0",
   "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.5.0"
+    "vite": "npm:@voidzero-dev/vite-plus-core@^1.5.0"
   },
   "engines": {
     "node": "^24.0.0"

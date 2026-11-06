@@ -70,6 +70,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = loadPresets();
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- saved presets are in localStorage, read after mount
     setPresets(stored.presets);
     setAppliedId(stored.appliedId);
     setIsHydrated(true);

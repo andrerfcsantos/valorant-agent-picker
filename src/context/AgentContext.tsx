@@ -60,6 +60,7 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
 
     if (shared.ok && shared.payload.kind === "picker-preset") {
       replacedSelection.current = saved;
+      // oxlint-disable-next-line react-hooks/set-state-in-effect -- localStorage and the URL are only read after mount
       setSelectedAgents(new Set(shared.payload.picker.selected));
       setSharedPreset(shared.payload.picker);
       setNoticeOpen(true);
