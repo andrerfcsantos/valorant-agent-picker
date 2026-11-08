@@ -15,12 +15,14 @@ export default async function Image() {
     .filter((f) => f.endsWith(".png"))
     .sort();
 
-  const [tungstenBold, dinNext, ...iconBuffers] = await Promise.all([
+  const [tungstenBold, dinNext, logo, ...iconBuffers] = await Promise.all([
     readFile(join(ogFontsDir, "Tungsten-Bold.ttf")),
     readFile(join(ogFontsDir, "DINNextW1G-Regular.ttf")),
+    readFile(join(publicDir, "imgs", "logo", "ap-logo.png")),
     ...iconFiles.map((f) => readFile(join(iconsDir, f))),
   ]);
 
+  const logoDataUrl = `data:image/png;base64,${logo.toString("base64")}`;
   const iconDataUrls = iconBuffers.map(
     (buf) => `data:image/png;base64,${buf.toString("base64")}`,
   );
@@ -63,6 +65,15 @@ export default async function Image() {
           justifyContent: "center",
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logoDataUrl}
+          alt=""
+          width={201}
+          height={80}
+          style={{ display: "flex", marginBottom: "20px" }}
+        />
+
         {/* Headline */}
         <div
           style={{

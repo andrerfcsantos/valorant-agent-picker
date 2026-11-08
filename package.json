@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "vp lint",
     "generate-sprites": "npx tsx scripts/generate-sprites.ts",
+    "generate-logos": "node scripts/generate-logos.mts",
     "preview": "next build && wrangler dev",
     "deploy": "next build && wrangler deploy",
     "deploy:preview": "next build && wrangler preview",
