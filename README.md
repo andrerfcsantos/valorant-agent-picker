@@ -30,6 +30,19 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Logos
+
+The master artwork lives in [`images/logo/`](images/logo). Every size the site
+uses (navbar logo, favicon, app and home-screen icons, the logo on the social
+card) is rendered from it and committed:
+
+```bash
+npm run generate-logos
+```
+
+Re-run it only when a master logo changes, and look at the results, especially
+the 16px favicon.
+
 ## Upgrading dependencies
 
 Every dependency is declared as a caret range, so `vp update` is free to move

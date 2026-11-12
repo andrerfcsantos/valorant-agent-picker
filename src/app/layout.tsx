@@ -24,9 +24,6 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({
@@ -63,7 +60,7 @@ export default function RootLayout({
         {/* Preload navbar assets */}
         <link
           rel="preload"
-          href="/imgs/navbar/v-logo-red.webp"
+          href="/imgs/logo/ap-logo.webp"
           as="image"
           type="image/webp"
         />

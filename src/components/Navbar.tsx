@@ -35,10 +35,10 @@ export default function Navbar() {
           >
             <Image
               className="h-[2em] w-auto pr-2"
-              src="/imgs/navbar/v-logo-red.webp"
-              width={4000}
-              height={2251}
-              alt="Valorant logo"
+              src="/imgs/logo/ap-logo.webp"
+              width={241}
+              height={96}
+              alt="Agent Picker logo"
             />
             <span
               className="text-2xl no-underline"
