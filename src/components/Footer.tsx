@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     // The band is twice the shortcut button's offset plus its height (see
@@ -17,6 +19,17 @@ export default function Footer() {
           >
             Hero Pickers
           </a>
+        </small>
+      </p>
+      <p className="text-[1.1em] m-0">
+        <small>
+          <Link href="/privacy" className="text-gray-400 hover:text-gray-300">
+            Privacy Policy
+          </Link>
+          {" · "}
+          <Link href="/terms" className="text-gray-400 hover:text-gray-300">
+            Terms of Service
+          </Link>
         </small>
       </p>
     </footer>

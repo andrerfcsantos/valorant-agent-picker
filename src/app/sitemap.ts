@@ -19,5 +19,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    ...["privacy", "terms"].map((page) => ({
+      url: `https://www.valorantpicker.com/${page}`,
+      changeFrequency: "yearly" as const,
+      priority: 0.1,
+    })),
   ];
 }
