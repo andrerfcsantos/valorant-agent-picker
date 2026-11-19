@@ -9,8 +9,9 @@ declare global {
 type EventParams = Record<string, string | number>;
 
 /**
- * Sends a GA4 event. Use snake_case names and parameters; parameters only
- * show up in reports once registered as custom dimensions in GA4.
+ * Sends a GA4 event. Use snake_case names and parameters. Parameters are
+ * visible in DebugView right away, but to use them as dimensions in standard
+ * reports they must be registered as custom dimensions in GA4.
  */
 export function sendEvent(name: string, params?: EventParams) {
   if (typeof window !== "undefined" && typeof window.gtag === "function") {

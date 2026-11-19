@@ -5,6 +5,7 @@ import { PresetProvider } from "@/context/PresetContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
+import PageViewTracker from "@/components/PageViewTracker";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import "./globals.css";
 
@@ -103,6 +104,7 @@ export default function RootLayout({
             {children}
             <Footer />
             <KeyboardShortcutHint />
+            <PageViewTracker />
           </PresetProvider>
         </AgentProvider>
       </body>
