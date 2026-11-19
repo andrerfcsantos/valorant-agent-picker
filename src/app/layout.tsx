@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
 import PageViewTracker from "@/components/PageViewTracker";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
+import { SHARE_PARAM } from "@/lib/share/urls";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -94,8 +95,13 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
+            // Same rule as currentPageLocation() in lib/analytics.ts: drop
+            // the share payload (it can carry player names) and the fragment.
+            var pageLocation = new URL(location.href);
+            pageLocation.searchParams.delete('${SHARE_PARAM}');
+            pageLocation.hash = '';
             gtag('event', 'page_view', {
-              page_location: location.href,
+              page_location: pageLocation.toString(),
               page_title: document.title,
             });
           `}

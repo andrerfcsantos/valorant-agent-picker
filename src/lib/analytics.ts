@@ -1,3 +1,5 @@
+import { SHARE_PARAM } from "@/lib/share/urls";
+
 export const GA_MEASUREMENT_ID = "G-9ML8E6VC1X";
 
 declare global {
@@ -7,6 +9,23 @@ declare global {
 }
 
 type EventParams = Record<string, string | number>;
+
+/**
+ * A URL as reported to GA4. The share payload is dropped because squad links
+ * carry player names, and so is the fragment. Other query parameters (utm_*
+ * and the like) are kept. The inline snippet in the root layout applies the
+ * same rule to the first page_view.
+ */
+export function sanitizePageLocation(href: string): string {
+  const url = new URL(href);
+  url.searchParams.delete(SHARE_PARAM);
+  url.hash = "";
+  return url.toString();
+}
+
+export function currentPageLocation(): string {
+  return sanitizePageLocation(window.location.href);
+}
 
 /**
  * Sends a GA4 event. Use snake_case names and parameters. Parameters are
@@ -22,7 +41,7 @@ type EventParams = Record<string, string | number>;
 export function sendEvent(name: string, params?: EventParams) {
   if (typeof window !== "undefined" && typeof window.gtag === "function") {
     window.gtag("event", name, {
-      page_location: window.location.href,
+      page_location: currentPageLocation(),
       ...(document.title ? { page_title: document.title } : {}),
       ...params,
     });
