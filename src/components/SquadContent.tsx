@@ -13,6 +13,7 @@ import {
   slotConfigsFromEnabled,
 } from "@/lib/squadService";
 import type { SlotConfig } from "@/lib/squadService";
+import { track } from "@/lib/analytics";
 import {
   loadSquadSlotConfigs,
   saveSquadSlotConfigs,
@@ -33,6 +34,17 @@ interface SquadSetup {
   configs: SlotConfig[];
 }
 
+/**
+ * How long a slot's filters must sit still before the edit is reported. Each
+ * agent is its own checkbox, so one event per click would mostly count clicks.
+ */
+const FILTER_EVENT_DELAY_MS = 2000;
+
+interface PendingFilterEvent {
+  timer: ReturnType<typeof setTimeout>;
+  send: () => void;
+}
+
 export default function SquadContent() {
   const [slotConfigs, setSlotConfigs] = useState<SlotConfig[]>(() =>
     ensureConfigs([]),
@@ -43,6 +55,19 @@ export default function SquadContent() {
   const [copied, setCopied] = useState(false);
   const [sharedPresetApplied, setSharedPresetApplied] = useState(false);
   const setupBeforeShare = useRef<SquadSetup | null>(null);
+  const pendingFilterEvents = useRef(new Map<number, PendingFilterEvent>());
+
+  // Leaving the page within the delay still reports the edit.
+  useEffect(() => {
+    const pending = pendingFilterEvents.current;
+    return () => {
+      pending.forEach(({ timer, send }) => {
+        clearTimeout(timer);
+        send();
+      });
+      pending.clear();
+    };
+  }, []);
 
   const applySetup = useCallback((setup: SquadSetup) => {
     setSlotConfigs(setup.configs);
@@ -59,7 +84,8 @@ export default function SquadContent() {
       configs: ensureConfigs(loadSquadSlotConfigs()),
     };
 
-    const shared = tryDecodeShare(readShareParam(window.location.search));
+    const raw = readShareParam(window.location.search);
+    const shared = tryDecodeShare(raw);
     if (shared.ok && shared.payload.kind === "squad-preset") {
       const preset = shared.payload.squad;
       setupBeforeShare.current = saved;
@@ -70,7 +96,15 @@ export default function SquadContent() {
       });
       setSharedPresetApplied(true);
       stripShareParam();
+      track("shared_link_opened", { share_type: "squad_preset", valid: true });
     } else {
+      if (raw && !shared.ok) {
+        track("shared_link_opened", {
+          share_type: "unknown",
+          valid: false,
+          invalid_reason: shared.reason,
+        });
+      }
       applySetup(saved);
     }
 
@@ -79,6 +113,13 @@ export default function SquadContent() {
 
   const randomizeAll = useCallback(() => {
     setSlotAgents(computeSquad(slotConfigs, squadSize));
+    track("squad_randomized", {
+      source: "generator",
+      squad_size: squadSize,
+      filtered_slot_count: slotConfigs
+        .slice(0, squadSize)
+        .filter((cfg) => cfg.disabledAgents.size > 0).length,
+    });
   }, [slotConfigs, squadSize]);
 
   const handleSizeChange = useCallback(
@@ -86,6 +127,7 @@ export default function SquadContent() {
       setSquadSize(size);
       saveSquadSize(size);
       setSlotAgents(computeSquad(slotConfigs, size));
+      track("squad_size_changed", { squad_size: size });
     },
     [slotConfigs],
   );
@@ -103,8 +145,13 @@ export default function SquadContent() {
         next[index] = agent;
         return next;
       });
+      track("squad_slot_rerolled", {
+        source: "generator",
+        squad_size: squadSize,
+        slot_index: index,
+      });
     },
-    [slotConfigs],
+    [slotConfigs, squadSize],
   );
 
   const updateSlotConfig = useCallback(
@@ -119,6 +166,29 @@ export default function SquadContent() {
     [],
   );
 
+  /** Replaces a slot's excluded agents, and reports the edit once it settles. */
+  const setSlotFilters = useCallback(
+    (index: number, disabledAgents: Set<string>) => {
+      updateSlotConfig(index, (prev) => ({ ...prev, disabledAgents }));
+      const pending = pendingFilterEvents.current;
+      const previous = pending.get(index);
+      if (previous) clearTimeout(previous.timer);
+      const send = () => {
+        pending.delete(index);
+        track("squad_slot_filters_changed", {
+          action: "edit",
+          slot_index: index,
+          disabled_count: disabledAgents.size,
+        });
+      };
+      pending.set(index, {
+        timer: setTimeout(send, FILTER_EVENT_DELAY_MS),
+        send,
+      });
+    },
+    [updateSlotConfig],
+  );
+
   const handleCopy = useCallback(() => {
     const parts = slotAgents
       .slice(0, squadSize)
@@ -131,7 +201,10 @@ export default function SquadContent() {
 
     if (parts.length === 0) return;
 
-    void navigator.clipboard.writeText(parts.join(" | "));
+    navigator.clipboard.writeText(parts.join(" | ")).then(
+      () => track("squad_copied_as_text", { squad_size: squadSize }),
+      () => {},
+    );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [slotAgents, slotConfigs, squadSize]);
@@ -169,7 +242,13 @@ export default function SquadContent() {
     const previous = setupBeforeShare.current;
     if (previous) applySetup(previous);
     setSharedPresetApplied(false);
+    track("shared_preset_undone", { share_type: "squad_preset" });
   }, [applySetup]);
+
+  const handleDismissShared = useCallback(() => {
+    setSharedPresetApplied(false);
+    track("shared_preset_dismissed", { share_type: "squad_preset" });
+  }, []);
 
   useKeyboardShortcuts({ r: randomizeAll, "ctrl+c": handleCopy });
 
@@ -181,7 +260,7 @@ export default function SquadContent() {
         <SharedPresetNotice
           message="A shared squad setup has been applied, replacing your own filters."
           onUndo={handleUndoShared}
-          onDismiss={() => setSharedPresetApplied(false)}
+          onDismiss={handleDismissShared}
         />
       )}
 
@@ -221,6 +300,8 @@ export default function SquadContent() {
           <ShareButton
             className={styles.copyButton}
             buildUrl={buildResultUrl}
+            shareType="squad_result"
+            shareSource="squad"
             label="Share squad"
             copiedLabel="Squad link copied!"
             title="Copy a link that reveals this squad"
@@ -228,6 +309,8 @@ export default function SquadContent() {
           <ShareButton
             className={styles.copyButton}
             buildUrl={buildPresetUrl}
+            shareType="squad_preset"
+            shareSource="squad"
             label="Share setup"
             copiedLabel="Setup link copied!"
             title="Copy a link that sets up these slot filters"
@@ -263,29 +346,25 @@ export default function SquadContent() {
             onNameChange={(name) =>
               updateSlotConfig(i, (prev) => ({ ...prev, name }))
             }
-            onToggleAgent={(agentKey: string) =>
-              updateSlotConfig(i, (prev) => {
-                const next = new Set(prev.disabledAgents);
-                if (next.has(agentKey)) next.delete(agentKey);
-                else next.add(agentKey);
-                return { ...prev, disabledAgents: next };
-              })
-            }
-            onToggleRoleAll={(role: Role) =>
-              updateSlotConfig(i, (prev) => {
-                const roleAgents = getAgentsByRole(role);
-                const allEnabled = roleAgents.every(
-                  (a) => !prev.disabledAgents.has(a.key),
-                );
-                const next = new Set(prev.disabledAgents);
-                if (allEnabled) {
-                  roleAgents.forEach((a) => next.add(a.key));
-                } else {
-                  roleAgents.forEach((a) => next.delete(a.key));
-                }
-                return { ...prev, disabledAgents: next };
-              })
-            }
+            onToggleAgent={(agentKey: string) => {
+              const next = new Set(config.disabledAgents);
+              if (next.has(agentKey)) next.delete(agentKey);
+              else next.add(agentKey);
+              setSlotFilters(i, next);
+            }}
+            onToggleRoleAll={(role: Role) => {
+              const roleAgents = getAgentsByRole(role);
+              const allEnabled = roleAgents.every(
+                (a) => !config.disabledAgents.has(a.key),
+              );
+              const next = new Set(config.disabledAgents);
+              if (allEnabled) {
+                roleAgents.forEach((a) => next.add(a.key));
+              } else {
+                roleAgents.forEach((a) => next.delete(a.key));
+              }
+              setSlotFilters(i, next);
+            }}
             onReroll={() => randomizeSingle(i)}
           />
         ))}

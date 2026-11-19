@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AGENTS, ROLES, getAllAgents } from "@/data/agents";
 import { usePresets } from "@/context/PresetContext";
+import { track } from "@/lib/analytics";
 import { buildDefaultPresets } from "@/lib/presets/defaults";
 import { presetShareUrl } from "@/lib/presets/share";
 import { SavedPreset, shortcutForIndex } from "@/lib/presets/types";
@@ -81,9 +82,19 @@ export default function PresetsContent() {
         await navigator.clipboard.writeText(url);
         setFallback(null);
         flash(`Link to “${preset.name}” copied!`);
+        track("share_link_copied", {
+          share_type: "preset",
+          source: "manage_page",
+          method: "clipboard",
+        });
       } catch {
         // The clipboard API needs a secure context and permission.
         setFallback({ id: preset.id, url });
+        track("share_link_copied", {
+          share_type: "preset",
+          source: "manage_page",
+          method: "fallback",
+        });
       }
     },
     [flash],
@@ -91,7 +102,7 @@ export default function PresetsContent() {
 
   const applyAndPick = useCallback(
     (id: string) => {
-      applyPreset(id);
+      applyPreset(id, "manage_page");
       router.push("/");
     },
     [applyPreset, router],

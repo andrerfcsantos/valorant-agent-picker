@@ -1,10 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { type ShareSource, type ShareType, track } from "@/lib/analytics";
 
 interface ShareButtonProps {
   /** Built lazily so the link always reflects the current state. */
   buildUrl: () => string;
+  /** Which of the share surfaces this is, for analytics. */
+  shareType: ShareType;
+  /** Where on the site the control lives, for analytics. */
+  shareSource: ShareSource;
   label?: string;
   copiedLabel?: string;
   title?: string;
@@ -13,6 +18,8 @@ interface ShareButtonProps {
 
 export default function ShareButton({
   buildUrl,
+  shareType,
+  shareSource,
   label = "Share link",
   copiedLabel = "Link copied!",
   title,
@@ -35,14 +42,24 @@ export default function ShareButton({
       await navigator.clipboard.writeText(url);
       setFallbackUrl(null);
       setCopied(true);
+      track("share_link_copied", {
+        share_type: shareType,
+        source: shareSource,
+        method: "clipboard",
+      });
       if (resetTimer.current) clearTimeout(resetTimer.current);
       resetTimer.current = setTimeout(() => setCopied(false), 1800);
     } catch {
       // The clipboard API needs a secure context and permission. Show the link
       // so it can still be copied by hand.
       setFallbackUrl(url);
+      track("share_link_copied", {
+        share_type: shareType,
+        source: shareSource,
+        method: "fallback",
+      });
     }
-  }, [buildUrl]);
+  }, [buildUrl, shareType, shareSource]);
 
   return (
     <>

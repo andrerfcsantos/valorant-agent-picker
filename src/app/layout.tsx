@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
 import PageViewTracker from "@/components/PageViewTracker";
-import { GA_MEASUREMENT_ID } from "@/lib/analytics";
+import { GA_MEASUREMENT_ID } from "@/lib/googleAnalytics";
 import { SHARE_PARAM } from "@/lib/share/urls";
 import "./globals.css";
 
@@ -93,7 +93,7 @@ export default function RootLayout({
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
-            // Same rule as sanitizePageLocation() in lib/analytics.ts: drop
+            // Same rule as sanitizePageLocation() in lib/googleAnalytics.ts: drop
             // the share payload (it can carry player names) and the fragment.
             function sanitizeUrl(href) {
               var url = new URL(href);

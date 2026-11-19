@@ -30,6 +30,18 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Analytics
+
+- **PostHog** gets every interaction as a typed event. The schema lives in
+  [`src/lib/analytics.ts`](src/lib/analytics.ts), the only module that talks
+  to PostHog, and is kept in step with the Overwatch Hero Picker's.
+  Rolls, filter changes and keyboard shortcuts are sampled (see
+  `SAMPLE_EVERY`): sum `sample_weight` rather than counting events. Share payloads (`?d=`) are redacted from every event.
+- **Google Analytics** gets page views only.
+- **Setup:** `.env.production` holds the public project token and host, and a
+  production build fails without them. `npm run dev` runs with PostHog off
+  unless `.env.local` sets them (see `.env.example`).
+
 ## Logos
 
 The master artwork lives in [`images/logo/`](images/logo). Every size the site
