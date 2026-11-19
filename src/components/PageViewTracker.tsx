@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   currentPageLocation,
   sendEvent,
-  setPageLocation,
+  setPageContext,
 } from "@/lib/analytics";
 
 // How long to wait for the new page's title before sending the page_view
@@ -16,26 +16,36 @@ const TITLE_WAIT_MS = 1000;
  * Sends a GA4 page_view on client-side route changes. The inline gtag
  * snippet in the root layout sends the first page load's page_view. GA4's
  * enhanced measurement does not pick up this router's history changes, so
- * without this, in-app visits to other pages would go uncounted. If "Page
- * changes based on browser history events" is ever enabled for the GA4
- * property, remove this component to avoid counting each navigation twice.
+ * without this, in-app visits to other pages would go uncounted.
+ *
+ * It also keeps gtag's tag-level page_location and page_referrer current
+ * and free of the share payload. If "Page changes based on browser history
+ * events" is ever enabled for the GA4 property, stop sending the page_view
+ * here to avoid counting each navigation twice, but keep the setPageContext
+ * call.
  */
 export default function PageViewTracker() {
   const pathname = usePathname();
   const previousPathname = useRef<string | null>(null);
+  const previousLocation = useRef<string | null>(null);
   const lastSentTitle = useRef<string | null>(null);
 
   useEffect(() => {
     const previous = previousPathname.current;
     previousPathname.current = pathname;
     if (previous === null) {
+      previousLocation.current = currentPageLocation();
       lastSentTitle.current = document.title;
       return;
     }
     if (previous === pathname) return;
 
+    // Like GA4's own history tracking, report the previous in-app page as
+    // the referrer instead of the landing page's document.referrer.
     const pageLocation = currentPageLocation();
-    setPageLocation(pageLocation);
+    const pageReferrer = previousLocation.current ?? "";
+    previousLocation.current = pageLocation;
+    setPageContext(pageLocation, pageReferrer);
 
     // The router usually clears document.title and sets the new one a little
     // after the route change, so wait for a non-empty title before sending.
@@ -49,6 +59,7 @@ export default function PageViewTracker() {
       lastSentTitle.current = document.title;
       sendEvent("page_view", {
         page_location: pageLocation,
+        page_referrer: pageReferrer,
         page_title: document.title,
       });
     };

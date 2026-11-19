@@ -28,13 +28,17 @@ export function currentPageLocation(): string {
 }
 
 /**
- * Sets page_location for every later hit, including gtag's automatic events
- * (user_engagement, scroll, outbound clicks), which would otherwise read the
- * raw URL. Call it whenever the route changes.
+ * Sets page_location and page_referrer for every later hit, including gtag's
+ * automatic events (user_engagement, scroll, outbound clicks), which would
+ * otherwise read the raw URL and the landing page's referrer. Call it
+ * whenever the route changes, with the previous page as the referrer.
  */
-export function setPageLocation(pageLocation: string) {
+export function setPageContext(pageLocation: string, pageReferrer: string) {
   if (typeof window !== "undefined" && typeof window.gtag === "function") {
-    window.gtag("set", { page_location: pageLocation });
+    window.gtag("set", {
+      page_location: pageLocation,
+      page_referrer: pageReferrer,
+    });
   }
 }
 
