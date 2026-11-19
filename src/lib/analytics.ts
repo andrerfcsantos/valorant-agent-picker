@@ -14,7 +14,7 @@ type EventParams = Record<string, string | number>;
  * A URL as reported to GA4. The share payload is dropped because squad links
  * carry player names, and so is the fragment. Other query parameters (utm_*
  * and the like) are kept. The inline snippet in the root layout applies the
- * same rule to the first page_view.
+ * same rule to the first page load's URL and referrer.
  */
 export function sanitizePageLocation(href: string): string {
   const url = new URL(href);
@@ -25,6 +25,17 @@ export function sanitizePageLocation(href: string): string {
 
 export function currentPageLocation(): string {
   return sanitizePageLocation(window.location.href);
+}
+
+/**
+ * Sets page_location for every later hit, including gtag's automatic events
+ * (user_engagement, scroll, outbound clicks), which would otherwise read the
+ * raw URL. Call it whenever the route changes.
+ */
+export function setPageLocation(pageLocation: string) {
+  if (typeof window !== "undefined" && typeof window.gtag === "function") {
+    window.gtag("set", { page_location: pageLocation });
+  }
 }
 
 /**

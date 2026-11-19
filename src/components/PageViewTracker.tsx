@@ -2,7 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { currentPageLocation, sendEvent } from "@/lib/analytics";
+import {
+  currentPageLocation,
+  sendEvent,
+  setPageLocation,
+} from "@/lib/analytics";
 
 // How long to wait for the new page's title before sending the page_view
 // with whatever title the document has.
@@ -30,9 +34,11 @@ export default function PageViewTracker() {
     }
     if (previous === pathname) return;
 
+    const pageLocation = currentPageLocation();
+    setPageLocation(pageLocation);
+
     // The router usually clears document.title and sets the new one a little
     // after the route change, so wait for a non-empty title before sending.
-    const pageLocation = currentPageLocation();
     let sent = false;
     const send = () => {
       if (sent) return;

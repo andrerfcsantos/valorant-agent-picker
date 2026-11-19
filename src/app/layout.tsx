@@ -93,15 +93,27 @@ export default function RootLayout({
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
-            // Same rule as currentPageLocation() in lib/analytics.ts: drop
+            // Same rule as sanitizePageLocation() in lib/analytics.ts: drop
             // the share payload (it can carry player names) and the fragment.
-            var pageLocation = new URL(location.href);
-            pageLocation.searchParams.delete('${SHARE_PARAM}');
-            pageLocation.hash = '';
+            function sanitizeUrl(href) {
+              var url = new URL(href);
+              url.searchParams.delete('${SHARE_PARAM}');
+              url.hash = '';
+              return url.toString();
+            }
+            gtag('js', new Date());
+            // Set for every hit, including gtag's automatic events
+            // (user_engagement, scroll, ...), which would otherwise read the
+            // raw URL and referrer. A share page linking to the generator
+            // makes the share URL the next page's referrer.
+            var pageContext = { page_location: sanitizeUrl(location.href) };
+            if (document.referrer) {
+              pageContext.page_referrer = sanitizeUrl(document.referrer);
+            }
+            gtag('set', pageContext);
+            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
             gtag('event', 'page_view', {
-              page_location: pageLocation.toString(),
+              page_location: pageContext.page_location,
               page_title: document.title,
             });
           `}
