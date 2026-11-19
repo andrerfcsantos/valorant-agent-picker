@@ -93,7 +93,11 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
+            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
+            gtag('event', 'page_view', {
+              page_location: location.href,
+              page_title: document.title,
+            });
           `}
         </Script>
       </head>
