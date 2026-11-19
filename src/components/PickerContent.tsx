@@ -110,7 +110,7 @@ export default function PickerContent() {
       setChosenAgent(agent);
       setAgentCount((c) => c + 1);
       setNameVisible(true);
-      sendEvent("Agent", "GetRandom", agent.name);
+      sendEvent("get_random_agent", { agent_name: agent.name });
     }, 100);
   };
 

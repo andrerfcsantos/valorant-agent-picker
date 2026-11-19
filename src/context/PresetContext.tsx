@@ -94,7 +94,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       if (!preset) return;
       setSelected(preset.agents);
       setAppliedId(id);
-      sendEvent("Preset", "ApplyPreset", preset.name);
+      sendEvent("apply_preset", { preset_name: preset.name });
     },
     [presets, setSelected],
   );
@@ -108,7 +108,7 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       };
       setPresets((current) => [...current, preset]);
       setAppliedId(preset.id);
-      sendEvent("Preset", "SavePreset", preset.name);
+      sendEvent("save_preset", { preset_name: preset.name });
     },
     [selectedKeys],
   );

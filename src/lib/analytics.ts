@@ -1,15 +1,19 @@
+export const GA_MEASUREMENT_ID = "G-9ML8E6VC1X";
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
   }
 }
 
-export function sendEvent(category: string, action: string, value: string) {
+type EventParams = Record<string, string | number>;
+
+/**
+ * Sends a GA4 event. Use snake_case names and parameters; parameters only
+ * show up in reports once registered as custom dimensions in GA4.
+ */
+export function sendEvent(name: string, params?: EventParams) {
   if (typeof window !== "undefined" && typeof window.gtag === "function") {
-    window.gtag("event", action, {
-      event_category: category,
-      event_label: `${action} - ${value}`,
-      value: value,
-    });
+    window.gtag("event", name, params);
   }
 }
