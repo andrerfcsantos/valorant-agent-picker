@@ -97,11 +97,9 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
       } else {
         next.add(key);
       }
-      sendEvent(
-        "Filter",
-        next.has(key) ? "SelectAgent" : "UnselectAgent",
-        AGENTS[key].name,
-      );
+      sendEvent(next.has(key) ? "select_agent" : "unselect_agent", {
+        agent_name: AGENTS[key].name,
+      });
       return next;
     });
   }, []);
@@ -110,7 +108,7 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     setSelectedAgents((prev) => {
       const next = new Set(prev);
       getAgentsByRole(role).forEach((a) => next.add(a.key));
-      sendEvent("Filter", "SelectRole", role);
+      sendEvent("select_role", { role });
       return next;
     });
   }, []);
@@ -119,24 +117,24 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     setSelectedAgents((prev) => {
       const next = new Set(prev);
       getAgentsByRole(role).forEach((a) => next.delete(a.key));
-      sendEvent("Filter", "UnselectRole", role);
+      sendEvent("unselect_role", { role });
       return next;
     });
   }, []);
 
   const selectOnlyRole = useCallback((role: Role) => {
     setSelectedAgents(new Set(getAgentsByRole(role).map((a) => a.key)));
-    sendEvent("Filter", "SelectOnlyRole", role);
+    sendEvent("select_only_role", { role });
   }, []);
 
   const selectAll = useCallback(() => {
     setSelectedAgents(new Set(Object.keys(AGENTS)));
-    sendEvent("Filter", "SelectAll", "All");
+    sendEvent("select_all_agents");
   }, []);
 
   const unselectAll = useCallback(() => {
     setSelectedAgents(new Set());
-    sendEvent("Filter", "UnselectAll", "All");
+    sendEvent("unselect_all_agents");
   }, []);
 
   const setSelected = useCallback(

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AGENTS, ROLES, getAllAgents } from "@/data/agents";
 import { usePresets } from "@/context/PresetContext";
-import { sendEvent } from "@/lib/analytics";
 import { buildDefaultPresets } from "@/lib/presets/defaults";
 import { presetShareUrl } from "@/lib/presets/share";
 import { SavedPreset, shortcutForIndex } from "@/lib/presets/types";
@@ -55,10 +54,6 @@ export default function PresetsContent() {
     null,
   );
   const statusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    sendEvent("Page", "Visit", "Presets");
-  }, []);
 
   useEffect(
     () => () => {
