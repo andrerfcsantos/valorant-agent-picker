@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAgents } from "@/context/AgentContext";
 import { usePresets } from "@/context/PresetContext";
+import { track } from "@/lib/analytics";
 import { getJsonFromLS, setJsonToLS } from "@/lib/localStorage";
 import { presetShareUrl } from "@/lib/presets/share";
 import { SavedPreset, shortcutForIndex } from "@/lib/presets/types";
@@ -105,9 +106,19 @@ export default function PresetBar() {
         await navigator.clipboard.writeText(url);
         setFallbackUrl(null);
         flash(`Link to “${preset.name}” copied!`);
+        track("share_link_copied", {
+          share_type: "preset",
+          source: "preset_bar",
+          method: "clipboard",
+        });
       } catch {
         // The clipboard API needs a secure context and permission.
         setFallbackUrl(url);
+        track("share_link_copied", {
+          share_type: "preset",
+          source: "preset_bar",
+          method: "fallback",
+        });
       }
     },
     [flash],

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { getAllAgents } from "@/data/agents";
+import { agentPoolProps, track } from "@/lib/analytics";
 import { ShareErrorReason } from "@/lib/share/binary";
 import { tryDecodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
@@ -66,11 +67,16 @@ export default function SharedAgentContent() {
     if (!decoded.ok) {
       // oxlint-disable-next-line react-hooks/set-state-in-effect -- the share link is in the URL, which only exists after mount
       setView({ status: "invalid", reason: decoded.reason });
+      track("shared_link_opened", {
+        share_type: "unknown",
+        valid: false,
+        invalid_reason: decoded.reason,
+      });
       return;
     }
 
     // The kind travels inside the payload, so a link opened on the wrong page
-    // can send itself where it belongs.
+    // can send itself where it belongs. The destination reports the open.
     if (decoded.payload.kind !== "agent-result") {
       window.location.replace(
         `${SHARE_PATHS[decoded.payload.kind]}?${SHARE_PARAM}=${raw}`,
@@ -84,6 +90,7 @@ export default function SharedAgentContent() {
       agentKey: decoded.payload.result.agentKey,
       ownRoll: false,
     });
+    track("shared_link_opened", { share_type: "agent_result", valid: true });
   }, []);
 
   const pool = useMemo(() => {
@@ -105,6 +112,16 @@ export default function SharedAgentContent() {
     );
     setView({ status: "ready", picker: view.picker, agentKey, ownRoll: true });
     setRolls((count) => count + 1);
+    const agent = agentKey ? agentByKey.get(agentKey) : undefined;
+    if (agent) {
+      track("agent_randomized", {
+        source: "shared_result",
+        agent_key: agent.key,
+        agent_role: agent.role,
+        non_repeating: view.picker.nonRepeating,
+        ...agentPoolProps(pool),
+      });
+    }
     window.history.replaceState(
       null,
       "",
@@ -191,6 +208,8 @@ export default function SharedAgentContent() {
               result: { agentKey: view.agentKey },
             })
           }
+          shareType="agent_result"
+          shareSource="shared_agent"
           label="Share this roll"
         />
         {/*

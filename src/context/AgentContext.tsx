@@ -11,7 +11,7 @@ import {
 } from "react";
 import { AGENTS, getAgentsByRole, getAllAgents } from "@/data/agents";
 import type { Role } from "@/data/agents";
-import { sendEvent } from "@/lib/analytics";
+import { track } from "@/lib/analytics";
 import { loadSelectedAgents, saveSelectedAgents } from "@/lib/localStorage";
 import { tryDecodeShare } from "@/lib/share/codec";
 import { PickerPreset } from "@/lib/share/types";
@@ -56,7 +56,8 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved =
       loadSelectedAgents() ?? new Set(getAllAgents().map((a) => a.key));
-    const shared = tryDecodeShare(readShareParam(window.location.search));
+    const raw = readShareParam(window.location.search);
+    const shared = tryDecodeShare(raw);
 
     if (shared.ok && shared.payload.kind === "picker-preset") {
       replacedSelection.current = saved;
@@ -65,7 +66,17 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
       setSharedPreset(shared.payload.picker);
       setNoticeOpen(true);
       stripShareParam();
+      track("shared_link_opened", { share_type: "picker_preset", valid: true });
     } else {
+      if (raw && !shared.ok && window.location.pathname === "/") {
+        // Broken links elsewhere are reported by the page that renders the
+        // error; this provider mounts everywhere, so it only speaks for "/".
+        track("shared_link_opened", {
+          share_type: "unknown",
+          valid: false,
+          invalid_reason: shared.reason,
+        });
+      }
       setSelectedAgents(saved);
     }
 
@@ -97,9 +108,6 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
       } else {
         next.add(key);
       }
-      sendEvent(next.has(key) ? "select_agent" : "unselect_agent", {
-        agent_name: AGENTS[key].name,
-      });
       return next;
     });
   }, []);
@@ -108,7 +116,6 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     setSelectedAgents((prev) => {
       const next = new Set(prev);
       getAgentsByRole(role).forEach((a) => next.add(a.key));
-      sendEvent("select_role", { role });
       return next;
     });
   }, []);
@@ -117,24 +124,20 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     setSelectedAgents((prev) => {
       const next = new Set(prev);
       getAgentsByRole(role).forEach((a) => next.delete(a.key));
-      sendEvent("unselect_role", { role });
       return next;
     });
   }, []);
 
   const selectOnlyRole = useCallback((role: Role) => {
     setSelectedAgents(new Set(getAgentsByRole(role).map((a) => a.key)));
-    sendEvent("select_only_role", { role });
   }, []);
 
   const selectAll = useCallback(() => {
     setSelectedAgents(new Set(Object.keys(AGENTS)));
-    sendEvent("select_all_agents");
   }, []);
 
   const unselectAll = useCallback(() => {
     setSelectedAgents(new Set());
-    sendEvent("unselect_all_agents");
   }, []);
 
   const setSelected = useCallback(

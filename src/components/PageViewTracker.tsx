@@ -6,7 +6,7 @@ import {
   currentPageLocation,
   sendEvent,
   setPageContext,
-} from "@/lib/analytics";
+} from "@/lib/googleAnalytics";
 
 // How long to wait for the new page's title before sending the page_view
 // with whatever title the document has.

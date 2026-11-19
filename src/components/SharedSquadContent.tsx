@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { getAllAgents } from "@/data/agents";
+import { track } from "@/lib/analytics";
 import {
   computeSquad,
   pickForSlot,
@@ -54,9 +55,15 @@ export default function SharedSquadContent() {
     if (!decoded.ok) {
       // oxlint-disable-next-line react-hooks/set-state-in-effect -- the share link is in the URL, which only exists after mount
       setView({ status: "invalid", reason: decoded.reason });
+      track("shared_link_opened", {
+        share_type: "unknown",
+        valid: false,
+        invalid_reason: decoded.reason,
+      });
       return;
     }
 
+    // A link of another kind redirects; the destination reports the open.
     if (decoded.payload.kind !== "squad-result") {
       window.location.replace(
         `${SHARE_PATHS[decoded.payload.kind]}?${SHARE_PARAM}=${raw}`,
@@ -70,6 +77,7 @@ export default function SharedSquadContent() {
       agents: decoded.payload.result.agents,
       ownRoll: false,
     });
+    track("shared_link_opened", { share_type: "squad_result", valid: true });
   }, []);
 
   const publish = useCallback(
@@ -94,6 +102,13 @@ export default function SharedSquadContent() {
       squad,
       rolled.map((agent) => agent?.key ?? null),
     );
+    track("squad_randomized", {
+      source: "shared_result",
+      squad_size: squad.size,
+      filtered_slot_count: squad.slots
+        .slice(0, squad.size)
+        .filter((slot) => slot !== null).length,
+    });
   }, [view, publish]);
 
   const handleRerollSlot = useCallback(
@@ -110,6 +125,11 @@ export default function SharedSquadContent() {
       const next = [...agents];
       next[index] = agent?.key ?? null;
       publish(squad, next);
+      track("squad_slot_rerolled", {
+        source: "shared_result",
+        squad_size: squad.size,
+        slot_index: index,
+      });
     },
     [view, publish],
   );
@@ -208,6 +228,8 @@ export default function SharedSquadContent() {
               result: { agents: view.agents },
             })
           }
+          shareType="squad_result"
+          shareSource="shared_squad"
           label="Share this squad"
         />
         {/* Full page load so the squad generator reads the preset on mount. */}
