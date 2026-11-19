@@ -9,7 +9,12 @@ import {
   useState,
 } from "react";
 import { useAgents } from "@/context/AgentContext";
-import { sendEvent } from "@/lib/analytics";
+import {
+  type PresetApplySource,
+  builtinId,
+  presetKind,
+  track,
+} from "@/lib/analytics";
 import { buildDefaultPresets } from "@/lib/presets/defaults";
 import { loadPresets, savePresets } from "@/lib/presets/storage";
 import { SavedPreset } from "@/lib/presets/types";
@@ -22,7 +27,8 @@ interface PresetContextValue {
   isDirty: boolean;
   /** False until localStorage has been read, so nothing renders from defaults. */
   isHydrated: boolean;
-  applyPreset: (id: string) => void;
+  /** `source` says which control applied it, for analytics. */
+  applyPreset: (id: string, source?: PresetApplySource) => void;
   /** Saves the current filters as a new preset and applies it. */
   savePreset: (name: string) => void;
   /** Points an existing preset at the current filters. */
@@ -89,12 +95,17 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
   const isDirty = applied ? !sameAgents(applied.agents, selectedAgents) : false;
 
   const applyPreset = useCallback(
-    (id: string) => {
+    (id: string, source: PresetApplySource = "chip") => {
       const preset = presets.find((p) => p.id === id);
       if (!preset) return;
       setSelected(preset.agents);
       setAppliedId(id);
-      sendEvent("Preset", "ApplyPreset", preset.name);
+      track("preset_applied", {
+        preset_kind: presetKind(id),
+        builtin_id: builtinId(id),
+        agent_count: preset.agents.length,
+        source,
+      });
     },
     [presets, setSelected],
   );
@@ -108,7 +119,10 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
       };
       setPresets((current) => [...current, preset]);
       setAppliedId(preset.id);
-      sendEvent("Preset", "SavePreset", preset.name);
+      track("preset_created", {
+        agent_count: selectedKeys.length,
+        source: "selection",
+      });
     },
     [selectedKeys],
   );
@@ -121,6 +135,10 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
         ),
       );
       setAppliedId(id);
+      track("preset_updated", {
+        preset_kind: presetKind(id),
+        agent_count: selectedKeys.length,
+      });
     },
     [selectedKeys],
   );
@@ -133,9 +151,11 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
         preset.id === id ? { ...preset, name: trimmed } : preset,
       ),
     );
+    track("preset_managed", { action: "renamed" });
   }, []);
 
   const duplicatePreset = useCallback((id: string) => {
+    track("preset_managed", { action: "duplicated" });
     setPresets((current) => {
       const index = current.findIndex((preset) => preset.id === id);
       if (index < 0) return current;
@@ -154,11 +174,13 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
     (id: string) => {
       setPresets((current) => current.filter((preset) => preset.id !== id));
       if (id === appliedId) setAppliedId(null);
+      track("preset_deleted", { preset_kind: presetKind(id) });
     },
     [appliedId],
   );
 
   const movePreset = useCallback((id: string, offset: number) => {
+    track("preset_managed", { action: "moved" });
     setPresets((current) => {
       const index = current.findIndex((preset) => preset.id === id);
       const target = index + offset;
@@ -171,12 +193,18 @@ export function PresetProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const revert = useCallback(() => {
-    if (applied) setSelected(applied.agents);
+    if (!applied) return;
+    setSelected(applied.agents);
+    track("preset_managed", { action: "reverted" });
   }, [applied, setSelected]);
 
-  const clearApplied = useCallback(() => setAppliedId(null), []);
+  const clearApplied = useCallback(() => {
+    setAppliedId(null);
+    track("preset_managed", { action: "unselected" });
+  }, []);
 
   const restoreDefaults = useCallback(() => {
+    track("preset_managed", { action: "restored_defaults" });
     setPresets((current) => {
       const present = new Set(current.map((preset) => preset.id));
       const missing = buildDefaultPresets().filter(

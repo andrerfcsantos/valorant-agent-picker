@@ -5,6 +5,9 @@ import { PresetProvider } from "@/context/PresetContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
+import PageViewTracker from "@/components/PageViewTracker";
+import { GA_MEASUREMENT_ID } from "@/lib/googleAnalytics";
+import { SHARE_PARAM } from "@/lib/share/urls";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -83,15 +86,36 @@ export default function RootLayout({
 
         <Script
           async
-          src="https://www.googletagmanager.com/gtag/js?id=UA-28576677-4"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            // Same rule as sanitizePageLocation() in lib/googleAnalytics.ts: drop
+            // the share payload (it can carry player names) and the fragment.
+            function sanitizeUrl(href) {
+              var url = new URL(href);
+              url.searchParams.delete('${SHARE_PARAM}');
+              url.hash = '';
+              return url.toString();
+            }
             gtag('js', new Date());
-            gtag('config', 'UA-28576677-4');
+            // Set for every hit, including gtag's automatic events
+            // (user_engagement, scroll, ...), which would otherwise read the
+            // raw URL and referrer. A share page linking to the generator
+            // makes the share URL the next page's referrer.
+            var pageContext = { page_location: sanitizeUrl(location.href) };
+            if (document.referrer) {
+              pageContext.page_referrer = sanitizeUrl(document.referrer);
+            }
+            gtag('set', pageContext);
+            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
+            gtag('event', 'page_view', {
+              page_location: pageContext.page_location,
+              page_title: document.title,
+            });
           `}
         </Script>
       </head>
@@ -102,6 +126,7 @@ export default function RootLayout({
             {children}
             <Footer />
             <KeyboardShortcutHint />
+            <PageViewTracker />
           </PresetProvider>
         </AgentProvider>
       </body>

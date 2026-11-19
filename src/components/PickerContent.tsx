@@ -15,7 +15,7 @@ import {
 import { SHORTCUT_COUNT, shortcutForIndex } from "@/lib/presets/types";
 import { PickerPreset } from "@/lib/share/types";
 import { shareUrl } from "@/lib/share/urls";
-import { sendEvent } from "@/lib/analytics";
+import { agentPoolProps, track } from "@/lib/analytics";
 import AgentCard from "./AgentCard";
 import PresetBar from "./PresetBar";
 import ShareButton from "./ShareButton";
@@ -24,15 +24,19 @@ import SpriteIcon from "./SpriteIcon";
 import RoleSpriteIcon from "./RoleSpriteIcon";
 import styles from "./PickerContent.module.css";
 
+/** The agents a roll picks from: the selection, or every agent if it is empty. */
+function poolFor(selected: Set<string>): Agent[] {
+  return selected.size > 0
+    ? getAllAgents().filter((a) => selected.has(a.key))
+    : getAllAgents();
+}
+
 function pickRandom(
   selected: Set<string>,
   previousKey?: string | null,
   nonRepeating?: boolean,
 ): Agent {
-  const pool =
-    selected.size > 0
-      ? getAllAgents().filter((a) => selected.has(a.key))
-      : getAllAgents();
+  const pool = poolFor(selected);
   if (nonRepeating && previousKey && pool.length > 1) {
     const filtered = pool.filter((a) => a.key !== previousKey);
     return filtered[Math.floor(Math.random() * filtered.length)];
@@ -110,18 +114,34 @@ export default function PickerContent() {
       setChosenAgent(agent);
       setAgentCount((c) => c + 1);
       setNameVisible(true);
-      sendEvent("Agent", "GetRandom", agent.name);
+      track("agent_randomized", {
+        source: "picker",
+        agent_key: agent.key,
+        agent_role: agent.role,
+        non_repeating: nonRepeating,
+        ...agentPoolProps(poolFor(selectedAgents)),
+      });
     }, 100);
   };
 
+  // Only the visitor's own clicks: a shared preset and its undo also set
+  // these options, and that must not look like clicks.
   const handleShowPortrait = (checked: boolean) => {
     setShowPortrait(checked);
     saveShowPortrait(checked);
+    track("picker_option_changed", {
+      option: "show_portrait",
+      enabled: checked,
+    });
   };
 
   const handleNonRepeating = (checked: boolean) => {
     setNonRepeating(checked);
     saveNonRepeating(checked);
+    track("picker_option_changed", {
+      option: "non_repeating",
+      enabled: checked,
+    });
   };
 
   const currentPreset = useCallback(
@@ -157,7 +177,13 @@ export default function PickerContent() {
       saveNonRepeating(previous.nonRepeating);
     }
     undoSharedPreset();
+    track("shared_preset_undone", { share_type: "picker_preset" });
   }, [undoSharedPreset]);
+
+  const handleDismissShared = useCallback(() => {
+    dismissSharedPreset();
+    track("shared_preset_dismissed", { share_type: "picker_preset" });
+  }, [dismissSharedPreset]);
 
   const toggleRole = useCallback(
     (role: Role) => {
@@ -178,7 +204,7 @@ export default function PickerContent() {
     const map: Record<string, () => void> = {};
     presets.slice(0, SHORTCUT_COUNT).forEach((preset, index) => {
       const key = shortcutForIndex(index);
-      if (key) map[key] = () => applyPreset(preset.id);
+      if (key) map[key] = () => applyPreset(preset.id, "keyboard");
     });
     return map;
   }, [presets, applyPreset]);
@@ -203,7 +229,7 @@ export default function PickerContent() {
             <SharedPresetNotice
               message="Filters and options from a shared link have been applied, replacing your own."
               onUndo={handleUndoShared}
-              onDismiss={dismissSharedPreset}
+              onDismiss={handleDismissShared}
             />
           </div>
         )}
@@ -284,6 +310,8 @@ export default function PickerContent() {
                 <ShareButton
                   className={styles.allButton}
                   buildUrl={buildResultUrl}
+                  shareType="agent_result"
+                  shareSource="picker"
                   label="Share this agent"
                   copiedLabel="Agent link copied!"
                   title="Copy a link that reveals this agent"
@@ -337,15 +365,29 @@ export default function PickerContent() {
               </p>
             )}
             <div className={styles.globalSelectionButtons}>
-              <button className={styles.allButton} onClick={selectAll}>
+              <button
+                className={styles.allButton}
+                onClick={() => {
+                  selectAll();
+                  track("agent_filters_changed", { action: "select_all" });
+                }}
+              >
                 Select All
               </button>
-              <button className={styles.allButton} onClick={unselectAll}>
+              <button
+                className={styles.allButton}
+                onClick={() => {
+                  unselectAll();
+                  track("agent_filters_changed", { action: "unselect_all" });
+                }}
+              >
                 Unselect All
               </button>
               <ShareButton
                 className={styles.allButton}
                 buildUrl={buildPresetUrl}
+                shareType="picker_preset"
+                shareSource="picker"
                 label="Share these filters"
                 copiedLabel="Filter link copied!"
                 title="Copy a link that sets up these filters and options"
@@ -366,19 +408,37 @@ export default function PickerContent() {
                 <h2 className={styles.roleHeader}>{role.label}</h2>
                 <button
                   className={`${styles.allButton} ${styles.selectAllButton}`}
-                  onClick={() => selectByRole(role.key)}
+                  onClick={() => {
+                    selectByRole(role.key);
+                    track("agent_filters_changed", {
+                      action: "select_role",
+                      role: role.key,
+                    });
+                  }}
                 >
                   Select All
                 </button>
                 <button
                   className={`${styles.allButton} ${styles.unselectAllButton}`}
-                  onClick={() => unselectByRole(role.key)}
+                  onClick={() => {
+                    unselectByRole(role.key);
+                    track("agent_filters_changed", {
+                      action: "unselect_role",
+                      role: role.key,
+                    });
+                  }}
                 >
                   Unselect All
                 </button>
                 <button
                   className={`${styles.allButton} ${styles.justThisRoleButton}`}
-                  onClick={() => selectOnlyRole(role.key)}
+                  onClick={() => {
+                    selectOnlyRole(role.key);
+                    track("agent_filters_changed", {
+                      action: "select_only_role",
+                      role: role.key,
+                    });
+                  }}
                 >
                   Just This Role
                 </button>

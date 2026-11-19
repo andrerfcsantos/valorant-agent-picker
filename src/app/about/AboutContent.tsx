@@ -1,15 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
 import Image from "next/image";
-import { sendEvent } from "@/lib/analytics";
 import styles from "./about.module.css";
 
 export default function AboutContent() {
-  useEffect(() => {
-    sendEvent("Page", "Visit", "About");
-  }, []);
-
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>About this site</h2>
