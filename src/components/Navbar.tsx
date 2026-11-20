@@ -17,6 +17,9 @@ const COFFEE_URL = "https://www.buymeacoffee.com/heropickers";
 
 const DIN = { fontFamily: "DINNextW1G, Arial, Helvetica, sans-serif" };
 
+/** From this width up the full navbar shows and the menu is gone. */
+const DESKTOP_QUERY = "(min-width: 64rem)";
+
 /** Position in the menu, read by the CSS to stagger the rows as it opens. */
 function order(index: number): React.CSSProperties {
   return { "--i": index } as React.CSSProperties;
@@ -25,9 +28,23 @@ function order(index: number): React.CSSProperties {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  // Every link in the menu takes the visitor somewhere, so it closes.
-  const closeMenu = () => setIsOpen(false);
+
+  // Every link in the menu takes the visitor somewhere, so it closes. Focus
+  // goes back to the button, since the link it was on is no longer reachable.
+  const closeMenu = () => {
+    setIsOpen(false);
+    toggleRef.current?.focus();
+  };
+
+  // Arriving on another page any other way (the browser's Back, say) closes
+  // the menu too.
+  const [menuPathname, setMenuPathname] = useState(pathname);
+  if (menuPathname !== pathname) {
+    setMenuPathname(pathname);
+    setIsOpen(false);
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -36,8 +53,25 @@ export default function Navbar() {
       setIsOpen(false);
       toggleRef.current?.focus();
     };
+    // Tabbing past the last link leaves the menu, so it should not stay open
+    // over the page the visitor is now in.
+    const onFocusIn = (event: FocusEvent) => {
+      if (!navRef.current?.contains(event.target as Node)) setIsOpen(false);
+    };
+    // The menu does not exist at desktop width; without this it would come
+    // back, still open, when the window narrows again.
+    const desktop = window.matchMedia(DESKTOP_QUERY);
+    const onDesktopChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setIsOpen(false);
+    };
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    document.addEventListener("focusin", onFocusIn);
+    desktop.addEventListener("change", onDesktopChange);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("focusin", onFocusIn);
+      desktop.removeEventListener("change", onDesktopChange);
+    };
   }, [isOpen]);
 
   const navLinkClass = (href: string) => {
@@ -55,6 +89,7 @@ export default function Navbar() {
       />
 
       <nav
+        ref={navRef}
         className={`${styles.nav} flex items-center justify-between gap-3 bg-[#111111] px-4 py-2 min-h-[5vh] font-[family-name:DINNextW1G]`}
         aria-label="Main"
       >
@@ -158,7 +193,12 @@ export default function Navbar() {
           </span>
         </button>
 
-        <div id="site-nav-menu" className={styles.panel} data-open={isOpen}>
+        <div
+          id="site-nav-menu"
+          className={styles.panel}
+          data-open={isOpen}
+          inert={!isOpen}
+        >
           <ul className={`${styles.primary} md:hidden`}>
             {PRIMARY_LINKS.map(({ href, label }, index) => (
               <li key={href} style={order(index)}>
