@@ -68,11 +68,15 @@ export default function Navbar() {
     // The menu hangs off the bar, so scrolling the page would carry it away
     // and leave the backdrop behind. Scrolling inside the menu does not count.
     const onScroll = () => setIsOpen(false);
+    // Keys pressed while the menu is open must not act on the picker behind
+    // it, wherever focus happens to be, so the opt-out goes on the root.
+    document.documentElement.dataset.shortcuts = "off";
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("focusin", onFocusIn);
     window.addEventListener("scroll", onScroll, { passive: true });
     desktop.addEventListener("change", onDesktopChange);
     return () => {
+      delete document.documentElement.dataset.shortcuts;
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("focusin", onFocusIn);
       window.removeEventListener("scroll", onScroll);
@@ -96,8 +100,6 @@ export default function Navbar() {
 
       <nav
         ref={navRef}
-        // Keys pressed in the open menu must not act on the picker behind it.
-        data-shortcuts={isOpen ? "off" : undefined}
         className={`${styles.nav} flex items-center justify-between gap-3 bg-[#111111] px-4 py-2 min-h-[5vh] font-[family-name:DINNextW1G]`}
         aria-label="Main"
       >
