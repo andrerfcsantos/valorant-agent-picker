@@ -65,12 +65,17 @@ export default function Navbar() {
     const onDesktopChange = (event: MediaQueryListEvent) => {
       if (event.matches) setIsOpen(false);
     };
+    // The menu hangs off the bar, so scrolling the page would carry it away
+    // and leave the backdrop behind. Scrolling inside the menu does not count.
+    const onScroll = () => setIsOpen(false);
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("focusin", onFocusIn);
+    window.addEventListener("scroll", onScroll, { passive: true });
     desktop.addEventListener("change", onDesktopChange);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("focusin", onFocusIn);
+      window.removeEventListener("scroll", onScroll);
       desktop.removeEventListener("change", onDesktopChange);
     };
   }, [isOpen]);
@@ -184,7 +189,12 @@ export default function Navbar() {
         <button
           ref={toggleRef}
           className={styles.toggle}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            setIsOpen(!isOpen);
+            // Safari does not focus a button on click, and the menu's keyboard
+            // handling counts on focus being inside the navbar.
+            toggleRef.current?.focus();
+          }}
           aria-label={isOpen ? "Close menu" : "Open menu"}
           aria-expanded={isOpen}
           aria-controls="site-nav-menu"
