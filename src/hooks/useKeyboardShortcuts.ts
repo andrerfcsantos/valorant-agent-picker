@@ -9,6 +9,10 @@ export function useKeyboardShortcuts(shortcuts: ShortcutMap) {
   // An effect event always sees the latest `shortcuts`, so the listener can be
   // attached once without going stale as the handlers change between renders.
   const handleKeyDown = useEffectEvent((e: KeyboardEvent) => {
+    // A surface that covers the page can ask for the page's shortcuts to stay
+    // out of it, so a key pressed there does not act on what is behind.
+    if ((e.target as HTMLElement).closest?.('[data-shortcuts="off"]')) return;
+
     const tag = (e.target as HTMLElement).tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
     if ((e.target as HTMLElement).isContentEditable) return;

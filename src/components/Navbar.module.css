@@ -1,0 +1,338 @@
+/* The menu the navbar folds into below the desktop width. The bar itself is
+   laid out with utility classes in Navbar.tsx; everything that opens, closes
+   or moves lives here. */
+
+.nav {
+  position: relative;
+  z-index: 30;
+
+  --menu-bg: #0f1923;
+  --menu-line: rgba(236, 232, 225, 0.14);
+  --menu-text: #ece8e1;
+  --menu-muted: rgba(236, 232, 225, 0.62);
+  --menu-tile: rgba(236, 232, 225, 0.06);
+  --menu-tile-hi: rgba(236, 232, 225, 0.13);
+  --menu-accent: #ff4655;
+  --menu-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ------------------------------------------------------------------ Toggle */
+
+/* Square and hard-edged, with one corner cut the way the game cuts its own
+   buttons. */
+.toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  background: rgba(236, 232, 225, 0.1);
+  color: var(--menu-text);
+  cursor: pointer;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    0.6rem 100%,
+    0 calc(100% - 0.6rem)
+  );
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.toggle:hover {
+  background: rgba(236, 232, 225, 0.2);
+}
+
+.toggle[aria-expanded="true"] {
+  background: var(--menu-accent);
+  color: #0f1923;
+}
+
+.toggle:active {
+  transform: scale(0.94);
+}
+
+.toggle:focus-visible {
+  /* An outline would be clipped along with the corner. */
+  box-shadow: inset 0 0 0 3px #ffffff;
+  outline: none;
+}
+
+.row:focus-visible,
+.tile:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: -2px;
+}
+
+.toggleBars {
+  position: relative;
+  width: 1.25rem;
+  height: 0.875rem;
+}
+
+.toggleBars span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transition:
+    transform 0.22s var(--menu-ease),
+    opacity 0.12s ease;
+}
+
+.toggleBars span:nth-child(1) {
+  top: 0;
+}
+
+.toggleBars span:nth-child(2) {
+  top: calc(50% - 1px);
+}
+
+.toggleBars span:nth-child(3) {
+  bottom: 0;
+}
+
+.toggle[aria-expanded="true"] .toggleBars span:nth-child(1) {
+  transform: translateY(calc(0.4375rem - 1px)) rotate(45deg);
+}
+
+.toggle[aria-expanded="true"] .toggleBars span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.toggle[aria-expanded="true"] .toggleBars span:nth-child(3) {
+  transform: translateY(calc(-0.4375rem + 1px)) rotate(-45deg);
+}
+
+/* ---------------------------------------------------------------- Backdrop */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(8, 13, 19, 0.65);
+  /* Off at once on closing, so the fade never swallows a click. */
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0s linear 0.2s;
+}
+
+.backdrop[data-open="true"] {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* ------------------------------------------------------------------- Panel */
+
+/* Hangs below the bar instead of pushing the page down. Hidden with
+   visibility so its links are out of the tab order until it opens. */
+.panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--menu-bg);
+  border-top: 2px solid var(--menu-accent);
+  box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.5);
+  /* On a short window the menu scrolls rather than running off the bottom. */
+  max-height: calc(100dvh - 3.75rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  visibility: hidden;
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+  transition:
+    opacity 0.16s ease,
+    clip-path 0.24s var(--menu-ease),
+    visibility 0s linear 0.24s;
+}
+
+.panel[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  /* Negative insets leave room for the shadow. */
+  clip-path: inset(0 -3rem -4rem -3rem);
+  transition-delay: 0s;
+}
+
+.primary,
+.tiles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Rows slide in from the left a beat after the panel, one after the other. */
+.panel li {
+  opacity: 0;
+  transform: translateX(-0.625rem);
+  transition:
+    opacity 0.1s ease,
+    transform 0.1s ease;
+}
+
+.panel[data-open="true"] li {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.2s ease calc(0.05s + var(--i, 0) * 0.03s),
+    transform 0.26s var(--menu-ease) calc(0.05s + var(--i, 0) * 0.03s);
+}
+
+.primary {
+  padding-block: 0.625rem;
+  border-bottom: 1px solid var(--menu-line);
+}
+
+/* Tungsten in capitals is how the game itself writes its menus. */
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 3.5rem;
+  padding: 0 1.25rem 0 2.25rem;
+  font-family: "Tungsten-Bold", "DINNextW1G", Helvetica, Arial, sans-serif;
+  font-size: 2.125rem;
+  font-weight: bold;
+  line-height: 1;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  color: var(--menu-muted);
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.row:hover {
+  color: var(--menu-text);
+  background: var(--menu-tile);
+}
+
+/* The page you are on gets the small square the game uses as a bullet. */
+.row::before {
+  content: "";
+  position: absolute;
+  left: 1.125rem;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: -0.25rem;
+  background: var(--menu-accent);
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.2s var(--menu-ease);
+}
+
+.row[aria-current="page"] {
+  color: var(--menu-accent);
+}
+
+.row[aria-current="page"]::before {
+  transform: rotate(45deg) scale(1);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  padding: 1rem;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 0.75rem;
+  background: var(--menu-tile);
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  font-size: 1.0625rem;
+  color: var(--menu-text);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.tile:hover {
+  background: var(--menu-tile-hi);
+}
+
+.tile[aria-current="page"] {
+  color: var(--menu-accent);
+  box-shadow: inset 0 -2px 0 var(--menu-accent);
+}
+
+/* With room to spare the menu only holds the smaller links, so it becomes a
+   card under the button rather than a band across the whole window. */
+@media (min-width: 48rem) {
+  .panel {
+    left: auto;
+    right: 1rem;
+    width: 21rem;
+    margin-top: 0.5rem;
+  }
+}
+
+/* The open menu has to sit above everything on the page, including the
+   shortcuts button pinned to the corner of the window. */
+@media (max-width: 63.999rem) {
+  .nav {
+    z-index: 120;
+  }
+}
+
+/* High-contrast themes repaint backgrounds, which is all the icon is made
+   of, so it is drawn in the theme's own button colour instead. */
+@media (forced-colors: active) {
+  .toggle {
+    border: 1px solid ButtonText;
+    clip-path: none;
+  }
+
+  .toggleBars span {
+    background: ButtonText;
+  }
+
+  .toggle:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  .row[aria-current="page"],
+  .tile[aria-current="page"] {
+    text-decoration: underline;
+  }
+}
+
+@media (min-width: 64rem) {
+  .toggle,
+  .panel,
+  .backdrop {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .toggleBars span,
+  .backdrop,
+  .panel,
+  .panel li,
+  .panel[data-open="true"] li,
+  .row,
+  .row::before {
+    transition: none;
+  }
+}
