@@ -31,8 +31,9 @@ export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
-  // Every link in the menu takes the visitor somewhere, so it closes. Focus
-  // goes back to the button, since the link it was on is no longer reachable.
+  // Every link in the menu takes the visitor somewhere, so it closes, as does
+  // a click outside it. Focus goes back to the button, since the link it was
+  // on is no longer reachable.
   const closeMenu = () => {
     setIsOpen(false);
     toggleRef.current?.focus();
@@ -84,12 +85,14 @@ export default function Navbar() {
       <div
         className={styles.backdrop}
         data-open={isOpen}
-        onClick={() => setIsOpen(false)}
+        onClick={closeMenu}
         aria-hidden="true"
       />
 
       <nav
         ref={navRef}
+        // Keys pressed in the open menu must not act on the picker behind it.
+        data-shortcuts={isOpen ? "off" : undefined}
         className={`${styles.nav} flex items-center justify-between gap-3 bg-[#111111] px-4 py-2 min-h-[5vh] font-[family-name:DINNextW1G]`}
         aria-label="Main"
       >
