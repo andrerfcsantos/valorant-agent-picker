@@ -141,7 +141,7 @@ export default function SquadSlotRefresh({
                 <span className={styles.outside}>
                   {othersHaveAll
                     ? `Not from ${player}'s selection: other players have all of it`
-                    : `Not in ${player}'s selection any more`}
+                    : `Not in ${player}'s current selection`}
                 </span>
               )}
             </div>

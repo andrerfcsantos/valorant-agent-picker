@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { ROLES } from "@/data/agents";
 import { SHARED_AGENT_ERRORS, type SharedAgent } from "@/hooks/useSharedAgent";
@@ -8,7 +8,7 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
-import { bringResultIntoView } from "./scroll";
+import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
@@ -28,9 +28,7 @@ export default function SharedAgentRefresh({
   const ready = shared.status === "ready";
   const rolls = ready ? shared.rolls : 0;
   const revealed = ready && shared.revealed;
-  useEffect(() => {
-    if (rolls > 0 || revealed) bringResultIntoView(rail.current);
-  }, [rolls, revealed]);
+  useResultIntoView(rail, `${rolls}-${revealed}`);
 
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;

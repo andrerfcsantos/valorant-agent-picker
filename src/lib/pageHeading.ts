@@ -6,7 +6,10 @@
  */
 export function focusPageHeading(): void {
   requestAnimationFrame(() => {
-    const heading = document.querySelector<HTMLElement>("main h1");
+    // Some classic pages have no <main>; their first heading is the page's.
+    const heading =
+      document.querySelector<HTMLElement>("main h1") ??
+      document.querySelector<HTMLElement>("h1");
     if (!heading) return;
     // Focusable from script only, so it never joins the tab order.
     if (!heading.hasAttribute("tabindex")) heading.tabIndex = -1;

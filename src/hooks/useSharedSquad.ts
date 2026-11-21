@@ -36,6 +36,7 @@ type ViewState =
 export function useSharedSquad() {
   const [view, setView] = useState<ViewState>({ status: "loading" });
   const [rolls, setRolls] = useState(0);
+  const [squadRolls, setSquadRolls] = useState(0);
   // Kept here rather than in the new design's view, so switching design and
   // back does not seal a roll the visitor has already seen.
   const [revealed, setRevealed] = useState(false);
@@ -104,6 +105,7 @@ export function useSharedSquad() {
       squad,
       rolled.map((agent) => agent?.key ?? null),
     );
+    setSquadRolls((count) => count + 1);
     track("squad_randomized", {
       source: "shared_result",
       squad_size: squad.size,
@@ -155,6 +157,8 @@ export function useSharedSquad() {
     agents: view.agents,
     ownRoll: view.ownRoll,
     rolls,
+    /** Rolls of the whole squad only. */
+    squadRolls,
     handleReroll,
     handleRerollSlot,
     /** Opens the squad generator with this setup. */

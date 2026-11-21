@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { ROLES, getAllAgents } from "@/data/agents";
 import { SHARED_SQUAD_ERRORS, type SharedSquad } from "@/hooks/useSharedSquad";
@@ -7,6 +8,7 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
@@ -22,6 +24,16 @@ export default function SharedSquadRefresh({
 }: {
   shared: SharedSquad;
 }) {
+  // Hooks first: the early returns below would otherwise skip them. The
+  // reveal and a whole-squad reroll change every row, from a button fixed to
+  // the bottom of a phone's screen; one player's reroll is made from that
+  // player's row, which is already in view.
+  const playerList = useRef<HTMLOListElement>(null);
+  const ready = shared.status === "ready";
+  const squadRolls = ready ? shared.squadRolls : 0;
+  const revealed = ready && shared.revealed;
+  useResultIntoView(playerList, `${squadRolls}-${revealed}`);
+
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
   }
@@ -131,6 +143,7 @@ export default function SharedSquadRefresh({
         </h2>
 
         <ol
+          ref={playerList}
           className={`${styles.players} ${rolls === 0 ? styles.inOrder : ""}`}
         >
           {players.map((player) => (

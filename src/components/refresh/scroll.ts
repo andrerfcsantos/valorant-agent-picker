@@ -1,5 +1,10 @@
+import { type RefObject, useEffect, useRef } from "react";
+
 /** Below this width the roll button is fixed to the bottom of the screen. */
 const FIXED_ROLL_BAR = "(max-width: 63.99rem)";
+
+/** About one result row, in pixels: what has to show above the bar. */
+const ROW = 64;
 
 /**
  * Brings a result back into view when the visitor rolled from further down
@@ -10,10 +15,33 @@ const FIXED_ROLL_BAR = "(max-width: 63.99rem)";
  */
 export function bringResultIntoView(element: HTMLElement | null): void {
   if (!element || !window.matchMedia(FIXED_ROLL_BAR).matches) return;
-  if (element.getBoundingClientRect().top >= 0) return;
+  // In view means starting below the top of the screen, with room for at
+  // least a row above the fixed bar. Setup above the results can push them
+  // under the bar as easily as scrolling down can leave them above.
+  const top = element.getBoundingClientRect().top;
+  const bar = document.querySelector("[data-roll-bar]");
+  const floor = bar ? bar.getBoundingClientRect().top : window.innerHeight;
+  if (top >= 0 && top + ROW <= floor) return;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   element.scrollIntoView({
     block: "start",
     behavior: reduce ? "auto" : "smooth",
   });
+}
+
+/**
+ * Calls {@link bringResultIntoView} on `ref` whenever `trigger` changes, but
+ * not for the value it mounts with: a view that mounts after a design switch
+ * already has its rolls counted, and switching design is not a roll.
+ */
+export function useResultIntoView(
+  ref: RefObject<HTMLElement | null>,
+  trigger: string | number,
+): void {
+  const seen = useRef(trigger);
+  useEffect(() => {
+    if (seen.current === trigger) return;
+    seen.current = trigger;
+    bringResultIntoView(ref.current);
+  }, [ref, trigger]);
 }
