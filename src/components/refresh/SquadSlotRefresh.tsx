@@ -51,7 +51,7 @@ export default function SquadSlotRefresh({
   // button is near the top, changes the agent above the screen.
   const row = useRef<HTMLDivElement>(null);
   const [rerolls, setRerolls] = useState(0);
-  useResultIntoView(row, rerolls);
+  useResultIntoView(row, rerolls, { ownRow: true });
 
   // Names the visitor types are theirs: shown as text only inside ph-mask,
   // which session replays mask, and never copied into an attribute (replays

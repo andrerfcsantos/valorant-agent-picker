@@ -38,7 +38,7 @@ export default function SharedSquadRefresh({
   // scrolled so the button is near the top, the agent changes above it.
   const rerolledRow = useRef<HTMLElement | null>(null);
   const [rowRerolls, setRowRerolls] = useState(0);
-  useResultIntoView(rerolledRow, rowRerolls);
+  useResultIntoView(rerolledRow, rowRerolls, { ownRow: true });
 
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;

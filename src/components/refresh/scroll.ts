@@ -10,19 +10,25 @@ const FIXED_ROLL_BAR = "(max-width: 63.99rem)";
  * otherwise change something nobody can see. On wider screens the button
  * sits beside the results, and the page is left where the visitor put it.
  */
-export function bringResultIntoView(element: HTMLElement | null): void {
+export function bringResultIntoView(
+  element: HTMLElement | null,
+  { ownRow = false }: { ownRow?: boolean } = {},
+): void {
   if (!element || !window.matchMedia(FIXED_ROLL_BAR).matches) return;
-  // Only for a roll made from the fixed bar, from a button marked
-  // data-roll-source (a player's own reroll), or by a tap that leaves
-  // nothing focused. A keyboard shortcut pressed while focus is anywhere
-  // else, a pool's agent tile included, keeps the visitor where they are,
-  // with their focus still on screen.
+  // Only for a roll made from the fixed bar, by a tap that leaves nothing
+  // focused, or, for one player's row (`ownRow`), from that row's own
+  // reroll button (marked data-roll-source). A keyboard shortcut pressed
+  // while focus is anywhere else, another player's controls included,
+  // keeps the visitor where they are, with their focus still on screen.
   const active = document.activeElement;
-  const fromElsewhere =
-    active instanceof HTMLElement &&
-    active !== document.body &&
-    !active.closest("[data-roll-bar], [data-roll-source]");
-  if (fromElsewhere) return;
+  const allowed =
+    !(active instanceof HTMLElement) ||
+    active === document.body ||
+    active.closest("[data-roll-bar]") !== null ||
+    (ownRow &&
+      element.contains(active) &&
+      active.closest("[data-roll-source]") !== null);
+  if (!allowed) return;
   // In view means the result itself (the agent's name, the first player's
   // agent, marked data-result) shows in full between the top of the screen
   // and the fixed bar. Setup above the results can push them under the bar
@@ -47,11 +53,13 @@ export function bringResultIntoView(element: HTMLElement | null): void {
 export function useResultIntoView(
   ref: RefObject<HTMLElement | null>,
   trigger: string | number,
+  options?: { ownRow?: boolean },
 ): void {
+  const ownRow = options?.ownRow ?? false;
   const seen = useRef(trigger);
   useEffect(() => {
     if (seen.current === trigger) return;
     seen.current = trigger;
-    bringResultIntoView(ref.current);
-  }, [ref, trigger]);
+    bringResultIntoView(ref.current, { ownRow });
+  }, [ref, trigger, ownRow]);
 }
