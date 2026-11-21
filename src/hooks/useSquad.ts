@@ -173,13 +173,19 @@ export function useSquad() {
 
     if (parts.length === 0) return;
 
-    navigator.clipboard.writeText(parts.join(" | ")).then(
-      () => track("squad_copied_as_text", { squad_size: squadSize }),
-      () => {},
-    );
-    setCopied(true);
-    if (copiedTimer.current) clearTimeout(copiedTimer.current);
-    copiedTimer.current = setTimeout(() => setCopied(false), 2000);
+    // Only a copy that landed says so. The clipboard needs a secure context
+    // and permission, and without the API at all `writeText` is not there.
+    Promise.resolve()
+      .then(() => navigator.clipboard.writeText(parts.join(" | ")))
+      .then(
+        () => {
+          track("squad_copied_as_text", { squad_size: squadSize });
+          setCopied(true);
+          if (copiedTimer.current) clearTimeout(copiedTimer.current);
+          copiedTimer.current = setTimeout(() => setCopied(false), 2000);
+        },
+        () => {},
+      );
   }, [agents, configs, squadSize]);
 
   const handleSizeChange = useCallback(

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { getAllAgents } from "@/data/agents";
 import { MAX_SLOTS, emptySlotConfig } from "@/lib/squadService";
 import type { Squad } from "@/hooks/useSquad";
@@ -39,6 +40,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
     handleUndoShared,
     handleDismissShared,
   } = squad;
+  const rollButton = useRef<HTMLButtonElement>(null);
 
   // Counted against the agents that exist. A saved pool can still name an
   // agent that has since been removed, which leaves nothing to add back.
@@ -85,7 +87,12 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
         </fieldset>
 
         <div className={ui.rollBar} data-roll-bar>
-          <button type="button" className={ui.roll} onClick={randomizeAll}>
+          <button
+            ref={rollButton}
+            type="button"
+            className={ui.roll}
+            onClick={randomizeAll}
+          >
             Roll the squad
             <kbd className={ui.kbd} aria-hidden="true">
               R
@@ -97,7 +104,11 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
           <button
             type="button"
             className={`${ui.link} ${styles.resetAll}`}
-            onClick={resetAllFilters}
+            onClick={() => {
+              resetAllFilters();
+              // The link goes away with the filters it cleared.
+              rollButton.current?.focus();
+            }}
           >
             Select every agent for every player
           </button>

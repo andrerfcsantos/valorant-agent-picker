@@ -142,7 +142,7 @@ export function useSharedAgent() {
     /** Undefined when the link names an agent this version does not know. */
     agent: view.agentKey ? agentByKey.get(view.agentKey) : undefined,
     pool,
-    /** True when the roll could have been any agent. */
+    /** True when no agents were selected, so every agent is in play. */
     everyAgent: view.picker.selected.length === 0,
     /** Rolls made here, which is also a key for replaying motion. */
     rolls,

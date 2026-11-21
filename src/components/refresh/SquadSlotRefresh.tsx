@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, useRef } from "react";
 import { ROLES, getAllAgents } from "@/data/agents";
 import type { Agent, Role } from "@/data/agents";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
@@ -38,6 +38,9 @@ export default function SquadSlotRefresh({
   onReroll,
 }: SquadSlotRefreshProps) {
   const [poolOpen, setPoolOpen] = useState(false);
+  // "Select all" goes away once it has done its job, so focus moves to the
+  // button that opened the pool rather than falling to the page.
+  const poolToggle = useRef<HTMLButtonElement>(null);
   const poolId = useId();
 
   const player = name.trim() || `Player ${index + 1}`;
@@ -137,6 +140,7 @@ export default function SquadSlotRefresh({
           <button
             type="button"
             className={`${ui.btn} ${ui.caret}`}
+            ref={poolToggle}
             aria-expanded={poolOpen}
             aria-controls={poolId}
             // Starts with the words on the button, so asking for it by what
@@ -161,7 +165,10 @@ export default function SquadSlotRefresh({
               <button
                 type="button"
                 className={ui.link}
-                onClick={() => onResetFilters(index)}
+                onClick={() => {
+                  onResetFilters(index);
+                  poolToggle.current?.focus();
+                }}
               >
                 Select all
               </button>

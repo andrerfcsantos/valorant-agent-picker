@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { getAllAgents } from "@/data/agents";
 import type { Role } from "@/data/agents";
 import { track } from "@/lib/analytics";
@@ -37,6 +38,17 @@ export default function AgentPool({
   } = useAgents();
 
   const count = selectedAgents.size;
+  // Each of "Select all" and "Clear selection" goes away once it has done its
+  // job, and the other is then always there: focus moves to it.
+  const selectAllButton = useRef<HTMLButtonElement>(null);
+  const clearButton = useRef<HTMLButtonElement>(null);
+  const focusAfter = useRef<"selectAll" | "clear" | null>(null);
+  useEffect(() => {
+    const target = focusAfter.current;
+    focusAfter.current = null;
+    if (target === "selectAll") selectAllButton.current?.focus();
+    if (target === "clear") clearButton.current?.focus();
+  }, [count]);
 
   const summary =
     count === 0
@@ -72,7 +84,9 @@ export default function AgentPool({
             <button
               type="button"
               className={ui.link}
+              ref={selectAllButton}
               onClick={() => {
+                focusAfter.current = "clear";
                 selectAll();
                 track("agent_filters_changed", { action: "select_all" });
               }}
@@ -84,7 +98,9 @@ export default function AgentPool({
             <button
               type="button"
               className={ui.link}
+              ref={clearButton}
               onClick={() => {
+                focusAfter.current = "selectAll";
                 unselectAll();
                 track("agent_filters_changed", { action: "unselect_all" });
               }}

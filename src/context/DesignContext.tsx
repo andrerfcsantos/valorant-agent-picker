@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   type DesignSwitchSource,
+  designForChoice,
   registerDesign,
   track,
 } from "@/lib/analytics";
@@ -45,10 +46,12 @@ export function DesignProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const initial = readDesignChoice();
-    // The boot script read storage too, a moment earlier; another tab may have
-    // switched design in between. Stamp what React is about to render, so the
-    // CSS and the page can never disagree.
+    // The boot script and analytics read storage too, a moment earlier;
+    // another tab may have switched design in between. Stamp what React is
+    // about to render on both, so CSS, the page and the events agree.
     document.documentElement.dataset.design = initial.design;
+    const { design, origin } = designForChoice(initial);
+    registerDesign(design, origin);
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- the saved design is in localStorage, read after mount
     setChoice(initial);
     setReady(true);

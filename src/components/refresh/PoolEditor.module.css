@@ -4,8 +4,11 @@
 
 .groupHead {
   display: flex;
+  /* "Controller" and "Initiator" are long in Tungsten: on a narrow sheet the
+     "Only …" button goes to a line of its own rather than off the edge. */
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.25rem 1rem;
   margin-bottom: 0.6rem;
 }
 

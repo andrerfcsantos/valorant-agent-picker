@@ -12,7 +12,7 @@ import styles from "./Shared.module.css";
 
 /**
  * The new design of the page a "Share this roll" link opens. A roll somebody
- * sent arrives sealed: the portrait out of focus, the pool it came from laid
+ * sent arrives sealed: the portrait out of focus, the sender's selection laid
  * out beside it as the line-up of who it could be, and one button to find
  * out. After that it is the picker's rail, rolling from the sender's pool.
  */
@@ -55,8 +55,9 @@ export default function SharedAgentRefresh({
         : `It was ${agent.name}, ${roleLabel}.`;
 
   // A roll is shared with the selection as it is when the link is made, and
-  // the selection may have changed since the roll. Then the pool is only what
-  // rolling again uses, and must not be offered as the line-up it came from.
+  // the selection may have changed since the roll. So the pool is described
+  // as what rolling again uses, never as where the roll came from, and is
+  // offered as the line-up only when the roll is in it.
   const inLineup = agent !== undefined && pool.some((a) => a.key === agent.key);
 
   const groups = ROLES.map((role) => ({
@@ -157,15 +158,13 @@ export default function SharedAgentRefresh({
         <div className={styles.head}>
           <div className={styles.headText}>
             <h2 id="shared-pool-heading" className={styles.title}>
-              {!inLineup
-                ? "Rolling again picks from these"
-                : sealed
-                  ? "It is one of these"
-                  : "The agents it came from"}
+              {sealed && inLineup
+                ? "It is one of these"
+                : "Rolling again picks from these"}
             </h2>
             <p className={styles.summary}>
               {shared.everyAgent
-                ? `It could have been any agent, all ${pool.length} of them.`
+                ? `No agents were selected, so all ${pool.length} are in play.`
                 : `${pool.length} ${pool.length === 1 ? "agent was" : "agents were"} selected.`}
               {picker.nonRepeating
                 ? " Rolling again never gives the same agent twice in a row."
