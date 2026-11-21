@@ -6,6 +6,7 @@ import {
   agentPoolProps,
   builtinId,
   createSampler,
+  designForChoice,
   isStacklessThirdPartyException,
   presetKind,
   redactUrl,
@@ -217,5 +218,21 @@ describe("presetKind and builtinId", () => {
     const id = "6f1c1b7e-1e0a-4b8e-9f11-2b5d1d0c9a77";
     expect(presetKind(id)).toBe("custom");
     expect(builtinId(id)).toBeUndefined();
+  });
+});
+
+describe("designForChoice", () => {
+  test("reports the visitor's own choice as chosen", () => {
+    expect(designForChoice({ design: "refresh", chosen: true })).toEqual({
+      design: "refresh",
+      origin: "chosen",
+    });
+  });
+
+  test("reports the build's default as the default", () => {
+    expect(designForChoice({ design: "classic", chosen: false })).toEqual({
+      design: "classic",
+      origin: "default",
+    });
   });
 });

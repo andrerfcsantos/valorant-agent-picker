@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SharedAgentContent from "@/components/SharedAgentContent";
+import SharedAgentPage from "@/components/SharedAgentPage";
 
 const title = "Someone randomized an agent for you";
 const description =
@@ -23,6 +23,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SharedAgentPage() {
-  return <SharedAgentContent />;
+export default function Page() {
+  return <SharedAgentPage />;
 }

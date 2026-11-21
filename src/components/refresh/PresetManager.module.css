@@ -1,0 +1,446 @@
+/* The preset manager. It is shown in a sheet and on a page of its own, which
+   are different widths in the same window, so its layout answers to the room
+   it is given rather than to the window. */
+
+.manager {
+  container-type: inline-size;
+}
+
+/* No keyboard below this width, so no keys to explain. */
+.keysNote {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .keysNote {
+    display: block;
+  }
+}
+
+/* Above the list, where it is in view however long the list is: a new
+   preset is the one thing here not done to a preset that already exists. */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Every row keeps the edge the applied one colours, so names line up. */
+.slot {
+  /* Clear of the navbar where the list is a page, when a new preset is
+     brought into view. */
+  scroll-margin-top: calc(var(--vp-nav-h) + 0.75rem);
+  border-left: 3px solid transparent;
+  border-radius: var(--vp-radius);
+  background: var(--vp-tile);
+}
+
+.applied {
+  border-left-color: var(--vp-red);
+}
+
+/* The whole row opens the preset's agents, so it answers the pointer like
+   something to press, except while the pointer is on a control of its own. */
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0 0.6rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.35rem;
+  border-radius: 0 var(--vp-radius) var(--vp-radius) 0;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+@media (hover: hover) {
+  .row:hover:not(:has(button:hover, label:hover)) {
+    background: var(--vp-tile-hi);
+  }
+}
+
+/* Position in the list: the arrows change it, and the key between them is
+   what that position is worth. */
+.order {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.move {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--vp-muted);
+  cursor: pointer;
+}
+
+.move:hover:not(:disabled) {
+  background: var(--vp-tile-hi);
+  color: var(--vp-text);
+}
+
+.move:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.key {
+  display: none;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--vp-muted);
+  border-radius: 0;
+  color: var(--vp-text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@media (min-width: 64rem) {
+  .key {
+    display: grid;
+  }
+}
+
+.main {
+  min-width: 0;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+}
+
+/* The name and its pencil, as one field. It reads as a heading until it is
+   pointed at, and is only as wide as the name, so the pencil sits at the
+   name's end. */
+.nameBox {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  max-width: 100%;
+  height: 2.25rem;
+  margin-left: -0.4rem;
+  padding: 0 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  cursor: text;
+}
+
+.nameBox:hover {
+  border-color: var(--vp-muted);
+}
+
+.nameBox:focus-within {
+  border-color: var(--vp-muted);
+  background: var(--vp-rail);
+}
+
+/* The focus ring goes round the whole field, pencil included. */
+.nameBox:has(:focus-visible) {
+  outline: 2px solid var(--vp-focus);
+  outline-offset: 2px;
+}
+
+.nameBox .name:focus-visible {
+  outline: none;
+}
+
+.name {
+  field-sizing: content;
+  min-width: 2ch;
+  max-width: 100%;
+  padding: 0.15rem 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--vp-text);
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+}
+
+/* Typed as it is saved: capitals only while it reads as a heading. */
+.name:focus {
+  text-transform: none;
+}
+
+.pencil {
+  display: grid;
+  flex: none;
+  place-items: center;
+  color: var(--vp-muted);
+  cursor: pointer;
+}
+
+.nameBox:hover .pencil,
+.nameBox:focus-within .pencil {
+  color: var(--vp-text);
+}
+
+.count {
+  flex: none;
+  color: var(--vp-muted);
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.actions button {
+  min-height: 2.25rem;
+}
+
+/* Stands where "Apply" would, at its size, so the buttons beside it are in
+   the same place on every row. */
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.25rem;
+  padding: 0 0.25rem;
+  font-weight: 600;
+}
+
+.state svg {
+  color: var(--vp-red);
+}
+
+/* Who is in the preset, and the icons for the rest of what is done to it. */
+.bottom {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.bottom > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.quick {
+  display: flex;
+  flex: none;
+  gap: 0.125rem;
+  margin: -0.15rem -0.4rem 0 0;
+}
+
+.iconAction {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--vp-muted);
+  cursor: pointer;
+}
+
+.iconAction:hover {
+  background: var(--vp-tile-hi);
+  color: var(--vp-text);
+}
+
+.iconAction.danger:hover {
+  color: var(--vp-danger);
+}
+
+.main .fallback {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0.4rem 0 0.2rem;
+}
+
+.roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.9rem;
+  margin: 0.2rem 0 0.1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.rosterRole {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.rosterCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-right: 0.2rem;
+  color: var(--vp-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.face {
+  display: block;
+  height: 1.5rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.faceImage {
+  width: 100%;
+  height: 100%;
+}
+
+/* Left out of the preset, drawn as the roster draws an agent left out. */
+.faceOut {
+  outline: 1px dashed var(--vp-muted);
+  outline-offset: -1px;
+}
+
+.faceOut .faceImage {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.none,
+.empty {
+  margin: 0;
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+.none {
+  margin-top: 0.3rem;
+}
+
+.empty {
+  margin-bottom: 0.75rem;
+}
+
+/* A preset opened to choose its agents. */
+.panel {
+  padding: 0.25rem 1rem 1rem;
+  border-top: 1px solid var(--vp-tile);
+  border-radius: 0 0 var(--vp-radius) 0;
+  background: var(--vp-rail);
+  /* The tile shows as a frame, so the panel still reads as part of its row
+     where the page behind is the same colour as the panel. */
+  margin: 0 1px 1px 0;
+}
+
+.panelHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  margin: 0.5rem 0 0.75rem;
+  color: var(--vp-muted);
+}
+
+.panelHead button {
+  white-space: normal;
+  text-align: left;
+}
+
+.panelFoot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* Where a deleted preset was, with the way to get it back. A name can be
+   one long word, so it may break anywhere. */
+.gone {
+  overflow-wrap: anywhere;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  padding: 0.15rem 0.9rem;
+  border: 1px dashed var(--vp-line);
+  border-radius: var(--vp-radius);
+  color: var(--vp-muted);
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.tools button {
+  white-space: normal;
+  text-align: left;
+}
+
+/* Tight on room: the buttons take a line of their own under the name, the
+   icons go under the agents they act on, and both grow into the targets a
+   thumb needs. */
+@container (max-width: 26rem) {
+  .actions {
+    flex: 1 1 100%;
+    margin: 0.15rem 0 0.25rem;
+  }
+
+  .bottom {
+    flex-direction: column;
+  }
+
+  .quick {
+    align-self: flex-end;
+    gap: 0.25rem;
+    margin-top: 0;
+  }
+
+  .iconAction {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .panel {
+    padding-inline: 0.75rem;
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .move {
+    height: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

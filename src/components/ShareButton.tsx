@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { type ShareSource, type ShareType, track } from "@/lib/analytics";
+import type { ShareSource, ShareType } from "@/lib/analytics";
+import { useShareLink } from "@/hooks/useShareLink";
 
 interface ShareButtonProps {
   /** Built lazily so the link always reflects the current state. */
@@ -25,45 +25,15 @@ export default function ShareButton({
   title,
   className,
 }: ShareButtonProps) {
-  const [copied, setCopied] = useState(false);
-  const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(
-    () => () => {
-      if (resetTimer.current) clearTimeout(resetTimer.current);
-    },
-    [],
-  );
-
-  const handleClick = useCallback(async () => {
-    const url = buildUrl();
-    try {
-      await navigator.clipboard.writeText(url);
-      setFallbackUrl(null);
-      setCopied(true);
-      track("share_link_copied", {
-        share_type: shareType,
-        source: shareSource,
-        method: "clipboard",
-      });
-      if (resetTimer.current) clearTimeout(resetTimer.current);
-      resetTimer.current = setTimeout(() => setCopied(false), 1800);
-    } catch {
-      // The clipboard API needs a secure context and permission. Show the link
-      // so it can still be copied by hand.
-      setFallbackUrl(url);
-      track("share_link_copied", {
-        share_type: shareType,
-        source: shareSource,
-        method: "fallback",
-      });
-    }
-  }, [buildUrl, shareType, shareSource]);
+  const { copied, fallbackUrl, copy } = useShareLink({
+    buildUrl,
+    shareType,
+    shareSource,
+  });
 
   return (
     <>
-      <button className={className} onClick={handleClick} title={title}>
+      <button className={className} onClick={copy} title={title}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="14"

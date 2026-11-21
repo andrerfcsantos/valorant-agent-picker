@@ -42,6 +42,24 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
   production build fails without them. `npm run dev` runs with PostHog off
   unless `.env.local` sets them (see `.env.example`).
 
+## The two designs
+
+The site ships a classic design and a new one ("refresh") side by side while
+the new one is adopted. Visitors switch between them from the navbar, and the
+choice is remembered in their browser.
+
+- **Default:** `NEXT_PUBLIC_DEFAULT_DESIGN` sets what a visitor sees before
+  they choose (`classic` unless set to `refresh`). See `.env.example`.
+- **Code:** each page with two designs has one hook holding its behaviour
+  (`src/hooks/usePicker.ts`, `src/hooks/useSquad.ts`,
+  `src/hooks/useSharedAgent.ts`, `src/hooks/useSharedSquad.ts`) and two views
+  over it. The new views live in `src/components/refresh`, their tokens in
+  `src/app/refresh.css`. The About page ships both designs in its HTML and
+  CSS shows the visitor's.
+- **Adoption:** every PostHog event carries `design` and `design_origin`
+  (`default` or `chosen`), and `design_switched` records each switch with the
+  control it came from.
+
 ## Logos
 
 The master artwork lives in [`images/logo/`](images/logo). Every size the site

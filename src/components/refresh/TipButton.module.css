@@ -1,0 +1,100 @@
+.anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Put away, the tip is a dot under its button. Hidden at its full size it
+   would still count towards how wide the page is, and one under a button at
+   the right edge would give the page a sideways scroll. */
+.tip {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 40;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  border-radius: var(--vp-radius);
+  background: var(--vp-nav);
+  box-shadow: 0 0.5rem 1.25rem rgb(0 0 0 / 0.4);
+  color: var(--vp-text);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+  /* A tip can name a preset, and a name can be one long word. */
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Shown: centred under the button, then moved by --tip-shift, which the
+   button sets to whatever keeps the tip inside the window. Its size is set
+   here rather than above so that it only takes up room while it is seen. */
+.anchor:has(:focus-visible) .tip {
+  left: 50%;
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 2rem));
+  height: auto;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--vp-line);
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(calc(-50% + var(--tip-shift, 0px)));
+  animation: appear 0.12s ease;
+}
+
+/* Only where there is a pointer to hover with: a tap would otherwise leave
+   the tip stuck on. A short wait first, so sweeping the pointer across the
+   row does not flash every tip on the way. */
+@media (hover: hover) {
+  .anchor:hover .tip {
+    left: 50%;
+    width: max-content;
+    max-width: min(20rem, calc(100vw - 2rem));
+    height: auto;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--vp-line);
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(calc(-50% + var(--tip-shift, 0px)));
+    animation: appear 0.12s ease 0.35s backwards;
+  }
+}
+
+/* The pointer can move from the button onto a tip it showed, to read it,
+   without the tip going: the tip is part of the button's hover, and this
+   strip bridges the gap between the two. */
+@media (hover: hover) {
+  .anchor:hover .tip {
+    pointer-events: auto;
+    overflow: visible;
+  }
+
+  .anchor:hover .tip::before {
+    content: "";
+    position: absolute;
+    inset: -0.5rem 0 100%;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 -2px;
+  }
+}
+
+/* Put away with Escape, or covered by what the button opened. */
+.anchor[data-dismissed] .tip,
+.anchor:has([aria-expanded="true"]) .tip {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anchor .tip {
+    animation-duration: 0s;
+  }
+}

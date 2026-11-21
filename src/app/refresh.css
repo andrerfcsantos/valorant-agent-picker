@@ -1,0 +1,267 @@
+/* The new design ("refresh"). Everything here is either a token, or a rule
+   that only applies once <html> carries data-design="refresh", so the classic
+   design is untouched by this file. Page-level styles live in CSS modules
+   next to their components (src/components/refresh); what is here has to be
+   global because it restyles markup that both designs share: the navbar, the
+   footer and a few shared widgets.
+
+   The look is the game's own: the deep navy of its menus, its red, off-white
+   text, square edges with the odd corner cut off, Tungsten in capitals for
+   anything that is a title, and DIN for everything you read. */
+
+:root {
+  /* The page colour of whichever design is showing. Classic containers that
+     paint their own background read it, so no page ends up two-tone. */
+  --site-bg: #2c3e50;
+
+  --vp-page: #0f1923;
+  --vp-rail: #0b131b;
+  --vp-nav: #070d13;
+  --vp-tile: #1b2733;
+  --vp-tile-hi: #25333f;
+  --vp-line: #3d4a57;
+  --vp-line-soft: #1f2b37;
+  --vp-text: #ece8e1;
+  --vp-muted: #a3aaae;
+  --vp-red: #ff4655;
+  --vp-focus: #ffffff;
+  --vp-danger: #ff8a93;
+  --vp-nav-h: 3.5rem;
+  /* The game draws its panels and buttons square. */
+  --vp-radius: 0;
+  /* How much of a corner is cut off the shapes that get one. */
+  --vp-cut: 0.75rem;
+  --vp-font-display:
+    "Tungsten-Bold", "DINNextW1G", Helvetica, Arial, sans-serif;
+  --vp-font-ui: "DINNextW1G", Arial, Helvetica, sans-serif;
+  --vp-font-brand: "Valorant-Regular", "Tungsten-Bold", Arial, sans-serif;
+}
+
+html[data-design="refresh"] {
+  --site-bg: var(--vp-page);
+}
+
+/* Text that differs between designs is written twice and shown by CSS, so the
+   static HTML is right for both before React has loaded. */
+html[data-design="refresh"] .only-classic,
+html:not([data-design="refresh"]) .only-refresh {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ Navbar */
+
+.site-nav-switch {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(236, 232, 225, 0.35);
+  background: none;
+  color: #ece8e1;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.site-nav-switch:hover {
+  border-color: #ff4655;
+  background: rgba(255, 70, 85, 0.16);
+}
+
+.site-nav-switch:focus-visible,
+html[data-design="refresh"] .site-nav a:focus-visible,
+html[data-design="refresh"] .site-nav button:focus-visible,
+html[data-design="refresh"] .site-footer a:focus-visible {
+  outline: 2px solid var(--vp-focus);
+  outline-offset: 2px;
+}
+
+html[data-design="refresh"] .site-nav {
+  background: var(--vp-nav);
+  border-bottom: 1px solid var(--vp-line-soft);
+}
+
+html[data-design="refresh"] .site-nav-switch {
+  min-height: 2.25rem;
+  border-color: var(--vp-line);
+  color: var(--vp-text);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+html[data-design="refresh"] .site-nav-switch:hover {
+  border-color: var(--vp-red);
+  background: var(--vp-tile);
+}
+
+@media (min-width: 64rem) {
+  /* The result rail sticks under the navbar, so the navbar has to be a known
+     height and stay put. Below this width it is a menu that opens and closes,
+     and nothing sticks. */
+  html[data-design="refresh"] .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    min-height: var(--vp-nav-h);
+    height: var(--vp-nav-h);
+    padding-block: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ Footer */
+
+/* The page fills whatever the window has left between the navbar and the
+   footer, so a short page ends exactly at the bottom of the window instead of
+   being pushed past it by the footer. */
+html[data-design="refresh"] body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+html[data-design="refresh"] body > main {
+  flex: 1 0 auto;
+}
+
+html[data-design="refresh"] body > .site-footer {
+  margin-top: auto;
+}
+
+html[data-design="refresh"] .site-footer {
+  margin-top: 0;
+  padding-block: 1.25rem;
+  border-top: 1px solid var(--vp-line-soft);
+  color: var(--vp-muted);
+  font-family: var(--vp-font-ui);
+}
+
+html[data-design="refresh"] .site-footer p {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+html[data-design="refresh"] .site-footer small {
+  font-size: inherit;
+}
+
+html[data-design="refresh"] .site-footer a {
+  color: var(--vp-text);
+}
+
+/* ------------------------------------------------------- Shared with pages */
+
+@media (max-width: 63.99rem) {
+  /* The roll button is fixed to the bottom of the screen at these widths. The
+     shortcut hint would sit on top of it, and has nothing to say to a
+     touchscreen anyway; the footer needs room to scroll clear of the button. */
+  html[data-design="refresh"]:has([data-roll-bar]) .shortcut-hint-container {
+    display: none;
+  }
+
+  html[data-design="refresh"]:has([data-roll-bar]) .site-footer {
+    padding-bottom: 6.5rem;
+  }
+}
+
+/* The shortcuts popover, squared off and in the new design's colours. */
+html[data-design="refresh"] .shortcut-hint-button {
+  border-radius: 0;
+  border-color: var(--vp-line);
+  background: var(--vp-rail);
+  color: var(--vp-muted);
+}
+
+html[data-design="refresh"] .shortcut-hint-button:hover {
+  border-color: var(--vp-red);
+  color: var(--vp-text);
+}
+
+html[data-design="refresh"] .shortcut-popover {
+  border-color: var(--vp-line);
+  border-top: 2px solid var(--vp-red);
+  border-radius: 0;
+  background: var(--vp-rail);
+}
+
+html[data-design="refresh"] .shortcut-popover-title {
+  color: var(--vp-text);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Invitation to try the new design, shown above the classic pages. */
+.design-invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 0.9rem;
+  padding: 0.5rem 1rem;
+  background: #0f1923;
+  border-bottom: 1px solid rgba(255, 70, 85, 0.55);
+  color: #ece8e1;
+  font-family: "DINNextW1G", Arial, Helvetica, sans-serif;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.design-invite p {
+  margin: 0;
+  font-family: inherit;
+}
+
+.design-invite-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.design-invite-try,
+.design-invite-dismiss {
+  min-height: 2rem;
+  padding: 0 0.8rem;
+  font: inherit;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.design-invite-try {
+  border: 1px solid #ff4655;
+  background: #ff4655;
+  color: #0f1923;
+  font-weight: 700;
+}
+
+.design-invite-try:hover {
+  border-color: #ece8e1;
+  background: #ece8e1;
+}
+
+.design-invite-dismiss {
+  border: 1px solid rgba(236, 232, 225, 0.3);
+  background: none;
+  color: rgba(236, 232, 225, 0.85);
+}
+
+.design-invite-dismiss:hover {
+  border-color: rgba(236, 232, 225, 0.7);
+  color: #ece8e1;
+}
+
+.design-invite-try:focus-visible,
+.design-invite-dismiss:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}

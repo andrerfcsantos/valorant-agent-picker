@@ -20,8 +20,11 @@ export default function RoleSpriteIcon({
   return (
     <div
       // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a slice of a sprite sheet, which <img> cannot show
-      role="img"
-      aria-label={alt}
+      role={alt ? "img" : undefined}
+      aria-label={alt || undefined}
+      // An empty alt marks the image as decoration, next to text that already
+      // names it.
+      aria-hidden={alt ? undefined : true}
       className={className}
       style={{
         backgroundImage: `url(${ROLE_SPRITE.src})`,

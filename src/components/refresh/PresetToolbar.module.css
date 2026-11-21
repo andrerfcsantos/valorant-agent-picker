@@ -1,0 +1,545 @@
+/* The preset row above the roster. It answers to the room the roster has,
+   not to the window, and on a wide page it stays in view while the roster
+   scrolls under it. */
+
+.dock {
+  /* Reserved before the saved presets are read, so the roster does not move
+     when the row fills in. */
+  min-height: 3.5rem;
+  margin: 0 -0.375rem 1rem;
+  container: preset-toolbar / inline-size;
+}
+
+.bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  padding: 0.375rem;
+  border: 1px solid var(--vp-line-soft);
+  border-radius: var(--vp-radius);
+  background: var(--vp-rail);
+}
+
+@media (min-width: 64rem) {
+  .dock {
+    position: sticky;
+    top: calc(var(--vp-nav-h) + 0.5rem);
+    z-index: 20;
+  }
+
+  /* An agent reached with Tab is scrolled clear of the stuck row and the
+     navbar above it, not left behind them. */
+  :global(html):has(.dock) {
+    scroll-padding-top: calc(var(--vp-nav-h) + 4.75rem);
+  }
+
+  /* The gap kept above the stuck row, filled in, so no agent shows through
+     between it and the navbar. */
+  .dock::before {
+    content: "";
+    position: absolute;
+    inset: -0.5rem 0 100%;
+    background: var(--vp-page);
+  }
+
+  /* Lifts the row off the agents passing under it, and only then. */
+  @supports (container-type: scroll-state) {
+    .dock {
+      container-type: inline-size scroll-state;
+    }
+
+    .bar {
+      transition: box-shadow 0.15s ease;
+    }
+
+    @container preset-toolbar scroll-state(stuck: top) {
+      .bar {
+        box-shadow: 0 0.6rem 1.25rem rgb(0 0 0 / 0.4);
+      }
+    }
+  }
+}
+
+/* The name and the list it opens. It gives way first when the row is short
+   of room, so the buttons beside it keep their size. */
+.picker {
+  position: relative;
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.trigger {
+  min-width: 0;
+}
+
+/* With a preset applied, the name and the × beside it read as one control:
+   one outline, a seam between the two. */
+.split .trigger,
+.split .stop {
+  border-color: var(--vp-red);
+}
+
+.split .trigger {
+  border-radius: var(--vp-radius) 0 0 var(--vp-radius);
+}
+
+.split > span {
+  flex: none;
+  margin-left: -1px;
+}
+
+.stop {
+  width: 2.5rem;
+  padding: 0;
+  border-radius: 0 var(--vp-radius) var(--vp-radius) 0;
+  color: var(--vp-muted);
+}
+
+.stop:hover {
+  color: var(--vp-text);
+}
+
+.label {
+  color: var(--vp-muted);
+  font-weight: 400;
+}
+
+.name {
+  max-width: 12rem;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+
+.action {
+  flex: none;
+}
+
+.action svg {
+  flex: none;
+  color: var(--vp-muted);
+}
+
+.action:hover svg {
+  color: var(--vp-text);
+}
+
+.pending {
+  display: flex;
+  flex: none;
+  gap: 0.5rem;
+}
+
+/* Waiting on a decision, so it arrives the way the roster answers a click. */
+.arrive {
+  animation: arrive 0.15s ease-out;
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+}
+
+.save {
+  border-color: var(--vp-red);
+}
+
+.save svg,
+.save:hover svg {
+  color: var(--vp-red);
+}
+
+.save:hover {
+  background: rgb(255 70 85 / 0.16);
+}
+
+/* Who was added and who was removed, after the buttons that act on it. */
+.tray {
+  position: relative;
+  flex: none;
+}
+
+.trayButton {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.75rem;
+  padding: 0 0.6rem;
+  border: 0;
+  border-radius: var(--vp-radius);
+  background: none;
+  color: var(--vp-text);
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.trayButton:hover,
+.trayButton[aria-expanded="true"] {
+  background: var(--vp-tile);
+}
+
+/* The selection no longer matches the preset: the game's small red
+   diamond, which it uses for anything that wants a look. */
+.dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-inline: 0.1rem;
+  background: var(--vp-red);
+  transform: rotate(45deg);
+}
+
+.traySide {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.trayCount {
+  margin-right: 0.15rem;
+}
+
+.trayFace {
+  display: none;
+  flex: none;
+  height: 1.5rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+}
+
+/* Out of the selection, so drawn the way the roster draws an agent left out. */
+.out {
+  color: var(--vp-muted);
+}
+
+.out .trayFace,
+.out .changeIcon {
+  outline: 1px dashed var(--vp-muted);
+  outline-offset: -1px;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+/* The way to everything else done with presets, at the row's far edge. */
+.manage {
+  flex: none;
+  margin: 0 0.5rem 0 auto;
+}
+
+.naming {
+  display: flex;
+  flex: 0 1 auto;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.nameField {
+  flex: 0 1 13rem;
+  min-width: 6rem;
+  height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--vp-red);
+  border-radius: var(--vp-radius);
+  background: var(--vp-page);
+  color: var(--vp-text);
+  font: inherit;
+  font-weight: 500;
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 30;
+  width: min(20rem, calc(100vw - 2rem));
+  padding: 0.35rem;
+  border: 1px solid var(--vp-line);
+  border-radius: var(--vp-radius);
+  background: var(--vp-rail);
+  box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 0.45);
+}
+
+.list {
+  max-height: min(27.5rem, 60vh);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0 0.6rem;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--vp-text);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--vp-tile);
+}
+
+.item[aria-pressed="true"] {
+  border-left-color: var(--vp-red);
+  background: var(--vp-tile);
+  font-weight: 600;
+}
+
+.itemName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemCount {
+  flex: none;
+  color: var(--vp-muted);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.itemKey {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--vp-line);
+  border-radius: 0;
+  color: var(--vp-muted);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.empty {
+  margin: 0;
+  padding: 0.6rem;
+  color: var(--vp-muted);
+  font-family: inherit;
+}
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 0.35rem;
+  padding: 0.15rem 0.6rem 0;
+  border-top: 1px solid var(--vp-line-soft);
+}
+
+.foot button {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* In the row instead, wherever the row has room for it. */
+.foot .footSaveNew {
+  display: none;
+}
+
+/* The names behind the tray. It hangs from the tray's right edge, so it
+   stays on the page wherever in the row the tray has ended up. */
+.changes {
+  right: 0;
+  left: auto;
+  padding: 0.6rem 0.75rem 0.7rem;
+}
+
+/* A name can be one long word, so it may break anywhere. */
+.changesTitle {
+  overflow-wrap: anywhere;
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.changeScroll {
+  max-height: min(20rem, 50vh);
+  overflow-y: auto;
+  border-radius: 0;
+}
+
+.changeList {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.changeRow {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  align-items: start;
+}
+
+.changeRow dt {
+  padding-top: 0.15rem;
+  color: var(--vp-muted);
+  font-size: 1rem;
+}
+
+.changeRow dd {
+  margin: 0;
+}
+
+.changeAgents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.changeAgent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--vp-text);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.changeIcon {
+  flex: none;
+  height: 1.5rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+}
+
+/* Room for a couple of faces on each side of the tray, then for all the
+   tray ever shows. Below these it is the counts alone. */
+@container preset-toolbar (min-width: 62rem) {
+  .trayFace:nth-child(-n + 3) {
+    display: block;
+  }
+}
+
+@container preset-toolbar (min-width: 72rem) {
+  .trayFace {
+    display: block;
+  }
+}
+
+/* Short of room for the far link beside everything else. The list the
+   name opens has it too. */
+@container preset-toolbar (max-width: 54rem) {
+  .manage {
+    display: none;
+  }
+}
+
+/* No room for words beside the name: the buttons that come and go keep
+   their icons, so the row stays one line and the roster stays where it is.
+   "Save as new" gives its place to the tray and goes to the foot of the
+   list. Naming takes a line of its own, which is asked for rather than a
+   surprise. */
+@container preset-toolbar (max-width: 40rem) {
+  .bar:has(.naming) {
+    flex-wrap: wrap;
+  }
+
+  /* While a new preset is named, the row is the preset and the form under
+     it, and nothing else: the buttons that come and go with the selection
+     would otherwise wrap onto a line of their own on a narrow phone, and
+     going would move the roster. Cancel brings them back. */
+  .bar:has(.naming) .pending,
+  .bar:has(.naming) .tray {
+    display: none;
+  }
+
+  .label,
+  .bar[data-changed] > span:has(.saveNew) {
+    display: none;
+  }
+
+  .foot .footSaveNew {
+    display: block;
+  }
+
+  .text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .bar[data-changed] .action {
+    width: 2.75rem;
+    padding: 0;
+  }
+
+  .trayButton {
+    gap: 0.4rem;
+    padding: 0 0.35rem;
+  }
+
+  /* The tray can end up anywhere in a short row, so the names behind it
+     hang from the row instead, as wide as it is, and stay on the page. */
+  .tray {
+    position: static;
+  }
+
+  .changes {
+    right: 0;
+    left: 0;
+    width: auto;
+  }
+
+  .name {
+    max-width: 8rem;
+  }
+
+  .naming {
+    flex: 1 1 100%;
+  }
+
+  .nameField {
+    flex: 1 1 6rem;
+  }
+}
+
+@media (max-width: 63.99rem) {
+  /* No keyboard, so no key to advertise. */
+  .itemKey {
+    display: none;
+  }
+
+  .item {
+    min-height: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrive {
+    animation: none;
+  }
+
+  .bar {
+    transition: none;
+  }
+}

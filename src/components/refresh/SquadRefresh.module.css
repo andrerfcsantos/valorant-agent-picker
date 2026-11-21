@@ -1,0 +1,195 @@
+.app {
+  display: grid;
+  grid-template-columns: 24rem minmax(0, 1fr);
+  align-items: start;
+}
+
+/* The setup and the roll, kept in view while the squad scrolls. */
+.rail {
+  position: sticky;
+  top: var(--vp-nav-h);
+  display: flex;
+  flex-direction: column;
+  /* As tall as the page's row, which fills the window above the footer, and
+     never taller than the window, so it can stick while the side scrolls. */
+  align-self: stretch;
+  max-height: calc(100vh - var(--vp-nav-h));
+  padding: 1.5rem 1.5rem 1.25rem;
+  border-right: 1px solid var(--vp-line-soft);
+  background: var(--vp-rail);
+  overflow-y: auto;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.intro {
+  margin: 0.4rem 0 1.25rem;
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+.sizes {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: 0.4rem;
+  padding: 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vp-muted);
+}
+
+.sizeRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.35rem;
+}
+
+.size {
+  position: relative;
+  cursor: pointer;
+}
+
+.size span {
+  display: grid;
+  place-items: center;
+  height: 2.75rem;
+  border: 1px solid var(--vp-line);
+  border-radius: var(--vp-radius);
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 1.9rem;
+  line-height: 1;
+  transition: background-color 0.12s ease;
+}
+
+.size:hover span {
+  background: var(--vp-tile);
+}
+
+/* The chosen size is filled and keeps its number, so it does not depend on
+   the fill colour alone to be told apart. */
+.size input:checked + span {
+  border-color: var(--vp-red);
+  background: var(--vp-red);
+  color: var(--vp-page);
+}
+
+.size input:focus-visible + span {
+  outline: 2px solid var(--vp-focus);
+  outline-offset: 2px;
+}
+
+.resetAll {
+  align-self: flex-start;
+  margin-top: 0.75rem;
+  white-space: normal;
+  text-align: left;
+}
+
+.main {
+  min-width: 0;
+  max-width: 76rem;
+  padding: 1.5rem 2rem 4rem;
+}
+
+.notice {
+  margin-bottom: 1rem;
+}
+
+.notice :global(.shared-preset-notice) {
+  max-width: none;
+  margin: 0;
+  border-radius: var(--vp-radius);
+}
+
+.notice :global(.shared-preset-notice-text) {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  flex: 1 1 12rem;
+  margin: 0 auto 0 0;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2.75rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.head :global(.share-fallback-input) {
+  flex-basis: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.slots {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 63.99rem) {
+  .app {
+    display: block;
+    min-height: 0;
+  }
+
+  .rail {
+    position: static;
+    max-height: none;
+    padding: 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--vp-line-soft);
+    overflow: visible;
+  }
+
+  .intro {
+    margin-bottom: 1rem;
+  }
+
+  .main {
+    max-width: none;
+    /* Room to scroll the last player clear of the fixed roll button. */
+    padding: 1.25rem 1rem 6.5rem;
+  }
+
+  .title {
+    flex-basis: 100%;
+  }
+
+  .head button {
+    flex: 1 1 9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .size span {
+    transition: none;
+  }
+}

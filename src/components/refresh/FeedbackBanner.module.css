@@ -1,0 +1,60 @@
+/* One quiet line: the Discord blurple marks where it leads, the rest stays in
+   the page's own colours. */
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.9rem;
+  border: 1px solid var(--vp-line-soft);
+  border-left: 3px solid #5865f2;
+  border-radius: var(--vp-radius);
+  background: var(--vp-rail);
+}
+
+.text {
+  flex: 1 1 16rem;
+  margin: 0;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--vp-muted);
+}
+
+.go,
+.go:link,
+.go:visited {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  color: var(--vp-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: #5865f2;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+
+.go:hover {
+  color: var(--vp-text);
+  text-decoration-color: var(--vp-text);
+}
+
+/* Kept at the far edge, also when the line wraps on a phone. */
+.close {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: var(--vp-radius);
+  background: none;
+  color: var(--vp-muted);
+  cursor: pointer;
+}
+
+.close:hover {
+  background: var(--vp-tile);
+  color: var(--vp-text);
+}

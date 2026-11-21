@@ -1,0 +1,99 @@
+/* A sheet on the right edge of the page, over whatever it was opened from.
+   It is a modal <dialog>, so the browser handles focus, Escape and the
+   backdrop. The preset manager opens in one. */
+
+/* Named with its element so it outranks the page class it is used with,
+   whichever of the two stylesheets happens to load last. */
+dialog.sheet {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(38rem, 100vw);
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  /* The game edges its side panels with a line of its red. */
+  border-left: 2px solid var(--vp-red);
+  background: var(--vp-rail);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* For a sheet whose rows hold more than a form's worth across. */
+dialog.wide {
+  width: min(41rem, 100vw);
+}
+
+.sheet[open] {
+  animation: slideIn 0.2s ease-out;
+}
+
+.sheet::backdrop {
+  background: rgb(7 13 19 / 0.7);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+}
+
+/* The page behind stays where it was while the sheet is read. */
+:global(html):has(.sheet[open]) {
+  overflow: hidden;
+}
+
+.body {
+  padding: 1.5rem 2rem 3rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2.75rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.intro {
+  max-width: 26rem;
+  margin: 0.5rem 0 0;
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+/* An introduction of more than one paragraph. */
+.intro p {
+  margin: 0.4rem 0 0;
+  font-family: inherit;
+}
+
+/* What the sheet is for, under its introduction. */
+.content {
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 30rem) {
+  .body {
+    padding: 1rem 1rem 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open] {
+    animation: none;
+  }
+}

@@ -25,6 +25,25 @@ export function setJsonToLS(key: string, value: unknown): void {
   }
 }
 
+/** Reads a flag, falling back to `fallback` when unset or unreadable. */
+export function getBoolFromLS(key: string, fallback: boolean): boolean {
+  try {
+    const val = localStorage.getItem(key);
+    if (val === null) return fallback;
+    return val === "true";
+  } catch {
+    return fallback;
+  }
+}
+
+export function setBoolToLS(key: string, value: boolean): void {
+  try {
+    localStorage.setItem(key, String(value));
+  } catch {
+    // Storage can be full or blocked; losing the write is better than throwing.
+  }
+}
+
 export function loadSelectedAgents(): Set<string> | null {
   try {
     const raw = localStorage.getItem("selectedAgents");

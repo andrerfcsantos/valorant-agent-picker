@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useDesign } from "@/context/DesignContext";
 import styles from "./Navbar.module.css";
 
 const PRIMARY_LINKS = [
@@ -30,6 +31,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const { design, setDesign } = useDesign();
 
   // Every link in the menu takes the visitor somewhere, so it closes, as does
   // a click outside it. Focus goes back to the button, since the link it was
@@ -89,6 +91,18 @@ export default function Navbar() {
     return `no-underline whitespace-nowrap hover:text-gray-300 ${active ? "text-[#ff4655] border-b-2 border-[#ff4655]" : "text-white"}`;
   };
 
+  const switchDesign = () =>
+    setDesign(design === "refresh" ? "classic" : "refresh", "nav");
+
+  // Both labels ship in the static HTML and CSS shows the right one, so the
+  // button never reads wrong while the page loads.
+  const switchLabel = (
+    <>
+      <span className="only-classic">Try the new design</span>
+      <span className="only-refresh">Classic design</span>
+    </>
+  );
+
   return (
     <>
       <div
@@ -100,14 +114,14 @@ export default function Navbar() {
 
       <nav
         ref={navRef}
-        className={`${styles.nav} flex items-center justify-between gap-3 bg-[#111111] px-4 py-2 min-h-[5vh] font-[family-name:DINNextW1G]`}
+        className={`site-nav ${styles.nav} flex items-center justify-between gap-3 bg-[#111111] px-4 py-2 min-h-[5vh] font-[family-name:DINNextW1G]`}
         aria-label="Main"
       >
         <div className="flex min-w-0 items-center gap-4">
           <Link
             href="/"
             prefetch={false}
-            className="flex min-w-0 items-center sm:items-end no-underline text-white lg:mr-4"
+            className="site-nav-brand flex min-w-0 items-center sm:items-end no-underline text-white lg:mr-4"
             onClick={() => setIsOpen(false)}
           >
             <Image
@@ -149,6 +163,13 @@ export default function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-4">
+          <button
+            className="site-nav-switch"
+            style={DIN}
+            onClick={switchDesign}
+          >
+            {switchLabel}
+          </button>
           <Link
             href="/about"
             prefetch={false}
@@ -288,6 +309,17 @@ export default function Navbar() {
                   unoptimized
                 />
               </a>
+            </li>
+            <li className={styles.wide} style={order(6)}>
+              <button
+                className={`site-nav-switch ${styles.switch}`}
+                onClick={() => {
+                  switchDesign();
+                  closeMenu();
+                }}
+              >
+                {switchLabel}
+              </button>
             </li>
           </ul>
         </div>

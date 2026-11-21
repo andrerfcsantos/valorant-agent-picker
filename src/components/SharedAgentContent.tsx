@@ -1,137 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { getAllAgents } from "@/data/agents";
-import { agentPoolProps, track } from "@/lib/analytics";
-import { ShareErrorReason } from "@/lib/share/binary";
-import { tryDecodeShare } from "@/lib/share/codec";
-import { PickerPreset } from "@/lib/share/types";
-import {
-  SHARE_PARAM,
-  SHARE_PATHS,
-  readShareParam,
-  sharePath,
-  shareUrl,
-} from "@/lib/share/urls";
+import { SHARED_AGENT_ERRORS, type SharedAgent } from "@/hooks/useSharedAgent";
 import RoleSpriteIcon from "./RoleSpriteIcon";
 import ShareButton from "./ShareButton";
 import SpriteIcon from "./SpriteIcon";
 import styles from "./SharedContent.module.css";
 
-const agentByKey = new Map(getAllAgents().map((agent) => [agent.key, agent]));
-
-type ViewState =
-  | { status: "loading" }
-  | { status: "invalid"; reason: ShareErrorReason }
-  | {
-      status: "ready";
-      picker: PickerPreset;
-      agentKey: string | null;
-      /** True once the visitor has rolled for themselves. */
-      ownRoll: boolean;
-    };
-
-const ERROR_TEXT: Record<ShareErrorReason, string> = {
-  "unsupported-version":
-    "This link was made with a newer version of the site. Refresh the page and open it again.",
-  corrupt:
-    "This link looks like it was cut off or altered on the way here, so the agent it points at can't be trusted.",
-  malformed: "This share link isn't valid.",
-};
-
-function pickRandom(
-  pool: { key: string }[],
-  nonRepeating: boolean,
-  previousKey: string | null,
-): string | null {
-  if (pool.length === 0) return null;
-  let candidates = pool;
-  if (nonRepeating && previousKey && pool.length > 1) {
-    candidates = pool.filter((agent) => agent.key !== previousKey);
-  }
-  return candidates[Math.floor(Math.random() * candidates.length)].key;
-}
-
-export default function SharedAgentContent() {
-  const [view, setView] = useState<ViewState>({ status: "loading" });
-  const [rolls, setRolls] = useState(0);
+/** The classic design of a shared agent roll. Its behaviour is `useSharedAgent`. */
+export default function SharedAgentContent({
+  shared: view,
+}: {
+  shared: SharedAgent;
+}) {
   const [poolOpen, setPoolOpen] = useState(false);
-
-  // Read straight from the URL rather than useSearchParams: the page is
-  // client-only, and this keeps the static export free of a Suspense boundary.
-  useEffect(() => {
-    const raw = readShareParam(window.location.search);
-    const decoded = tryDecodeShare(raw);
-
-    if (!decoded.ok) {
-      // oxlint-disable-next-line react-hooks/set-state-in-effect -- the share link is in the URL, which only exists after mount
-      setView({ status: "invalid", reason: decoded.reason });
-      track("shared_link_opened", {
-        share_type: "unknown",
-        valid: false,
-        invalid_reason: decoded.reason,
-      });
-      return;
-    }
-
-    // The kind travels inside the payload, so a link opened on the wrong page
-    // can send itself where it belongs. The destination reports the open.
-    if (decoded.payload.kind !== "agent-result") {
-      window.location.replace(
-        `${SHARE_PATHS[decoded.payload.kind]}?${SHARE_PARAM}=${raw}`,
-      );
-      return;
-    }
-
-    setView({
-      status: "ready",
-      picker: decoded.payload.picker,
-      agentKey: decoded.payload.result.agentKey,
-      ownRoll: false,
-    });
-    track("shared_link_opened", { share_type: "agent_result", valid: true });
-  }, []);
-
-  const pool = useMemo(() => {
-    if (view.status !== "ready") return [];
-    const all = getAllAgents();
-    const selected = all.filter((agent) =>
-      view.picker.selected.includes(agent.key),
-    );
-    // Matches the picker: no selection means every agent is in play.
-    return selected.length > 0 ? selected : all;
-  }, [view]);
-
-  const handleReroll = useCallback(() => {
-    if (view.status !== "ready" || pool.length === 0) return;
-    const agentKey = pickRandom(
-      pool,
-      view.picker.nonRepeating,
-      view.agentKey ?? null,
-    );
-    setView({ status: "ready", picker: view.picker, agentKey, ownRoll: true });
-    setRolls((count) => count + 1);
-    const agent = agentKey ? agentByKey.get(agentKey) : undefined;
-    if (agent) {
-      track("agent_randomized", {
-        source: "shared_result",
-        agent_key: agent.key,
-        agent_role: agent.role,
-        non_repeating: view.picker.nonRepeating,
-        ...agentPoolProps(pool),
-      });
-    }
-    window.history.replaceState(
-      null,
-      "",
-      sharePath({
-        kind: "agent-result",
-        picker: view.picker,
-        result: { agentKey },
-      }),
-    );
-  }, [view, pool]);
 
   if (view.status === "loading") {
     return <div className={styles.container} />;
@@ -142,7 +25,7 @@ export default function SharedAgentContent() {
       <div className={styles.container}>
         <div className={styles.errorBox}>
           <h1 className={styles.errorTitle}>This link didn&apos;t open</h1>
-          <p className={styles.errorText}>{ERROR_TEXT[view.reason]}</p>
+          <p className={styles.errorText}>{SHARED_AGENT_ERRORS[view.reason]}</p>
           <div className={styles.actions}>
             <Link className={styles.linkBtn} href="/" prefetch={false}>
               Go to the agent picker
@@ -153,8 +36,7 @@ export default function SharedAgentContent() {
     );
   }
 
-  const agent = view.agentKey ? agentByKey.get(view.agentKey) : undefined;
-  const presetHref = sharePath({ kind: "picker-preset", picker: view.picker });
+  const { agent, pool, rolls, handleReroll, presetHref, buildResultUrl } = view;
 
   return (
     <div className={styles.container}>
@@ -201,13 +83,7 @@ export default function SharedAgentContent() {
       <div className={styles.secondaryRow}>
         <ShareButton
           className={styles.linkBtn}
-          buildUrl={() =>
-            shareUrl({
-              kind: "agent-result",
-              picker: view.picker,
-              result: { agentKey: view.agentKey },
-            })
-          }
+          buildUrl={buildResultUrl}
           shareType="agent_result"
           shareSource="shared_agent"
           label="Share this roll"

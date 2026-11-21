@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PresetsContent from "@/components/PresetsContent";
+import PresetsPage from "@/components/PresetsPage";
 
 export const metadata: Metadata = {
   title: { absolute: "Manage Presets | Valorant Agent Picker" },
@@ -10,6 +10,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function PresetsPage() {
-  return <PresetsContent />;
+export default function Page() {
+  return <PresetsPage />;
 }

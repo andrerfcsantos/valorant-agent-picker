@@ -1,0 +1,140 @@
+.slot {
+  border-radius: var(--vp-radius);
+  background: var(--vp-tile);
+}
+
+/* Face, who and what, then the two things done to a player. */
+.row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  padding: 0.75rem 1rem 0.75rem 0.75rem;
+}
+
+.face {
+  width: 4.5rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+}
+
+.faceEmpty {
+  display: block;
+  border: 1px dashed var(--vp-line);
+}
+
+.who {
+  min-width: 0;
+}
+
+/* Reads as a label until it is pointed at or filled in. */
+.nameInput {
+  display: block;
+  width: 100%;
+  max-width: 14rem;
+  min-height: 1.9rem;
+  margin-left: -0.4rem;
+  padding: 0 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--vp-text);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.nameInput::placeholder {
+  color: var(--vp-muted);
+  opacity: 1;
+}
+
+.nameInput:hover {
+  border-color: var(--vp-line);
+}
+
+.nameInput:focus {
+  border-color: var(--vp-line);
+  background: var(--vp-rail);
+}
+
+.result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.75rem;
+  margin: 0;
+  font-family: inherit;
+}
+
+.agentName {
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2.5rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.role {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vp-muted);
+}
+
+.none {
+  margin: 0;
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+.actions {
+  display: flex;
+  grid-column: 3;
+  gap: 0.5rem;
+}
+
+.pool {
+  padding: 1rem;
+  border-top: 1px solid var(--vp-page);
+  border-radius: 0 0 var(--vp-radius) var(--vp-radius);
+  background: var(--vp-rail);
+}
+
+.poolHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--vp-muted);
+}
+
+@media (max-width: 40rem) {
+  .row {
+    grid-template-columns: 3.75rem minmax(0, 1fr);
+    padding: 0.75rem;
+  }
+
+  .face {
+    width: 3.75rem;
+  }
+
+  .agentName {
+    font-size: 2.25rem;
+  }
+
+  .actions {
+    grid-column: 1 / -1;
+  }
+
+  .actions button {
+    flex: 1;
+  }
+
+  .pool {
+    padding: 0.75rem;
+  }
+}

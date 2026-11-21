@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { AgentProvider } from "@/context/AgentContext";
-import { PresetProvider } from "@/context/PresetContext";
+import SiteChrome from "@/components/SiteChrome";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import KeyboardShortcutHint from "@/components/KeyboardShortcutHint";
 import PageViewTracker from "@/components/PageViewTracker";
 import { GA_MEASUREMENT_ID } from "@/lib/googleAnalytics";
+import { DESIGN_BOOT_SCRIPT } from "@/lib/design";
 import { SHARE_PARAM } from "@/lib/share/urls";
 import "./globals.css";
+import "./refresh.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.valorantpicker.com"),
@@ -35,8 +36,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // The boot script below sets data-design before React hydrates, which
+    // React would otherwise report as a mismatch on this one element.
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Stamps the visitor's design on <html> before the first paint. */}
+        <script
+          id="design-boot"
+          dangerouslySetInnerHTML={{ __html: DESIGN_BOOT_SCRIPT }}
+        />
+
         {/* Preload fonts */}
         <link
           rel="preload"
@@ -120,15 +129,18 @@ export default function RootLayout({
         </Script>
       </head>
       <body>
-        <AgentProvider>
-          <PresetProvider>
-            <Navbar />
-            {children}
-            <Footer />
-            <KeyboardShortcutHint />
-            <PageViewTracker />
-          </PresetProvider>
-        </AgentProvider>
+        <SiteChrome
+          navbar={<Navbar />}
+          footer={<Footer />}
+          extras={
+            <>
+              <KeyboardShortcutHint />
+              <PageViewTracker />
+            </>
+          }
+        >
+          {children}
+        </SiteChrome>
       </body>
     </html>
   );

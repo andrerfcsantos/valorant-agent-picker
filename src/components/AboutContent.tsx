@@ -1,11 +1,13 @@
-"use client";
-
 import Image from "next/image";
 import styles from "./about.module.css";
 
+/**
+ * The about page in the classic design. `only-classic` keeps it out of the
+ * new one (see the page).
+ */
 export default function AboutContent() {
   return (
-    <div className={styles.container}>
+    <div className={`only-classic ${styles.container}`}>
       <h2 className={styles.title}>About this site</h2>
 
       <p className={styles.paragraphText}>

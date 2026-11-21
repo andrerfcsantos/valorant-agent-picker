@@ -1,0 +1,183 @@
+"use client";
+
+import { useId, useState } from "react";
+import { ROLES, getAllAgents } from "@/data/agents";
+import type { Agent, Role } from "@/data/agents";
+import RoleSpriteIcon from "@/components/RoleSpriteIcon";
+import SpriteIcon from "@/components/SpriteIcon";
+import PoolEditor from "./PoolEditor";
+import ui from "./ui.module.css";
+import styles from "./SquadSlotRefresh.module.css";
+
+const ALL_AGENTS = getAllAgents();
+
+interface SquadSlotRefreshProps {
+  index: number;
+  agent: Agent | null;
+  name: string;
+  /** Agents this player will not be given. */
+  disabledAgents: Set<string>;
+  onNameChange: (index: number, name: string) => void;
+  onDisabledChange: (index: number, disabled: Set<string>) => void;
+  onResetFilters: (index: number) => void;
+  onReroll: (index: number) => void;
+}
+
+/**
+ * One player's row: who they are, what they rolled, and the pool they roll
+ * from. The pool opens in place and is the same roster the picker uses.
+ */
+export default function SquadSlotRefresh({
+  index,
+  agent,
+  name,
+  disabledAgents,
+  onNameChange,
+  onDisabledChange,
+  onResetFilters,
+  onReroll,
+}: SquadSlotRefreshProps) {
+  const [poolOpen, setPoolOpen] = useState(false);
+  const poolId = useId();
+
+  const player = name.trim() || `Player ${index + 1}`;
+  const total = ALL_AGENTS.length;
+  // Counted against the agents that exist, so a key left over from an agent that
+  // has since been removed cannot push the count below what is on screen.
+  const inCount = ALL_AGENTS.filter(
+    (candidate) => !disabledAgents.has(candidate.key),
+  ).length;
+  const poolLabel = `Selected: ${inCount === total ? `all ${total}` : `${inCount} of ${total}`}`;
+  const roleLabel = agent
+    ? (ROLES.find((role) => role.key === agent.role)?.label ?? "")
+    : "";
+
+  const toggleAgent = (agentKey: string) => {
+    const next = new Set(disabledAgents);
+    if (next.has(agentKey)) next.delete(agentKey);
+    else next.add(agentKey);
+    onDisabledChange(index, next);
+  };
+
+  const setRole = (role: Role, inPool: boolean) => {
+    const next = new Set(disabledAgents);
+    for (const candidate of ALL_AGENTS) {
+      if (candidate.role !== role) continue;
+      if (inPool) next.delete(candidate.key);
+      else next.add(candidate.key);
+    }
+    onDisabledChange(index, next);
+  };
+
+  const onlyRole = (role: Role) => {
+    onDisabledChange(
+      index,
+      new Set(
+        ALL_AGENTS.filter((candidate) => candidate.role !== role).map(
+          (candidate) => candidate.key,
+        ),
+      ),
+    );
+  };
+
+  return (
+    <li className={styles.slot}>
+      <div className={styles.row}>
+        {agent ? (
+          <SpriteIcon
+            agentKey={agent.key}
+            type="icon"
+            alt=""
+            className={styles.face}
+          />
+        ) : (
+          <span className={`${styles.face} ${styles.faceEmpty}`} />
+        )}
+
+        <div className={styles.who}>
+          <input
+            className={styles.nameInput}
+            type="text"
+            placeholder={`Player ${index + 1}`}
+            aria-label={`Name of player ${index + 1}`}
+            value={name}
+            onChange={(e) => onNameChange(index, e.target.value)}
+          />
+          {agent ? (
+            <div className={styles.result}>
+              <span
+                key={agent.key}
+                className={`${styles.agentName} ${ui.land}`}
+              >
+                {agent.name}
+              </span>
+              <span className={styles.role}>
+                <RoleSpriteIcon
+                  roleKey={agent.role}
+                  alt=""
+                  className={ui.roleIcon}
+                />
+                {roleLabel}
+              </span>
+            </div>
+          ) : (
+            <p className={styles.none}>No agent left to give this player.</p>
+          )}
+        </div>
+
+        <div className={styles.actions}>
+          <button
+            type="button"
+            className={ui.btn}
+            aria-label={`Reroll ${player}`}
+            onClick={() => onReroll(index)}
+          >
+            Reroll
+          </button>
+          <button
+            type="button"
+            className={`${ui.btn} ${ui.caret}`}
+            aria-expanded={poolOpen}
+            aria-controls={poolId}
+            // Starts with the words on the button, so asking for it by what
+            // it says finds it.
+            aria-label={`${poolLabel}, ${player}`}
+            onClick={() => setPoolOpen(!poolOpen)}
+          >
+            {poolLabel}
+          </button>
+        </div>
+      </div>
+
+      {poolOpen && (
+        <div id={poolId} className={styles.pool}>
+          <div className={styles.poolHead}>
+            <span>
+              {inCount === 0
+                ? `No agents are selected for ${player}, so they can be given any agent.`
+                : `${player} can be given ${inCount === total ? `any of the ${total} agents` : `${inCount} of ${total} agents`}.`}
+            </span>
+            {inCount < total && (
+              <button
+                type="button"
+                className={ui.link}
+                onClick={() => onResetFilters(index)}
+              >
+                Select all
+              </button>
+            )}
+          </div>
+          <PoolEditor
+            compact
+            label={player}
+            isIn={(agentKey) => !disabledAgents.has(agentKey)}
+            onToggleAgent={toggleAgent}
+            onSetRole={setRole}
+            onOnlyRole={onlyRole}
+            currentAgentKey={agent?.key ?? null}
+          />
+        </div>
+      )}
+    </li>
+  );
+}

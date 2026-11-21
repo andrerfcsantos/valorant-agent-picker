@@ -1,0 +1,267 @@
+/* Pieces every page of the new design shares. Colours and fonts come from the
+   --vp-* tokens in src/app/refresh.css. */
+
+.page {
+  background: var(--vp-page);
+  color: var(--vp-text);
+  font-family: var(--vp-font-ui);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.page :focus-visible {
+  outline: 2px solid var(--vp-focus);
+  outline-offset: 2px;
+}
+
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Secondary action: an outlined box with its label in small capitals, the
+   way the game labels the buttons in its menus. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--vp-line);
+  border-radius: var(--vp-radius);
+  background: transparent;
+  color: var(--vp-text);
+  font: inherit;
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.btn:hover {
+  border-color: var(--vp-text);
+  background: var(--vp-tile);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn[aria-expanded="true"] {
+  background: var(--vp-tile);
+}
+
+/* The action a small surface is there for, in the roll button's red. The
+   label is the page's navy, which reads at 5:1 on this red at any size. */
+.primary {
+  border-color: var(--vp-red);
+  background: var(--vp-red);
+  color: var(--vp-page);
+  font-weight: 700;
+}
+
+/* The game's buttons go off-white under the pointer. */
+.primary:hover:not(:disabled) {
+  border-color: var(--vp-text);
+  background: var(--vp-text);
+  color: var(--vp-page);
+}
+
+.caret::after {
+  content: "";
+  flex: none;
+  border: 0.3rem solid transparent;
+  border-top-color: currentColor;
+  border-bottom-width: 0;
+}
+
+.caret[aria-expanded="true"]::after {
+  transform: rotate(180deg);
+}
+
+/* An action that reads as text, for the quiet ones. The padding keeps it a
+   comfortable target without making it look like a button. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: var(--vp-text);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--vp-line);
+  text-underline-offset: 0.2em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration-color: var(--vp-red);
+}
+
+/* The one call to action on a page: the game's red slab with its bottom
+   right corner cut off, which goes off-white under the pointer. */
+.roll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3.75rem;
+  border: 0;
+  border-radius: var(--vp-radius);
+  background: var(--vp-red);
+  /* Off-white on the red is 3.1:1, which holds only because this label is
+     large display type. Small text on red is set in navy instead. */
+  color: var(--vp-text);
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--vp-cut)),
+    calc(100% - var(--vp-cut)) 100%,
+    0 100%
+  );
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.roll:hover {
+  background: var(--vp-text);
+  color: var(--vp-page);
+}
+
+.roll:active {
+  transform: translateY(1px);
+}
+
+/* An outline would be clipped with the corner, so focus is drawn inside. */
+.roll:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--vp-focus);
+}
+
+.roll:hover:focus-visible {
+  box-shadow: inset 0 0 0 3px var(--vp-red);
+}
+
+.kbd {
+  display: grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0 0.3rem;
+  border-radius: 0;
+  background: rgb(15 25 35 / 0.3);
+  font-family: var(--vp-font-ui);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+/* Holds the roll button. On small screens it is fixed to the bottom of the
+   viewport, where a thumb already is. */
+.rollBar {
+  margin-top: 0.75rem;
+}
+
+.check {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--vp-red);
+  cursor: pointer;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+}
+
+.roleIcon {
+  display: inline-block;
+  flex: none;
+  height: 1.1rem;
+  aspect-ratio: 1 / 1;
+}
+
+/* Motion that answers a roll. */
+.land {
+  animation: land 0.18s ease-out;
+}
+
+@keyframes land {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .rollBar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 15;
+    margin: 0;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: rgb(7 13 19 / 0.95);
+    border-top: 1px solid var(--vp-line-soft);
+  }
+
+  .roll {
+    min-height: 3.25rem;
+  }
+
+  /* No keyboard to hint at. */
+  .rollBar .kbd {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .land {
+    animation: none;
+  }
+
+  .roll:active {
+    transform: none;
+  }
+
+  .btn {
+    transition: none;
+  }
+}
+
+/* The site's links are orange, and that rule is specific enough to reach a
+   link dressed as one of these. */
+a.btn:link,
+a.btn:visited,
+a.btn:hover,
+a.link:link,
+a.link:visited,
+a.link:hover {
+  color: var(--vp-text);
+}

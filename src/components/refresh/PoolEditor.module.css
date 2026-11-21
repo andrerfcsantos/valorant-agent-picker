@@ -1,0 +1,194 @@
+.group + .group {
+  margin-top: 1.75rem;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.roleCheck {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.25rem;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+
+.groupIcon {
+  height: 1.4rem;
+}
+
+.count {
+  color: var(--vp-muted);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.only {
+  margin-left: auto;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.25rem, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agent {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 0.6rem 0 0;
+  border: 1px solid transparent;
+  border-radius: var(--vp-radius);
+  background: var(--vp-tile);
+  color: var(--vp-text);
+  font: inherit;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.agentIcon {
+  flex: none;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.agentName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent:hover {
+  background: var(--vp-tile-hi);
+}
+
+/* Out of the pool. Muted text is a colour, not an opacity, so it keeps its
+   contrast; the dashed outline and the greyed face say the same thing twice
+   over for anyone who cannot rely on the colour. */
+.agent[aria-pressed="false"] {
+  background: transparent;
+  border: 1px dashed var(--vp-line);
+  color: var(--vp-muted);
+}
+
+.agent[aria-pressed="false"] .agentIcon {
+  filter: grayscale(1);
+  opacity: 0.4;
+}
+
+.agent[aria-pressed="false"]:hover {
+  border-style: solid;
+}
+
+/* The agent that was just rolled. */
+.current,
+.current[aria-pressed="false"] {
+  border: 2px solid var(--vp-red);
+}
+
+.compact .group + .group {
+  margin-top: 1.1rem;
+}
+
+.compact .roleCheck {
+  font-size: 1.6rem;
+}
+
+.compact .groupIcon {
+  height: 1.15rem;
+}
+
+.compact .groupHead {
+  margin-bottom: 0.4rem;
+}
+
+/* A roster with a page's width to itself. Each role's name, count and
+   shortcut stand in a column at the left of its agentes, so no role spends a
+   row on its heading. Only where that still leaves the agentes most of their
+   columns: narrower than this, losing a column costs more rows than the
+   headings did. */
+.rail {
+  container: roster / inline-size;
+}
+
+@container roster (min-width: 50rem) {
+  .rail .group {
+    display: grid;
+    grid-template-columns: 11.75rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0 1rem;
+  }
+
+  .rail .group + .group {
+    margin-top: 1.25rem;
+  }
+
+  .rail .groupHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    margin: 0;
+  }
+
+  .rail .roleCheck {
+    min-height: 2.5rem;
+  }
+
+  /* Under the role's name rather than under its checkbox. */
+  .rail .count,
+  .rail .only {
+    margin-left: 1.725rem;
+  }
+
+  .rail .only {
+    min-height: 2rem;
+  }
+}
+
+/* With a pointer to aim with, the tiles can be a little shorter, which is
+   what lets a whole roster fit a laptop's window. */
+@media (min-width: 64rem) {
+  .rail .tiles {
+    grid-template-columns: repeat(auto-fill, minmax(9.75rem, 1fr));
+  }
+
+  .rail .agent {
+    height: 2.5rem;
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .tiles {
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  }
+}
+
+@media (max-width: 22rem) {
+  .tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent {
+    transition: none;
+  }
+}
