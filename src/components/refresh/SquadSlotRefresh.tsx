@@ -47,7 +47,12 @@ export default function SquadSlotRefresh({
   const poolToggle = useRef<HTMLButtonElement>(null);
   const poolId = useId();
 
-  const player = name.trim() || `Player ${index + 1}`;
+  // Names the visitor types are theirs: shown as text only inside ph-mask,
+  // which session replays mask, and never copied into an attribute (replays
+  // mask text, not attributes). Labels use the player's number instead.
+  const slotLabel = `Player ${index + 1}`;
+  const player = name.trim() || slotLabel;
+  const playerText = <span className="ph-mask">{player}</span>;
   const total = ALL_AGENTS.length;
   // Counted against the agents that exist, so a key left over from an agent that
   // has since been removed cannot push the count below what is on screen.
@@ -141,7 +146,10 @@ export default function SquadSlotRefresh({
                 <span className={styles.outside}>
                   {/* What is true now, not why the roll went this way: the
                       selection may have changed since. */}
-                  {`Not in ${player}'s current selection${othersHaveAll ? ", and the other players have all of it" : ""}`}
+                  Not in {playerText}&apos;s current selection
+                  {othersHaveAll
+                    ? ", and the other players have all of it"
+                    : ""}
                 </span>
               )}
             </div>
@@ -154,7 +162,7 @@ export default function SquadSlotRefresh({
           <button
             type="button"
             className={ui.btn}
-            aria-label={`Reroll ${player}`}
+            aria-label={`Reroll ${slotLabel.toLowerCase()}`}
             onClick={() => onReroll(index)}
           >
             Reroll
@@ -167,7 +175,7 @@ export default function SquadSlotRefresh({
             aria-controls={poolId}
             // Starts with the words on the button, so asking for it by what
             // it says finds it.
-            aria-label={`${poolLabel}, ${player}`}
+            aria-label={`${poolLabel}, ${slotLabel.toLowerCase()}`}
             onClick={() => setPoolOpen(!poolOpen)}
           >
             {poolLabel}
@@ -179,9 +187,20 @@ export default function SquadSlotRefresh({
         <div id={poolId} className={styles.pool}>
           <div className={styles.poolHead}>
             <span>
-              {inCount === 0
-                ? `No agents are selected for ${player}, so they can be given any agent.`
-                : `${player} can be given ${inCount === total ? `any of the ${total} agents` : `${inCount} of ${total} agents`}.`}
+              {inCount === 0 ? (
+                <>
+                  No agents are selected for {playerText}, so they can be given
+                  any agent.
+                </>
+              ) : (
+                <>
+                  {playerText} can be given{" "}
+                  {inCount === total
+                    ? `any of the ${total} agents`
+                    : `${inCount} of ${total} agents`}
+                  .
+                </>
+              )}
             </span>
             {inCount < total && (
               <button
@@ -196,7 +215,7 @@ export default function SquadSlotRefresh({
           </div>
           <PoolEditor
             compact
-            label={player}
+            label={slotLabel}
             isIn={(agentKey) => !disabledAgents.has(agentKey)}
             onToggleAgent={toggleAgent}
             onSetRole={setRole}

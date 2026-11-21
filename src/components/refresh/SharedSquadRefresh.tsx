@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { ROLES, getAllAgents } from "@/data/agents";
+import { slotNarrows } from "@/lib/squadService";
 import { SHARED_SQUAD_ERRORS, type SharedSquad } from "@/hooks/useSharedSquad";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
@@ -71,7 +72,7 @@ export default function SharedSquadRefresh({
   const facts = [
     squad.size === 1 ? "1 player" : `${squad.size} players`,
     "Every player gets a different agent",
-    squad.slots.slice(0, squad.size).some((slot) => slot !== null)
+    squad.slots.slice(0, squad.size).some(slotNarrows)
       ? "Some players roll from their own selection"
       : null,
   ].filter((fact): fact is string => fact !== null);
@@ -130,8 +131,9 @@ export default function SharedSquadRefresh({
           </Link>
         </div>
 
+        {/* Masked in session replays: it carries the players' names. */}
         {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- announces the reveal and each roll, not the result of a form */}
-        <p className={ui.vh} role="status">
+        <p className={`${ui.vh} ph-mask`} role="status">
           <span key={rolls}>{announcement}</span>
         </p>
       </section>
@@ -166,7 +168,9 @@ export default function SharedSquadRefresh({
               )}
 
               <div className={styles.who} data-result>
-                <span className={styles.playerName}>{player.name}</span>
+                <span className={`${styles.playerName} ph-mask`}>
+                  {player.name}
+                </span>
                 {sealed ? (
                   <span className={styles.redacted}>
                     <span className={ui.vh}>Hidden until revealed</span>
@@ -199,7 +203,9 @@ export default function SharedSquadRefresh({
                 <button
                   type="button"
                   className={`${ui.btn} ${styles.playerReroll}`}
-                  aria-label={`Reroll ${player.name}`}
+                  // By number: a name in an attribute would reach session
+                  // replays, which mask text but not attributes.
+                  aria-label={`Reroll player ${player.index + 1}`}
                   onClick={() => shared.handleRerollSlot(player.index)}
                 >
                   Reroll

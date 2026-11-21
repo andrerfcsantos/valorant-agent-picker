@@ -92,8 +92,11 @@
 
 .outside {
   flex-basis: 100%;
+  min-width: 0;
   color: var(--vp-muted);
   font-size: 0.875rem;
+  /* A player's name can be one long handle with nowhere to break. */
+  overflow-wrap: anywhere;
 }
 
 .actions {
@@ -116,6 +119,11 @@
   gap: 0 1rem;
   margin-bottom: 0.75rem;
   color: var(--vp-muted);
+}
+
+.poolHead > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 40rem) {

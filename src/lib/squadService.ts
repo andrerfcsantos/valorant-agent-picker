@@ -57,6 +57,15 @@ export function computeSquad(
 }
 
 /**
+ * Whether a shared slot's selection actually narrows who the player can get.
+ * `null` is "every agent", and so is an empty list: a player with nothing
+ * selected rolls from the whole roster, as in the generator.
+ */
+export function slotNarrows(enabled: string[] | null): boolean {
+  return enabled !== null && enabled.length > 0;
+}
+
+/**
  * Slot filters as *enabled* agent keys, which is what share links carry. A slot
  * with nothing ruled out becomes `null`, so the common case costs no bytes.
  */
