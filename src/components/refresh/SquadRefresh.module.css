@@ -93,6 +93,17 @@
   outline-offset: 2px;
 }
 
+/* High-contrast modes replace the fill with system colours, so the chosen
+   size takes the system's selection colours instead. */
+@media (forced-colors: active) {
+  .size input:checked + span {
+    border: 3px solid Highlight;
+    background: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+}
+
 .resetAll {
   align-self: flex-start;
   margin-top: 0.75rem;

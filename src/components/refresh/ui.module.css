@@ -165,6 +165,19 @@
   box-shadow: inset 0 0 0 3px var(--vp-red);
 }
 
+/* High-contrast modes drop box shadows, which is where the focus ring is.
+   Give the corner back so an outline can be drawn around the whole button. */
+@media (forced-colors: active) {
+  .roll {
+    clip-path: none;
+  }
+
+  .roll:focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
 .kbd {
   display: grid;
   place-items: center;
@@ -214,9 +227,10 @@
   animation: land 0.18s ease-out;
 }
 
+/* Movement only: the result is at full strength from the first frame, so
+   rolling fast (holding R) never leaves it half faded in. */
 @keyframes land {
   from {
-    opacity: 0;
     transform: translateY(4px);
   }
 }
