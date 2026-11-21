@@ -409,9 +409,10 @@
     font-size: 0.8125rem;
   }
 
-  .noPortrait .lead,
-  .noPortrait .name,
-  .noPortrait .role {
+  /* Doubled up to outrank ".rail .role" below. */
+  .rail.noPortrait .lead,
+  .rail.noPortrait .name,
+  .rail.noPortrait .role {
     grid-column: 1;
   }
 

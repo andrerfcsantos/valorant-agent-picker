@@ -386,8 +386,25 @@ export function designForChoice(choice: DesignChoice): {
  * rolls with `design = refresh`, and how many of them chose it.
  */
 export function registerDesign(design: Design, origin: DesignOrigin): void {
+  // Events held back for later belong to the design they happened under, so
+  // they go out before it changes.
+  designChangeListeners.forEach((flush) => flush());
   if (!initialized) return;
   posthog.register({ design, design_origin: origin });
+}
+
+const designChangeListeners = new Set<() => void>();
+
+/**
+ * Runs `flush` just before the registered design changes. For code that holds
+ * an event back (a debounced edit, say): sent after a switch, it would count
+ * under the design the visitor moved to. Returns the unsubscribe.
+ */
+export function beforeDesignChange(flush: () => void): () => void {
+  designChangeListeners.add(flush);
+  return () => {
+    designChangeListeners.delete(flush);
+  };
 }
 
 export function track<E extends keyof EventMap>(

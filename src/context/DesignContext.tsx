@@ -44,8 +44,13 @@ export function DesignProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    const initial = readDesignChoice();
+    // The boot script read storage too, a moment earlier; another tab may have
+    // switched design in between. Stamp what React is about to render, so the
+    // CSS and the page can never disagree.
+    document.documentElement.dataset.design = initial.design;
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- the saved design is in localStorage, read after mount
-    setChoice(readDesignChoice());
+    setChoice(initial);
     setReady(true);
   }, []);
 

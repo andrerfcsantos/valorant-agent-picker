@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { Agent } from "@/data/agents";
-import { track } from "@/lib/analytics";
+import { beforeDesignChange, track } from "@/lib/analytics";
 import {
   MAX_SLOTS,
   computeSquad,
@@ -63,15 +63,21 @@ export function useSquad() {
   const pendingFilterEvents = useRef(new Map<number, PendingFilterEvent>());
   const copiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Leaving the page within the delay still reports the edit.
+  // Leaving the page or switching design within the delay still reports the
+  // edit, under the design it was made in.
   useEffect(() => {
     const pending = pendingFilterEvents.current;
-    return () => {
+    const flush = () => {
       pending.forEach(({ timer, send }) => {
         clearTimeout(timer);
         send();
       });
       pending.clear();
+    };
+    const unsubscribe = beforeDesignChange(flush);
+    return () => {
+      unsubscribe();
+      flush();
       if (copiedTimer.current) clearTimeout(copiedTimer.current);
     };
   }, []);
@@ -242,20 +248,28 @@ export function useSquad() {
     });
   }, []);
 
-  /** Gives every player every agent again. */
+  /**
+   * Gives every player in the squad every agent again. Slots beyond the squad
+   * size keep their filters, for when the squad grows back.
+   */
   const resetAllFilters = useCallback(() => {
     const pending = pendingFilterEvents.current;
-    pending.forEach(({ timer }) => clearTimeout(timer));
-    pending.clear();
+    pending.forEach(({ timer }, index) => {
+      if (index >= squadSize) return;
+      clearTimeout(timer);
+      pending.delete(index);
+    });
     setConfigs((prev) =>
-      prev.map((cfg) => ({ ...cfg, disabledAgents: new Set<string>() })),
+      prev.map((cfg, index) =>
+        index < squadSize ? { ...cfg, disabledAgents: new Set<string>() } : cfg,
+      ),
     );
     track("squad_slot_filters_changed", {
       action: "reset_all",
       slot_index: null,
       disabled_count: 0,
     });
-  }, []);
+  }, [squadSize]);
 
   const currentPreset = useCallback(
     (): SquadPreset => ({

@@ -54,6 +54,11 @@ export default function SharedAgentRefresh({
         ? `Rolled ${agent.name}, ${roleLabel}.`
         : `It was ${agent.name}, ${roleLabel}.`;
 
+  // A roll is shared with the selection as it is when the link is made, and
+  // the selection may have changed since the roll. Then the pool is only what
+  // rolling again uses, and must not be offered as the line-up it came from.
+  const inLineup = agent !== undefined && pool.some((a) => a.key === agent.key);
+
   const groups = ROLES.map((role) => ({
     ...role,
     agents: pool.filter((candidate) => candidate.role === role.key),
@@ -86,7 +91,9 @@ export default function SharedAgentRefresh({
 
             {sealed ? (
               <>
-                <p className={styles.name}>One of {pool.length}</p>
+                <p className={styles.name}>
+                  {inLineup ? `One of ${pool.length}` : "Who is it?"}
+                </p>
                 <div className={styles.role}>Reveal it to see who</div>
               </>
             ) : (
@@ -150,7 +157,11 @@ export default function SharedAgentRefresh({
         <div className={styles.head}>
           <div className={styles.headText}>
             <h2 id="shared-pool-heading" className={styles.title}>
-              {sealed ? "It is one of these" : "The agents it came from"}
+              {!inLineup
+                ? "Rolling again picks from these"
+                : sealed
+                  ? "It is one of these"
+                  : "The agents it came from"}
             </h2>
             <p className={styles.summary}>
               {shared.everyAgent

@@ -167,6 +167,11 @@ html[data-design="refresh"] .site-footer a {
   html[data-design="refresh"]:has([data-roll-bar]) .site-footer {
     padding-bottom: 6.5rem;
   }
+
+  /* A control tabbed to behind the fixed button is scrolled clear of it. */
+  html[data-design="refresh"]:has([data-roll-bar]) {
+    scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  }
 }
 
 /* The shortcuts popover, squared off and in the new design's colours. */

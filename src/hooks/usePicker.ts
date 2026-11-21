@@ -43,6 +43,16 @@ interface PickerOptions {
 }
 
 /**
+ * The options a shared preset replaced, kept for the whole visit rather than
+ * per mount. The provider holds the shared preset across pages, so leaving
+ * the picker and coming back mounts the hook again with the same preset: it
+ * must not be applied a second time, or Undo would "restore" the options the
+ * link itself set.
+ */
+let shareSnapshot: { preset: PickerPreset; before: PickerOptions } | null =
+  null;
+
+/**
  * Everything the random agent page does, without any of how it looks: the
  * roll, the options, share links, shared-preset undo, and the keyboard
  * shortcuts. The classic and the new design are two views over this one hook,
@@ -87,11 +97,20 @@ export function usePicker() {
   // the decoded preset; putting the options into effect is the picker's job.
   useEffect(() => {
     if (!sharedPreset) return;
+    if (shareSnapshot?.preset === sharedPreset) {
+      // Already applied on an earlier visit to this page; storage holds it.
+      optionsBeforeShare.current = shareSnapshot.before;
+      return;
+    }
     // Read from storage rather than state: the values the link replaced are
     // still there, and they are what Undo has to put back.
     optionsBeforeShare.current = {
       showPortrait: loadShowPortrait(),
       nonRepeating: loadNonRepeating(),
+    };
+    shareSnapshot = {
+      preset: sharedPreset,
+      before: optionsBeforeShare.current,
     };
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- the provider publishes a shared preset after mount
     setShowPortrait(sharedPreset.showPortrait);
