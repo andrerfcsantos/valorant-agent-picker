@@ -12,16 +12,16 @@ const FIXED_ROLL_BAR = "(max-width: 63.99rem)";
  */
 export function bringResultIntoView(element: HTMLElement | null): void {
   if (!element || !window.matchMedia(FIXED_ROLL_BAR).matches) return;
-  // Only for a roll made from the bar, from the result itself (a player's
-  // own reroll), or by a tap that leaves nothing focused. A keyboard
-  // shortcut pressed while focus is somewhere else on the page keeps the
-  // visitor where they are, with their focus still on screen.
+  // Only for a roll made from the fixed bar, from a button marked
+  // data-roll-source (a player's own reroll), or by a tap that leaves
+  // nothing focused. A keyboard shortcut pressed while focus is anywhere
+  // else, a pool's agent tile included, keeps the visitor where they are,
+  // with their focus still on screen.
   const active = document.activeElement;
   const fromElsewhere =
     active instanceof HTMLElement &&
     active !== document.body &&
-    !active.closest("[data-roll-bar]") &&
-    !element.contains(active);
+    !active.closest("[data-roll-bar], [data-roll-source]");
   if (fromElsewhere) return;
   // In view means the result itself (the agent's name, the first player's
   // agent, marked data-result) shows in full between the top of the screen

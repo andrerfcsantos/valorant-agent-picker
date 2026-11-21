@@ -211,6 +211,7 @@ export default function SharedSquadRefresh({
                   // By number: a name in an attribute would reach session
                   // replays, which mask text but not attributes.
                   aria-label={`Reroll player ${player.index + 1}`}
+                  data-roll-source
                   onClick={(event) => {
                     shared.handleRerollSlot(player.index);
                     rerolledRow.current = event.currentTarget.closest("li");

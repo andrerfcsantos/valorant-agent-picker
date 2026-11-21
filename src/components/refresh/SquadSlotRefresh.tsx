@@ -169,6 +169,7 @@ export default function SquadSlotRefresh({
             type="button"
             className={ui.btn}
             aria-label={`Reroll ${slotLabel.toLowerCase()}`}
+            data-roll-source
             onClick={() => {
               onReroll(index);
               setRerolls((count) => count + 1);
