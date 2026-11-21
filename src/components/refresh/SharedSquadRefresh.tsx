@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ROLES, getAllAgents } from "@/data/agents";
 import { slotNarrows } from "@/lib/squadService";
@@ -34,6 +34,11 @@ export default function SharedSquadRefresh({
   const squadRolls = ready ? shared.squadRolls : 0;
   const revealed = ready && shared.revealed;
   useResultIntoView(playerList, `${squadRolls}-${revealed}`);
+  // One player's reroll, from the button below their result: on a phone
+  // scrolled so the button is near the top, the agent changes above it.
+  const rerolledRow = useRef<HTMLElement | null>(null);
+  const [rowRerolls, setRowRerolls] = useState(0);
+  useResultIntoView(rerolledRow, rowRerolls);
 
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
@@ -120,7 +125,7 @@ export default function SharedSquadRefresh({
           )}
           {/* Full page load so the squad generator reads the setup as it starts. */}
           <a
-            className={ui.btn}
+            className={`${ui.btn} ${ui.wrap}`}
             href={shared.presetHref}
             title="Open the squad generator with these players and selections"
           >
@@ -206,7 +211,11 @@ export default function SharedSquadRefresh({
                   // By number: a name in an attribute would reach session
                   // replays, which mask text but not attributes.
                   aria-label={`Reroll player ${player.index + 1}`}
-                  onClick={() => shared.handleRerollSlot(player.index)}
+                  onClick={(event) => {
+                    shared.handleRerollSlot(player.index);
+                    rerolledRow.current = event.currentTarget.closest("li");
+                    setRowRerolls((count) => count + 1);
+                  }}
                 >
                   Reroll
                 </button>

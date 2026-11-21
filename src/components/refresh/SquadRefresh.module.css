@@ -102,6 +102,10 @@
     color: HighlightText;
     forced-color-adjust: none;
   }
+
+  .size input:focus-visible + span {
+    outline-color: CanvasText;
+  }
 }
 
 .resetAll {

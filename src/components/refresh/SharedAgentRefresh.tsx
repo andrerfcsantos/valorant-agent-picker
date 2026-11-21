@@ -186,7 +186,7 @@ export default function SharedAgentRefresh({
           {/* A full page load, not a client navigation: the picker reads a
               shared pool once, as it starts. */}
           <a
-            className={ui.btn}
+            className={`${ui.btn} ${ui.wrap}`}
             href={shared.presetHref}
             title="Open the picker with these agents selected and these roll settings"
           >

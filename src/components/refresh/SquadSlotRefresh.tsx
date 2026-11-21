@@ -6,6 +6,7 @@ import type { Agent, Role } from "@/data/agents";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import SpriteIcon from "@/components/SpriteIcon";
 import { handOffFocus } from "./focus";
+import { useResultIntoView } from "./scroll";
 import PoolEditor from "./PoolEditor";
 import ui from "./ui.module.css";
 import styles from "./SquadSlotRefresh.module.css";
@@ -46,6 +47,11 @@ export default function SquadSlotRefresh({
   // button that opened the pool rather than falling to the page.
   const poolToggle = useRef<HTMLButtonElement>(null);
   const poolId = useId();
+  // A reroll from the button below the result, on a phone scrolled so the
+  // button is near the top, changes the agent above the screen.
+  const row = useRef<HTMLDivElement>(null);
+  const [rerolls, setRerolls] = useState(0);
+  useResultIntoView(row, rerolls);
 
   // Names the visitor types are theirs: shown as text only inside ph-mask,
   // which session replays mask, and never copied into an attribute (replays
@@ -105,7 +111,7 @@ export default function SquadSlotRefresh({
 
   return (
     <li className={styles.slot}>
-      <div className={styles.row}>
+      <div ref={row} className={styles.row}>
         {agent ? (
           <SpriteIcon
             agentKey={agent.key}
@@ -163,7 +169,10 @@ export default function SquadSlotRefresh({
             type="button"
             className={ui.btn}
             aria-label={`Reroll ${slotLabel.toLowerCase()}`}
-            onClick={() => onReroll(index)}
+            onClick={() => {
+              onReroll(index);
+              setRerolls((count) => count + 1);
+            }}
           >
             Reroll
           </button>

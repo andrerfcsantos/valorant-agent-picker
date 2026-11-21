@@ -25,6 +25,14 @@
 
 /* Secondary action: an outlined box with its label in small capitals, the
    way the game labels the buttons in its menus. */
+/* For a label long enough to need a second line on a narrow screen.
+   Doubled up to outrank .btn, which comes later. */
+.wrap.wrap {
+  padding-block: 0.4rem;
+  white-space: normal;
+  text-align: center;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
