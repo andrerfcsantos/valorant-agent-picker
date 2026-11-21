@@ -1,5 +1,7 @@
 "use client";
 
+import { focusPageHeading } from "@/lib/pageHeading";
+
 interface SharedPresetNoticeProps {
   message: string;
   onUndo: () => void;
@@ -15,15 +17,23 @@ export default function SharedPresetNotice({
   onUndo,
   onDismiss,
 }: SharedPresetNoticeProps) {
+  // Either button closes the notice, and itself with it: keep keyboard focus
+  // on the page rather than letting it fall to <body>.
+  const closing =
+    (action: () => void) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (document.activeElement === event.currentTarget) focusPageHeading();
+      action();
+    };
+
   return (
     <div className="shared-preset-notice" aria-live="polite">
       <span className="shared-preset-notice-text">{message}</span>
-      <button className="shared-preset-notice-undo" onClick={onUndo}>
+      <button className="shared-preset-notice-undo" onClick={closing(onUndo)}>
         Undo
       </button>
       <button
         className="shared-preset-notice-dismiss"
-        onClick={onDismiss}
+        onClick={closing(onDismiss)}
         aria-label="Dismiss"
         title="Dismiss"
       >

@@ -13,8 +13,16 @@ export function useKeyboardShortcuts(shortcuts: ShortcutMap) {
     // out of it, so a key pressed there does not act on what is behind.
     if ((e.target as HTMLElement).closest?.('[data-shortcuts="off"]')) return;
 
-    const tag = (e.target as HTMLElement).tagName;
-    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    // Fields that take typing keep their keys. A checkbox or radio does not
+    // type, so shortcuts still work while one has focus.
+    const target = e.target as HTMLElement;
+    const tag = target.tagName;
+    const typing =
+      tag === "TEXTAREA" ||
+      tag === "SELECT" ||
+      (tag === "INPUT" &&
+        !["checkbox", "radio"].includes((target as HTMLInputElement).type));
+    if (typing) return;
     if ((e.target as HTMLElement).isContentEditable) return;
 
     const key = e.key.toLowerCase();
