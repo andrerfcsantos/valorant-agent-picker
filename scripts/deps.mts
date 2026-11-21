@@ -50,20 +50,25 @@ function readOutdated(): Record<string, OutdatedEntry> {
   // all-clear because the command never ran would be worse than crashing:
   // inside an npm script `node_modules/.bin/vp` shadows the global binary, so
   // a stale local `vite-plus` can be missing the subcommand outright.
+  // npm exits 0 with no output when nothing is outdated and 1 with a report
+  // when something is, so blank output only counts as an all-clear on exit 0.
+  // A failed registry request also exits 1 with JSON, as {"error": {...}}, and
+  // a missing `vp` or a killed child exits non-zero with no output: none of
+  // those may read as "up to date".
   let stdout: string | undefined;
+  let status: number | null = 0;
   try {
     stdout = execSync("vp outdated --format json", options);
   } catch (error) {
-    stdout = (error as { stdout?: string }).stdout;
+    const failure = error as { stdout?: string; status?: number | null };
+    stdout = failure.stdout;
+    status = failure.status ?? null;
   }
 
-  // An empty report means nothing is outdated. Anything else must be npm's
-  // name -> row map: a failed registry request also prints JSON, as
-  // {"error": {...}}, and reading that as data would report an all-clear.
-  if (stdout !== undefined && !stdout.trim()) return {};
+  if (status === 0 && !stdout?.trim()) return {};
   let parsed: unknown;
   try {
-    parsed = stdout === undefined ? undefined : JSON.parse(stdout);
+    parsed = stdout?.trim() ? JSON.parse(stdout) : undefined;
   } catch {
     // Reported below.
   }
@@ -73,10 +78,12 @@ function readOutdated(): Record<string, OutdatedEntry> {
     typeof (row as OutdatedEntry).wanted === "string" &&
     typeof (row as OutdatedEntry).latest === "string";
   if (
+    (status === 0 || status === 1) &&
     typeof parsed === "object" &&
     parsed !== null &&
     !Array.isArray(parsed) &&
     !("error" in parsed) &&
+    (status === 0 || Object.keys(parsed).length > 0) &&
     Object.values(parsed).every(isRow)
   ) {
     return parsed as Record<string, OutdatedEntry>;
@@ -90,7 +97,7 @@ function readOutdated(): Record<string, OutdatedEntry> {
     );
   } else {
     console.error(
-      `${red("Could not read `vp outdated`.")} The local vite-plus in node_modules\n` +
+      `${red("Could not read `vp outdated`")} ${dim(`(${status === null ? "killed by a signal" : `exit ${status}`})`)}. The local vite-plus in node_modules\n` +
         `shadows the global \`vp\` inside npm scripts - run ${bold("vp update vite-plus")}\n` +
         `if it is too old to have the subcommand.`,
     );
@@ -239,10 +246,18 @@ function checkDependencies(): boolean {
   const outOfRange: [string, OutdatedEntry][] = [];
 
   // The `vite` alias is not upgraded on its own: it must be the core build the
-  // selected vite-plus requires, which the Vite+ section above checks.
-  const { vite: viteCore, ...independent } = outdated;
+  // selected vite-plus requires, which the Vite+ section above checks. npm
+  // keys an aliased dependency as `<name>:<package>@<range>`, so the declared
+  // name is the part before the colon (package names cannot contain one).
+  let viteCore: OutdatedEntry | undefined;
+  const independent: [string, OutdatedEntry][] = [];
+  for (const [key, entry] of Object.entries(outdated)) {
+    const name = key.split(":")[0];
+    if (name === "vite") viteCore = entry;
+    else independent.push([name, entry]);
+  }
 
-  for (const [name, entry] of Object.entries(independent)) {
+  for (const [name, entry] of independent) {
     if (entry.current !== entry.wanted) inRange.push([name, entry]);
     if (entry.wanted !== entry.latest) outOfRange.push([name, entry]);
   }
