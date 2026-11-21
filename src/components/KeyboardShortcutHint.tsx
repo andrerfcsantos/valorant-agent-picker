@@ -42,6 +42,9 @@ export default function KeyboardShortcutHint() {
   const { design } = useDesign();
 
   const onSquad = pathname === "/squad";
+  // Only the picker and the squad generator have shortcuts; elsewhere the
+  // list would advertise keys that do nothing.
+  const hasShortcuts = pathname === "/" || onSquad;
   const shortcuts =
     design === "refresh"
       ? onSquad
@@ -74,6 +77,8 @@ export default function KeyboardShortcutHint() {
       document.removeEventListener("keydown", handleEscape);
     };
   }, [open]);
+
+  if (!hasShortcuts) return null;
 
   return (
     <div ref={popoverRef} className="shortcut-hint-container">

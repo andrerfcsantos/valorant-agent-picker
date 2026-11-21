@@ -175,7 +175,9 @@ html[data-design="refresh"] .site-footer a {
 
   /* A control tabbed to behind the fixed button is scrolled clear of it. */
   html[data-design="refresh"]:has([data-roll-bar]) {
-    scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    /* Room for the bar when its label wraps to two lines on the narrowest
+       screens, as "Roll the squad again" can. */
+    scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom));
   }
 }
 
