@@ -78,26 +78,44 @@ the 16px favicon.
 Every dependency is declared as a caret range, so `vp update` is free to move
 within a major. The lockfile is what pins exact versions.
 
-| Command                     | What it does                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| `npm run deps:check`        | Reports the Node.js version alignment and splits pending updates into minor/patch and major |
-| `npm run deps:update`       | Applies every minor/patch update the declared ranges already allow                          |
-| `npm run deps:update:major` | Interactively picks major updates, which widen the ranges in `package.json`                 |
+| Command               | What it does                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------- |
+| `npm run deps:check`  | Reports the Node.js version alignment and splits pending updates into minor/patch and major |
+| `npm run deps:update` | Applies every minor/patch update the declared ranges already allow                          |
 
 `deps:update` is the routine one — it only moves the lockfile, so `package.json`
 stays untouched and the changes are non-breaking by semver. Run `vp check` and
 `npm run build` afterwards and commit `package-lock.json`.
 
-`deps:update:major` crosses major boundaries and needs real testing: read the
-changelog for each package, take them one at a time where possible, and validate
-with `vp check` and `npm run build` before committing.
+Major updates widen a range in `package.json` and need real testing. Read the
+changelog, then take one package at a time with `vp add <name>@latest` (add `-D`
+for a devDependency), which writes the new caret range. The `vite` alias is the exception: it moves
+with `vite-plus`, so `deps:check` leaves it out of both lists. Validate with `vp check`
+and `npm run build` before committing. (Vite+ rejects `vp update --latest` and
+`--interactive` in npm projects.)
+
+`vite-plus` and the `vite` alias (`@voidzero-dev/vite-plus-core`) move as a
+pair: each Vite+ release requires one exact core build, which
+`npm view vite-plus@<version> dependencies.vite` prints. Both are caret ranges, so a
+routine update can pick a core the installed CLI rejects, and `vp build` then
+stops and asks for `vp migrate`. `npm run deps:check` compares the two in the
+lockfile and fails on a mismatch. To fix it, set the `vite` devDependency and
+the `vite` override to the exact core version and run `vp install`, then put the
+`^` back on both and run `vp install` again. The lockfile keeps the exact
+version, and a caret alone would not move a newer, already locked core back
+down. `vp migrate` also writes exact pins; turn them back into caret ranges the
+same way. The direct `vite` devDependency is there so npm hoists the core to the
+top of `node_modules`; without it `vp test` cannot resolve `vite`.
 
 Bumping `@types/node` across a major is a Node.js upgrade, not a types upgrade.
 Do it together with `vp env pin <major>` and a matching `engines.node`, in one
-commit — `npm run deps:check` fails if the three ever disagree.
+commit — `npm run deps:check` reports it if the three ever disagree, and
+fails with `--ci`.
 
 `npm run deps:check -- --ci` exits non-zero when the Node.js declarations are out
 of sync or when in-range updates are pending, which makes it usable as a CI gate.
+A Vite+ mismatch, or a `vp outdated` that failed (for example, the registry is
+unreachable), fails `deps:check` with or without `--ci`.
 
 ## Learn More
 

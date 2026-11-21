@@ -50,23 +50,65 @@ function readOutdated(): Record<string, OutdatedEntry> {
   // all-clear because the command never ran would be worse than crashing:
   // inside an npm script `node_modules/.bin/vp` shadows the global binary, so
   // a stale local `vite-plus` can be missing the subcommand outright.
+  // npm exits 0 with no output when nothing is outdated and 1 with a report
+  // when something is, so blank output only counts as an all-clear on exit 0.
+  // A failed registry request also exits 1 with JSON, as {"error": {...}}, and
+  // a missing `vp` or a killed child exits non-zero with no output: none of
+  // those may read as "up to date".
+  let stdout: string | undefined;
+  let status: number | null = 0;
   try {
-    const stdout = execSync("vp outdated --format json", options);
-    return stdout.trim() ? JSON.parse(stdout) : {};
+    // Pinned so the environment cannot narrow or reshape the report:
+    // NODE_ENV=production would drop the devDependencies, and `all` would
+    // turn rows into arrays for packages several dependents pull in.
+    stdout = execSync(
+      "vp outdated --format json -- --include=dev --all=false",
+      options,
+    );
   } catch (error) {
-    const stdout = (error as { stdout?: string }).stdout;
-    try {
-      if (stdout?.trim()) return JSON.parse(stdout);
-    } catch {
-      // Fall through to the diagnostic below.
-    }
+    const failure = error as { stdout?: string; status?: number | null };
+    stdout = failure.stdout;
+    status = failure.status ?? null;
+  }
+
+  if (status === 0 && !stdout?.trim()) return {};
+  let parsed: unknown;
+  try {
+    parsed = stdout?.trim() ? JSON.parse(stdout) : undefined;
+  } catch {
+    // Reported below.
+  }
+  const isRow = (row: unknown) =>
+    typeof row === "object" &&
+    row !== null &&
+    typeof (row as OutdatedEntry).wanted === "string" &&
+    typeof (row as OutdatedEntry).latest === "string";
+  if (
+    (status === 0 || status === 1) &&
+    typeof parsed === "object" &&
+    parsed !== null &&
+    !Array.isArray(parsed) &&
+    !("error" in parsed) &&
+    (status === 0 || Object.keys(parsed).length > 0) &&
+    Object.values(parsed).every(isRow)
+  ) {
+    return parsed as Record<string, OutdatedEntry>;
+  }
+
+  const npmError = (parsed as { error?: { code?: string; summary?: string } })
+    ?.error;
+  if (npmError) {
     console.error(
-      `${red("Could not read `vp outdated`.")} The local vite-plus in node_modules\n` +
+      `${red("`vp outdated` failed:")} ${[npmError.code, npmError.summary].filter(Boolean).join(" - ")}`,
+    );
+  } else {
+    console.error(
+      `${red("Could not read `vp outdated`")} ${dim(`(${status === null ? "killed by a signal" : `exit ${status}`})`)}. The local vite-plus in node_modules\n` +
         `shadows the global \`vp\` inside npm scripts - run ${bold("vp update vite-plus")}\n` +
         `if it is too old to have the subcommand.`,
     );
-    process.exit(1);
   }
+  process.exit(1);
 }
 
 /**
@@ -121,6 +163,85 @@ function checkNodeAlignment(): boolean {
   return aligned && runningOk;
 }
 
+/**
+ * vite-plus requires one exact `@voidzero-dev/vite-plus-core` build, aliased as
+ * `vite`, while package.json declares that alias as a caret range so updates
+ * are not blocked. A routine update can therefore resolve a core that the
+ * installed CLI rejects (as 1.5 -> 1.7 did, when core jumped from 1.x to
+ * 8.3.8000), and `vp build` then refuses to run. The lockfile must also hoist
+ * `vite` to the top level: when npm nests it under vite-plus, `vp test` cannot
+ * resolve it. Both are read from the lockfile, which is what installs ship.
+ */
+const VITE_CORE = "@voidzero-dev/vite-plus-core";
+
+function checkVitePlusAlignment(): boolean {
+  type LockPackage = {
+    name?: string;
+    version?: string;
+    dependencies?: Record<string, string>;
+  };
+  let packages: Record<string, LockPackage> = {};
+  try {
+    const lock = JSON.parse(
+      fs.readFileSync(path.join(ROOT_DIR, "package-lock.json"), "utf8"),
+    );
+    packages = lock.packages ?? {};
+  } catch {
+    console.log(
+      `\n${bold("Vite+")}\n  ${red("?")} package-lock.json not readable`,
+    );
+    return false;
+  }
+
+  const cli = packages["node_modules/vite-plus"];
+  const requiredSpec = cli?.dependencies?.vite;
+  const required = requiredSpec?.startsWith(`npm:${VITE_CORE}@`)
+    ? requiredSpec.slice(`npm:${VITE_CORE}@`.length)
+    : undefined;
+  const hoistedPkg = packages["node_modules/vite"];
+  const nestedPkg = packages["node_modules/vite-plus/node_modules/vite"];
+  const hoisted = hoistedPkg?.version;
+  const nested = nestedPkg?.version;
+  // The CLI resolves its own nested copy first; project code and `vp test`
+  // only see the hoisted one. Both must be the build vite-plus requires, from
+  // the core package itself rather than a same-numbered fork.
+  const isRequired = (entry: LockPackage | undefined) =>
+    !!required && entry?.name === VITE_CORE && entry.version === required;
+  const cliOk = isRequired(nestedPkg ?? hoistedPkg);
+  const rootOk = isRequired(hoistedPkg);
+  const ok = cliOk && rootOk;
+
+  console.log(`\n${bold("Vite+")}`);
+  console.log(
+    `  ${ok ? green("✓") : red("!")} ${"vite-plus".padEnd(28)} ${cli?.version ?? red("not installed")} ${dim(`(requires core ${required ?? "?"})`)}`,
+  );
+  console.log(
+    `  ${rootOk ? green("✓") : red("!")} ${"vite (vite-plus-core)".padEnd(28)} ${hoisted ?? red("not hoisted")}`,
+  );
+  if (nested !== undefined) {
+    console.log(
+      `  ${cliOk ? green("✓") : red("!")} ${"  nested under vite-plus".padEnd(28)} ${nested}`,
+    );
+  }
+
+  if (!ok && hoisted === undefined && cliOk) {
+    console.log(
+      `\n  ${red("vite is nested under vite-plus.")} Declare it as a direct devDependency with\n` +
+        `  the same alias as the override, then run ${bold("vp install")}.`,
+    );
+  } else if (!ok) {
+    const exact = `npm:${VITE_CORE}@${required ?? "<version>"}`;
+    console.log(
+      `\n  ${red("Mismatch.")} Set the ${bold("vite")} devDependency and override to ${bold(exact)}\n` +
+        `  and run ${bold("vp install")}. Then put the ${bold("^")} back on both and run ${bold("vp install")} again;\n` +
+        `  the lockfile keeps the exact version. ${dim("(`npm view vite-plus@<version> dependencies.vite`")}\n` +
+        `  ${dim("shows the core a release needs.)")}`,
+    );
+  }
+
+  return ok;
+}
+
 function checkDependencies(): boolean {
   const outdated = readOutdated();
 
@@ -130,7 +251,19 @@ function checkDependencies(): boolean {
   const inRange: [string, OutdatedEntry][] = [];
   const outOfRange: [string, OutdatedEntry][] = [];
 
-  for (const [name, entry] of Object.entries(outdated)) {
+  // The `vite` alias is not upgraded on its own: it must be the core build the
+  // selected vite-plus requires, which the Vite+ section above checks. npm
+  // keys an aliased dependency as `<name>:<package>@<range>`, so the declared
+  // name is the part before the colon (package names cannot contain one).
+  let viteCore: OutdatedEntry | undefined;
+  const independent: [string, OutdatedEntry][] = [];
+  for (const [key, entry] of Object.entries(outdated)) {
+    const name = key.split(":")[0];
+    if (name === "vite") viteCore = entry;
+    else independent.push([name, entry]);
+  }
+
+  for (const [name, entry] of independent) {
     if (entry.current !== entry.wanted) inRange.push([name, entry]);
     if (entry.wanted !== entry.latest) outOfRange.push([name, entry]);
   }
@@ -172,8 +305,16 @@ function checkDependencies(): boolean {
       );
     }
     console.log(
-      `\n  Review each changelog, then ${bold("npm run deps:update:major")} to pick them\n` +
-        `  interactively. Validate with ${bold("vp check")} and ${bold("npm run build")} before committing.`,
+      `\n  Review each changelog, then take them one at a time with\n` +
+        `  ${bold("vp add <name>@latest")} (${bold("-D")} for a devDependency). Validate with ${bold("vp check")}\n` +
+        `  and the build before committing.`,
+    );
+  }
+
+  if (viteCore) {
+    console.log(
+      `\n  ${dim(`vite (${VITE_CORE}) ${viteCore.current ?? "?"} -> ${viteCore.latest} is not listed: it moves with`)}\n` +
+        `  ${dim("vite-plus. Upgrade vite-plus, then set both `vite` entries to the core it requires.")}`,
     );
   }
 
@@ -181,9 +322,12 @@ function checkDependencies(): boolean {
 }
 
 const nodeOk = checkNodeAlignment();
+const vitePlusOk = checkVitePlusAlignment();
 const depsOk = checkDependencies();
 
-if (CI && !(nodeOk && depsOk)) {
+if (!vitePlusOk) process.exitCode = 1;
+
+if (CI && !(nodeOk && vitePlusOk && depsOk)) {
   console.log(`\n${red("deps:check failed")} ${dim("(--ci)")}`);
   process.exit(1);
 }
