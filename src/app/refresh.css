@@ -111,6 +111,11 @@ html[data-design="refresh"] .site-nav-switch:hover {
     height: var(--vp-nav-h);
     padding-block: 0;
   }
+
+  /* Whatever is scrolled to, or focused, lands below the navbar. */
+  html[data-design="refresh"] {
+    scroll-padding-top: var(--vp-nav-h);
+  }
 }
 
 /* ------------------------------------------------------------------ Footer */

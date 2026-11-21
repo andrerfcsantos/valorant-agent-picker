@@ -53,8 +53,8 @@ export function PresetIntro({ className }: { className?: string }) {
         Applying one selects its agents.
       </p>
       <p className={styles.keysNote}>
-        The first ten also answer to the number keys, in the order they are
-        listed.
+        On the picker, the number keys 1 to 0 apply the first ten, in the order
+        they are listed here.
       </p>
     </div>
   );
