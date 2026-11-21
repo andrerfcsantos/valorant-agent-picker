@@ -89,7 +89,8 @@ stays untouched and the changes are non-breaking by semver. Run `vp check` and
 
 Major updates widen a range in `package.json` and need real testing. Read the
 changelog, then take one package at a time with `vp add <name>@latest` (add `-D`
-for a devDependency), which writes the new caret range. Validate with `vp check`
+for a devDependency), which writes the new caret range. The `vite` alias is the exception: it moves
+with `vite-plus`, so `deps:check` leaves it out of both lists. Validate with `vp check`
 and `npm run build` before committing. (Vite+ rejects `vp update --latest` and
 `--interactive` in npm projects.)
 
@@ -108,10 +109,13 @@ top of `node_modules`; without it `vp test` cannot resolve `vite`.
 
 Bumping `@types/node` across a major is a Node.js upgrade, not a types upgrade.
 Do it together with `vp env pin <major>` and a matching `engines.node`, in one
-commit — `npm run deps:check` fails if the three ever disagree.
+commit — `npm run deps:check` reports it if the three ever disagree, and
+fails with `--ci`.
 
 `npm run deps:check -- --ci` exits non-zero when the Node.js declarations are out
 of sync or when in-range updates are pending, which makes it usable as a CI gate.
+A Vite+ mismatch, or a `vp outdated` that failed (for example, the registry is
+unreachable), fails `deps:check` with or without `--ci`.
 
 ## Learn More
 

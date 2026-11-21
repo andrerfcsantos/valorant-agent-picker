@@ -83,7 +83,7 @@ replace a range with an exact version — that is what blocks `vp update`.
 
 - `npm run deps:check` - report Node.js alignment plus pending minor/patch and major updates
 - `npm run deps:update` - apply everything the existing ranges allow (lockfile-only, non-breaking)
-- `vp add <name>@latest` (`-D` for a devDependency) - cross a major boundary, one package at a time; requires review and testing. Vite+ rejects `vp update --latest`/`--interactive` in npm projects
+- `vp add <name>@latest` (`-D` for a devDependency) - cross a major boundary, one package at a time; requires review and testing. Not for the `vite` alias, which follows `vite-plus`. Vite+ rejects `vp update --latest`/`--interactive` in npm projects
 
 `vite-plus` and the `vite` alias (`npm:@voidzero-dev/vite-plus-core@...`,
 declared both as a devDependency and as an override) must resolve to the core
@@ -103,7 +103,7 @@ and `npm run build`.
 
 The target Node.js major is declared in three places that must always agree:
 `engines.node`, `devEngines.runtime.version` (both in `package.json`), and the
-`@types/node` major. `npm run deps:check` verifies this and reports a mismatch.
+`@types/node` major. `npm run deps:check` verifies this and reports a mismatch (it fails only with `--ci`).
 
 Changing it is a deliberate, standalone change: run `vp env pin <major>`, then
 update `engines.node` and `@types/node` to match in the same commit.
