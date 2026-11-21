@@ -58,7 +58,13 @@ function readOutdated(): Record<string, OutdatedEntry> {
   let stdout: string | undefined;
   let status: number | null = 0;
   try {
-    stdout = execSync("vp outdated --format json", options);
+    // Pinned so the environment cannot narrow or reshape the report:
+    // NODE_ENV=production would drop the devDependencies, and `all` would
+    // turn rows into arrays for packages several dependents pull in.
+    stdout = execSync(
+      "vp outdated --format json -- --include=dev --all=false",
+      options,
+    );
   } catch (error) {
     const failure = error as { stdout?: string; status?: number | null };
     stdout = failure.stdout;
