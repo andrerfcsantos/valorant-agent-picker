@@ -102,7 +102,7 @@ export default function SharedAgentRefresh({
 
             {sealed ? (
               <>
-                <p className={styles.name}>
+                <p className={styles.name} data-result>
                   {inLineup ? `One of ${pool.length}` : "Who is it?"}
                 </p>
                 <div className={styles.role}>Reveal it to see who</div>
@@ -112,6 +112,7 @@ export default function SharedAgentRefresh({
                 <p
                   key={`name-${rolls}`}
                   className={`${styles.name} ${ui.land}`}
+                  data-result
                 >
                   {agent.name}
                 </p>

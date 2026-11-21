@@ -78,6 +78,7 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
             <p
               key={`name-${agentCount}`}
               className={`${styles.name} ${ui.land}`}
+              data-result
             >
               {chosenAgent.name}
             </p>

@@ -165,7 +165,7 @@ export default function SharedSquadRefresh({
                 <span className={`${styles.faceFrame} ${styles.faceEmpty}`} />
               )}
 
-              <div className={styles.who}>
+              <div className={styles.who} data-result>
                 <span className={styles.playerName}>{player.name}</span>
                 {sealed ? (
                   <span className={styles.redacted}>

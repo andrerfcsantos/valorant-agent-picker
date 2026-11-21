@@ -3,9 +3,6 @@ import { type RefObject, useEffect, useRef } from "react";
 /** Below this width the roll button is fixed to the bottom of the screen. */
 const FIXED_ROLL_BAR = "(max-width: 63.99rem)";
 
-/** About one result row, in pixels: what has to show above the bar. */
-const ROW = 64;
-
 /**
  * Brings a result back into view when the visitor rolled from further down
  * the page. On a phone the roll button is fixed to the bottom of the screen
@@ -15,13 +12,15 @@ const ROW = 64;
  */
 export function bringResultIntoView(element: HTMLElement | null): void {
   if (!element || !window.matchMedia(FIXED_ROLL_BAR).matches) return;
-  // In view means starting below the top of the screen, with room for at
-  // least a row above the fixed bar. Setup above the results can push them
-  // under the bar as easily as scrolling down can leave them above.
-  const top = element.getBoundingClientRect().top;
+  // In view means the result itself (the agent's name, the first player's
+  // agent, marked data-result) shows in full between the top of the screen
+  // and the fixed bar. Setup above the results can push them under the bar
+  // as easily as scrolling down can leave them above.
+  const result = element.querySelector<HTMLElement>("[data-result]") ?? element;
+  const { top, bottom } = result.getBoundingClientRect();
   const bar = document.querySelector("[data-roll-bar]");
   const floor = bar ? bar.getBoundingClientRect().top : window.innerHeight;
-  if (top >= 0 && top + ROW <= floor) return;
+  if (top >= 0 && bottom <= floor) return;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   element.scrollIntoView({
     block: "start",

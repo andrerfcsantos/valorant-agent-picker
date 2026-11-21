@@ -270,3 +270,13 @@ html[data-design="refresh"] .shortcut-popover-title {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
+
+/* The shared-link notice's Undo: navy on the red, as on every red control in
+   this design (off-white on it is 2.75:1). */
+html[data-design="refresh"] .shared-preset-notice-undo {
+  color: var(--vp-page);
+}
+
+html[data-design="refresh"] .shared-preset-notice-undo:hover {
+  background-color: var(--vp-text);
+}

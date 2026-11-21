@@ -112,7 +112,7 @@ export default function SquadSlotRefresh({
           <span className={`${styles.face} ${styles.faceEmpty}`} />
         )}
 
-        <div className={styles.who}>
+        <div className={styles.who} data-result>
           <input
             className={styles.nameInput}
             type="text"
@@ -139,9 +139,9 @@ export default function SquadSlotRefresh({
               </span>
               {outside && (
                 <span className={styles.outside}>
-                  {othersHaveAll
-                    ? `Not from ${player}'s selection: other players have all of it`
-                    : `Not in ${player}'s current selection`}
+                  {/* What is true now, not why the roll went this way: the
+                      selection may have changed since. */}
+                  {`Not in ${player}'s current selection${othersHaveAll ? ", and the other players have all of it" : ""}`}
                 </span>
               )}
             </div>

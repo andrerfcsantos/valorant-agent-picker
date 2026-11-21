@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ROLES, getAgentsByRole } from "@/data/agents";
 import { useAgents } from "@/context/AgentContext";
 import type { Picker } from "@/hooks/usePicker";
@@ -43,14 +43,28 @@ export default function PickerContent({ picker }: { picker: Picker }) {
   // Each roll blanks the name for a moment before the new one drops in, so
   // rolling the same agent twice still reads as a roll.
   // A layout effect, so the new name is never painted before it is hidden.
+  // A reveal already on its way is left to finish, and shows whichever agent
+  // is latest by then: restarting it on every roll would keep the name
+  // hidden for as long as R is held down.
   const [nameVisible, setNameVisible] = useState(true);
+  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useLayoutEffect(() => {
     if (agentCount === 0) return;
     // oxlint-disable-next-line react-hooks/set-state-in-effect -- replays the name's entrance after each roll
     setNameVisible(false);
-    const timer = setTimeout(() => setNameVisible(true), 100);
-    return () => clearTimeout(timer);
+    if (revealTimer.current) return;
+    revealTimer.current = setTimeout(() => {
+      revealTimer.current = null;
+      setNameVisible(true);
+    }, 100);
   }, [agentCount]);
+  useEffect(
+    () => () => {
+      if (revealTimer.current) clearTimeout(revealTimer.current);
+      revealTimer.current = null;
+    },
+    [],
+  );
 
   const numberOfSelected = selectedAgents.size;
 
