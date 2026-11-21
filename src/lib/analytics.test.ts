@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vite-plus/test";
+import { describe, expect, test, vi } from "vite-plus/test";
 import type { CaptureResult } from "posthog-js/dist/module.slim";
 
 import { getAllAgents } from "@/data/agents";
@@ -6,9 +6,12 @@ import {
   agentPoolProps,
   builtinId,
   createSampler,
+  beforeDesignChange,
+  designForChoice,
   isStacklessThirdPartyException,
   presetKind,
   redactUrl,
+  registerDesign,
   scrubSecrets,
 } from "./analytics";
 
@@ -217,5 +220,33 @@ describe("presetKind and builtinId", () => {
     const id = "6f1c1b7e-1e0a-4b8e-9f11-2b5d1d0c9a77";
     expect(presetKind(id)).toBe("custom");
     expect(builtinId(id)).toBeUndefined();
+  });
+});
+
+describe("designForChoice", () => {
+  test("reports the visitor's own choice as chosen", () => {
+    expect(designForChoice({ design: "refresh", chosen: true })).toEqual({
+      design: "refresh",
+      origin: "chosen",
+    });
+  });
+
+  test("reports the build's default as the default", () => {
+    expect(designForChoice({ design: "classic", chosen: false })).toEqual({
+      design: "classic",
+      origin: "default",
+    });
+  });
+});
+
+describe("beforeDesignChange", () => {
+  test("flushes held-back events before the design changes, until unsubscribed", () => {
+    const flush = vi.fn();
+    const unsubscribe = beforeDesignChange(flush);
+    registerDesign("refresh", "chosen");
+    expect(flush).toHaveBeenCalledTimes(1);
+    unsubscribe();
+    registerDesign("classic", "chosen");
+    expect(flush).toHaveBeenCalledTimes(1);
   });
 });

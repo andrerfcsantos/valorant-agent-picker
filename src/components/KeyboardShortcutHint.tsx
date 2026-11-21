@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { useDesign } from "@/context/DesignContext";
 
 const soloShortcuts = [
   { key: "R", description: "Randomize agent" },
@@ -18,11 +19,40 @@ const squadShortcuts = [
   { key: "Ctrl+C", description: "Copy squad to clipboard" },
 ];
 
+// The new design names the same actions the way its buttons do.
+const soloShortcutsRefresh = [
+  { key: "R", description: "Roll an agent" },
+  { key: "C", description: "Add or remove all controllers" },
+  { key: "S", description: "Add or remove all sentinels" },
+  { key: "I", description: "Add or remove all initiators" },
+  { key: "D", description: "Add or remove all duelists" },
+  { key: "U", description: "Clear selection" },
+  { key: "1–0", description: "Apply preset 1 to 10" },
+];
+
+const squadShortcutsRefresh = [
+  { key: "R", description: "Roll the squad" },
+  { key: "Ctrl+C", description: "Copy the squad as text" },
+];
+
 export default function KeyboardShortcutHint() {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const shortcuts = pathname === "/squad" ? squadShortcuts : soloShortcuts;
+  const { design } = useDesign();
+
+  const onSquad = pathname === "/squad";
+  // Only the picker and the squad generator have shortcuts; elsewhere the
+  // list would advertise keys that do nothing.
+  const hasShortcuts = pathname === "/" || onSquad;
+  const shortcuts =
+    design === "refresh"
+      ? onSquad
+        ? squadShortcutsRefresh
+        : soloShortcutsRefresh
+      : onSquad
+        ? squadShortcuts
+        : soloShortcuts;
 
   useEffect(() => {
     if (!open) return;
@@ -47,6 +77,8 @@ export default function KeyboardShortcutHint() {
       document.removeEventListener("keydown", handleEscape);
     };
   }, [open]);
+
+  if (!hasShortcuts) return null;
 
   return (
     <div ref={popoverRef} className="shortcut-hint-container">

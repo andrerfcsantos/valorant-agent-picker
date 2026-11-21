@@ -17,6 +17,7 @@ import {
   SessionReplayExtensions,
 } from "posthog-js/dist/extension-bundles";
 import type { Role } from "@/data/agents";
+import { type Design, type DesignChoice, readDesignChoice } from "@/lib/design";
 import { DEFAULT_PRESET_ID_PREFIX } from "@/lib/presets/defaults";
 import { SHARE_PARAM } from "@/lib/share/urls";
 
@@ -40,6 +41,15 @@ export type PresetKind = "builtin" | "custom";
 
 /** Where a preset was applied from. */
 export type PresetApplySource = "chip" | "keyboard" | "manage_page";
+
+/**
+ * How the design on an event came about: the build's default, or the
+ * visitor's own switch.
+ */
+export type DesignOrigin = "default" | "chosen";
+
+/** Which control a visitor used to change design. */
+export type DesignSwitchSource = "invite" | "nav";
 
 interface AgentPoolProps {
   pool_size: number;
@@ -98,8 +108,9 @@ type EventMap = {
   squad_size_changed: { squad_size: number };
   squad_copied_as_text: { squad_size: number };
   squad_slot_filters_changed: {
-    action: "edit";
-    slot_index: number;
+    action: "edit" | "reset" | "reset_all";
+    /** Null when every slot was reset at once. */
+    slot_index: number | null;
     disabled_count: number;
   };
   agent_filters_changed: {
@@ -137,8 +148,8 @@ type EventMap = {
   };
   preset_created: {
     agent_count: number;
-    /** Always saved from the agents selected; kept to match the other site. */
-    source: "selection";
+    /** Saved from the agents selected, or started empty in the manager. */
+    source: "selection" | "blank";
   };
   preset_updated: { preset_kind: PresetKind; agent_count: number };
   preset_deleted: { preset_kind: PresetKind };
@@ -149,9 +160,30 @@ type EventMap = {
       | "moved"
       | "reverted"
       | "unselected"
-      | "restored_defaults";
+      | "restored_defaults"
+      | "agents_edited"
+      | "delete_undone";
   };
   keyboard_shortcut_used: { key: string };
+  /**
+   * A visitor moved between the classic and the new design. Every event also
+   * carries the `design` it happened under (see {@link registerDesign}), so
+   * this one is for the moment of switching: who tries the new design, from
+   * which control, and who goes back.
+   */
+  design_switched: {
+    from: Design;
+    to: Design;
+    source: DesignSwitchSource;
+  };
+  /** The invitation to try the new design was closed without trying it. */
+  design_invite_dismissed: Record<string, never>;
+  /** The banner asking for feedback on the new design led to Discord. */
+  design_feedback_clicked: Record<string, never>;
+  /** The banner asking for feedback on the new design was closed. */
+  design_feedback_dismissed: Record<string, never>;
+  /** Someone opened a shared roll and asked to see what it was. */
+  shared_result_revealed: { share_type: "agent_result" | "squad_result" };
 };
 
 let initialized = false;
@@ -331,6 +363,48 @@ export function initAnalytics(projectToken: string, host: string): void {
     },
   });
   initialized = true;
+  // Registered before the SDK sends its first pageview, so every event of the
+  // visit says which design it happened under.
+  const { design, origin } = designForChoice(readDesignChoice());
+  registerDesign(design, origin);
+}
+
+/** The design a page is shown in, and where that came from, for analytics. */
+export function designForChoice(choice: DesignChoice): {
+  design: Design;
+  origin: DesignOrigin;
+} {
+  return {
+    design: choice.design,
+    origin: choice.chosen ? "chosen" : "default",
+  };
+}
+
+/**
+ * Stamps `design` and `design_origin` on every event from here on. Adoption
+ * of the new design is read off these: the share of visitors, pageviews or
+ * rolls with `design = refresh`, and how many of them chose it.
+ */
+export function registerDesign(design: Design, origin: DesignOrigin): void {
+  // Events held back for later belong to the design they happened under, so
+  // they go out before it changes.
+  designChangeListeners.forEach((flush) => flush());
+  if (!initialized) return;
+  posthog.register({ design, design_origin: origin });
+}
+
+const designChangeListeners = new Set<() => void>();
+
+/**
+ * Runs `flush` just before the registered design changes. For code that holds
+ * an event back (a debounced edit, say): sent after a switch, it would count
+ * under the design the visitor moved to. Returns the unsubscribe.
+ */
+export function beforeDesignChange(flush: () => void): () => void {
+  designChangeListeners.add(flush);
+  return () => {
+    designChangeListeners.delete(flush);
+  };
 }
 
 export function track<E extends keyof EventMap>(

@@ -4,7 +4,7 @@ export default function Footer() {
     // .shortcut-hint-container in globals.css), so at the bottom of the page the
     // footer text and the fixed "?" button share a centre line. The side padding
     // keeps the centred text clear of the button.
-    <footer className="text-gray-500 text-center mt-4 max-[1220px]:mt-20 min-h-[4.75rem] px-16 flex flex-col justify-center">
+    <footer className="site-footer text-gray-500 text-center mt-4 max-[1220px]:mt-20 min-h-[4.75rem] px-16 flex flex-col justify-center">
       <p className="text-[1.25em] m-0">
         <small>
           This is a fan-site for Valorant and it is not in any way associated

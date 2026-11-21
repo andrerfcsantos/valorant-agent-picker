@@ -1,0 +1,128 @@
+/* One column at a reading measure, centred in the window. The picker's rail
+   and side are for keeping controls in reach while the selection changes; a
+   page that is only read has no use for them. */
+
+.app {
+  padding: 2rem 1.5rem 4rem;
+}
+
+.column {
+  max-width: 44rem;
+  margin: 0 auto;
+}
+
+/* A plain title, and what the site is in a line. */
+.intro {
+  padding: 0.5rem 0 1.75rem;
+  border-bottom: 1px solid var(--vp-line-soft);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 4rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin: 0.4rem 0 0;
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+/* The reading. Headings sit over their text, as in any article. */
+.section {
+  padding-top: 2.5rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.section p {
+  margin: 0 0 1rem;
+  font-family: inherit;
+}
+
+.section p:last-child {
+  margin-bottom: 0;
+}
+
+.heading {
+  margin: 0 0 0.75rem;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2.75rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+
+.section p a:link,
+.section p a:visited {
+  color: var(--vp-text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--vp-muted);
+  text-underline-offset: 0.2em;
+}
+
+.section p a:hover {
+  color: var(--vp-text);
+  text-decoration-color: var(--vp-red);
+}
+
+/* A section's one thing to do, under what it says. */
+.action {
+  margin-top: 0.25rem;
+}
+
+/* The notices nobody reads but that have to be there, set small. */
+.fine {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--vp-line-soft);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--vp-muted);
+}
+
+.fine p {
+  margin: 0 0 0.6rem;
+  font-family: inherit;
+}
+
+.fine strong {
+  font-weight: 600;
+  color: var(--vp-text);
+}
+
+.fineTitle {
+  margin: 0 0 0.5rem;
+  font-family: var(--vp-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vp-text);
+}
+
+@media (max-width: 40rem) {
+  .app {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  .title {
+    font-size: 3.25rem;
+  }
+
+  .section {
+    font-size: 1.0625rem;
+  }
+
+  .heading {
+    font-size: 2.25rem;
+  }
+}

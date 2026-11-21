@@ -1,0 +1,243 @@
+.app {
+  display: grid;
+  grid-template-columns: 24rem minmax(0, 1fr);
+  align-items: start;
+}
+
+/* The roll. It stays in view while the pool beside it scrolls, so the button
+   and its result are never more than a glance away. */
+.rail {
+  position: sticky;
+  top: var(--vp-nav-h);
+  display: flex;
+  flex-direction: column;
+  /* As tall as the page's row, which fills the window above the footer, and
+     never taller than the window, so it can stick while the side scrolls. */
+  align-self: stretch;
+  max-height: calc(100vh - var(--vp-nav-h));
+  padding: 1.5rem 1.5rem 1.25rem;
+  border-right: 1px solid var(--vp-line-soft);
+  background: var(--vp-rail);
+  text-align: center;
+  overflow-y: auto;
+}
+
+/* A small red square ahead of the line, the game's own bullet. */
+.lead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vp-muted);
+}
+
+.lead::before {
+  content: "";
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  background: var(--vp-red);
+}
+
+/* Takes whatever height the rail has left, so the portrait is as large as
+   the window allows without pushing the roll button off it. Never wider than
+   the rail either: the art is square. The agent stands on a faint glow of the
+   game's red, the way the agent select screen lights them. */
+.portraitFrame {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  min-height: 9rem;
+  max-height: 21rem;
+  margin: 0.75rem 0 0.25rem;
+  background: radial-gradient(closest-side, rgb(255 70 85 / 0.16), transparent);
+}
+
+.portrait {
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 4.75rem;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
+.noPortrait .name {
+  margin-top: 1.5rem;
+}
+
+.role {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.35rem 0 0;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vp-muted);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.actions :global(.share-fallback-input) {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.settings {
+  margin-top: 0.75rem;
+  text-align: left;
+}
+
+.settings summary {
+  width: max-content;
+  margin: 0 auto;
+  padding: 0.35rem 0.5rem;
+  color: var(--vp-muted);
+  cursor: pointer;
+}
+
+.settings summary:hover,
+.settings[open] summary {
+  color: var(--vp-text);
+}
+
+.side {
+  min-width: 0;
+}
+
+.notice {
+  padding: 1rem 2rem 0;
+}
+
+/* Lined up with the pool below it, which brings its own space above. */
+.feedback {
+  max-width: 76rem;
+  padding: 1.5rem 2rem 0;
+}
+
+.feedback > * {
+  margin-bottom: 0;
+}
+
+.feedback:empty {
+  display: none;
+}
+
+.notice :global(.shared-preset-notice) {
+  max-width: none;
+  margin: 0;
+  border-radius: var(--vp-radius);
+}
+
+.notice :global(.shared-preset-notice-text) {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 63.99rem) {
+  .app {
+    display: block;
+    min-height: 0;
+  }
+
+  /* The result becomes a compact card: portrait on the left, facts beside it,
+     and the roll button leaves for the bottom of the screen. */
+  .rail {
+    position: static;
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-content: start;
+    max-height: none;
+    padding: 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--vp-line-soft);
+    text-align: left;
+    overflow: visible;
+  }
+
+  .noPortrait {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lead {
+    grid-column: 2;
+    justify-content: flex-start;
+    font-size: 0.8125rem;
+  }
+
+  .noPortrait .lead,
+  .noPortrait .name,
+  .noPortrait .role {
+    grid-column: 1;
+  }
+
+  .portraitFrame {
+    display: block;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+  }
+
+  .portrait {
+    width: 100%;
+    height: auto;
+  }
+
+  .name {
+    grid-column: 2;
+    font-size: 3.5rem;
+  }
+
+  .noPortrait .name {
+    margin-top: 0;
+  }
+
+  .role {
+    grid-column: 2;
+    align-self: start;
+    justify-content: flex-start;
+  }
+
+  .actions,
+  .settings {
+    grid-column: 1 / -1;
+  }
+
+  .settings summary {
+    margin: 0;
+    padding-left: 0;
+  }
+
+  .notice,
+  .feedback {
+    padding: 1rem 1rem 0;
+  }
+
+  .feedback {
+    max-width: none;
+  }
+}

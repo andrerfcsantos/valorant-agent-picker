@@ -1,0 +1,498 @@
+/* The pages a shared roll or squad opens on. They borrow the picker's shape,
+   a rail that holds the roll and a wide side that holds what it came from,
+   so a visitor who goes on to the picker already knows their way around. */
+
+.app {
+  display: grid;
+  grid-template-columns: 24rem minmax(0, 1fr);
+  align-items: start;
+}
+
+.blank {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  padding: 2rem 1rem;
+}
+
+.problem {
+  max-width: 30rem;
+}
+
+.problem p {
+  margin: 0.5rem 0 1.25rem;
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+.problemTitle,
+.title {
+  margin: 0;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2.75rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.rail,
+.squadRail {
+  position: sticky;
+  top: var(--vp-nav-h);
+  display: flex;
+  flex-direction: column;
+  /* As tall as the page's row, which fills the window above the footer, and
+     never taller than the window, so it can stick while the side scrolls. */
+  align-self: stretch;
+  max-height: calc(100vh - var(--vp-nav-h));
+  padding: 1.5rem 1.5rem 1.25rem;
+  border-right: 1px solid var(--vp-line-soft);
+  background: var(--vp-rail);
+  overflow-y: auto;
+}
+
+.rail {
+  text-align: center;
+}
+
+/* As on the picker: a small red square ahead of the line. */
+.lead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vp-muted);
+}
+
+.lead::before {
+  content: "";
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  background: var(--vp-red);
+}
+
+/* Square art, never wider than the rail, standing on the picker's glow. */
+.portraitFrame {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  min-height: 9rem;
+  max-height: 21rem;
+  margin: 0.75rem 0 0.25rem;
+  background: radial-gradient(closest-side, rgb(255 70 85 / 0.16), transparent);
+}
+
+.portrait {
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+  /* Coming into focus is the reveal. */
+  transition:
+    filter 0.5s ease-out,
+    clip-path 0.5s ease-out;
+  clip-path: inset(0);
+}
+
+/* Out of focus: enough to guess from, not enough to know. The clip keeps the
+   blur from spilling past the frame. */
+.sealedPortrait {
+  filter: blur(1.1rem) saturate(0.55) brightness(0.8);
+}
+
+.name {
+  margin: 0;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 4.75rem;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
+.noPortrait .name,
+.unknown {
+  margin-top: 1.5rem;
+}
+
+.unknown {
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+.role {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vp-muted);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.actions :global(.share-fallback-input),
+.railActions :global(.share-fallback-input) {
+  grid-column: 1 / -1;
+  max-width: none;
+  margin: 0;
+}
+
+/* ------------------------------------------------- What the roll came from */
+
+.side {
+  min-width: 0;
+  max-width: 76rem;
+  padding: 1.5rem 2rem 4rem;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.headText {
+  flex: 1 1 18rem;
+  margin-right: auto;
+}
+
+.summary {
+  margin: 0.2rem 0 0;
+  font-family: inherit;
+  color: var(--vp-muted);
+}
+
+.group + .group {
+  margin-top: 1.75rem;
+}
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.6rem;
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.03em;
+}
+
+.groupIcon {
+  height: 1.4rem;
+}
+
+.count {
+  margin-left: 0.4rem;
+  font-family: var(--vp-font-ui);
+  font-size: 0.9375rem;
+  color: var(--vp-muted);
+}
+
+/* The picker's tiles, but nothing here is pressed: it is a line-up to look
+   at, not a pool to edit. */
+.lineup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.25rem, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.suspect {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  height: 2.75rem;
+  padding-right: 0.6rem;
+  border: 2px solid transparent;
+  border-radius: var(--vp-radius);
+  background: var(--vp-tile);
+  overflow: hidden;
+}
+
+.suspectIcon {
+  flex: none;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.suspectName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The one it turned out to be. */
+.rolled {
+  border-color: var(--vp-red);
+  background: var(--vp-tile-hi);
+}
+
+/* ------------------------------------------------------------- The squad */
+
+.facts {
+  margin: 1rem 0 0.5rem;
+  padding: 0;
+  list-style: none;
+  color: var(--vp-muted);
+}
+
+.facts li {
+  padding: 0.3rem 0;
+  border-top: 1px solid var(--vp-line-soft);
+}
+
+.railActions {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.players {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.player {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  min-height: 5.5rem;
+  padding: 0.75rem 1rem 0.75rem 0.75rem;
+  border-radius: var(--vp-radius);
+  background: var(--vp-tile);
+}
+
+.faceFrame {
+  display: block;
+  width: 4.5rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.faceEmpty {
+  border: 1px dashed var(--vp-line);
+}
+
+.face {
+  width: 100%;
+  height: 100%;
+  transition: filter 0.4s ease-out;
+}
+
+.sealedFace {
+  filter: blur(0.55rem) saturate(0.55) brightness(0.8);
+}
+
+.who {
+  min-width: 0;
+}
+
+.playerName {
+  display: block;
+  font-size: 1rem;
+  color: var(--vp-muted);
+  overflow-wrap: anywhere;
+}
+
+.result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.75rem;
+}
+
+.agentName {
+  font-family: var(--vp-font-display);
+  text-transform: uppercase;
+  font-size: 2.5rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.player .role {
+  display: inline-flex;
+  justify-content: flex-start;
+  margin: 0;
+}
+
+/* A bar where the name will be, as on a redacted page. */
+.redacted {
+  display: block;
+  width: 9rem;
+  max-width: 100%;
+  height: 1.6rem;
+  margin-top: 0.35rem;
+  border-radius: 0;
+  background: var(--vp-line);
+}
+
+.none {
+  color: var(--vp-muted);
+}
+
+.playerReroll {
+  grid-column: 3;
+}
+
+/* The reveal turns the players over one after another. Later rolls land
+   together, as they do in the generator. */
+.inOrder .face {
+  transition-delay: calc(var(--i) * 90ms);
+}
+
+.inOrder .agentName {
+  animation-delay: calc(var(--i) * 90ms);
+  animation-fill-mode: backwards;
+}
+
+@media (max-width: 63.99rem) {
+  .app {
+    display: block;
+    min-height: 0;
+  }
+
+  .rail,
+  .squadRail {
+    position: static;
+    max-height: none;
+    padding: 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--vp-line-soft);
+    overflow: visible;
+  }
+
+  /* As on the picker: portrait on the left, the facts beside it, and the
+     button at the bottom of the screen. */
+  .rail {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-content: start;
+    text-align: left;
+  }
+
+  .noPortrait {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lead {
+    grid-column: 2;
+    justify-content: flex-start;
+    font-size: 0.8125rem;
+  }
+
+  /* Doubled up to outrank ".rail .role" below. */
+  .rail.noPortrait .lead,
+  .rail.noPortrait .name,
+  .rail.noPortrait .role {
+    grid-column: 1;
+  }
+
+  .portraitFrame {
+    display: block;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+  }
+
+  .portrait {
+    width: 100%;
+    height: auto;
+  }
+
+  .name {
+    grid-column: 2;
+    font-size: 3.5rem;
+  }
+
+  .noPortrait .name,
+  .unknown {
+    margin-top: 0;
+  }
+
+  .rail .role {
+    grid-column: 2;
+    align-self: start;
+    justify-content: flex-start;
+  }
+
+  .actions,
+  .unknown {
+    grid-column: 1 / -1;
+  }
+
+  .side {
+    max-width: none;
+    /* Room to scroll the last row clear of the fixed button. */
+    padding: 1.25rem 1rem 6.5rem;
+  }
+
+  .headText {
+    flex-basis: 100%;
+  }
+
+  .head > a {
+    flex: 1 1 12rem;
+  }
+}
+
+@media (max-width: 40rem) {
+  .player {
+    grid-template-columns: 3.75rem minmax(0, 1fr);
+    padding: 0.75rem;
+  }
+
+  .faceFrame {
+    width: 3.75rem;
+  }
+
+  .agentName {
+    font-size: 2.25rem;
+  }
+
+  .playerReroll {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait,
+  .face {
+    transition: none;
+  }
+
+  .inOrder .agentName {
+    animation: none;
+  }
+}

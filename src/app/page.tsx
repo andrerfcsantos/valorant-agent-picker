@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PickerContent from "@/components/PickerContent";
+import PickerPage from "@/components/PickerPage";
 
 export const metadata: Metadata = {
   title: { absolute: "Valorant Random Agent Picker" },
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.valorantpicker.com/" },
 };
 
-export default function Home() {
-  return <PickerContent />;
+export default function Page() {
+  return <PickerPage />;
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SharedSquadContent from "@/components/SharedSquadContent";
+import SharedSquadPage from "@/components/SharedSquadPage";
 
 const title = "Someone randomized a squad for you";
 const description =
@@ -21,6 +21,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SharedSquadPage() {
-  return <SharedSquadContent />;
+export default function Page() {
+  return <SharedSquadPage />;
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SquadContent from "@/components/SquadContent";
+import SquadPage from "@/components/SquadPage";
 
 export const metadata: Metadata = {
   title: "Squad Generator",
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.valorantpicker.com/squad" },
 };
 
-export default function SquadPage() {
-  return <SquadContent />;
+export default function Page() {
+  return <SquadPage />;
 }

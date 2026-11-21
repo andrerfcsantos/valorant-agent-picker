@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAgents } from "@/context/AgentContext";
 import { usePresets } from "@/context/PresetContext";
 import { track } from "@/lib/analytics";
+import { readPanel } from "@/lib/panels";
 import { getJsonFromLS, setJsonToLS } from "@/lib/localStorage";
 import { presetShareUrl } from "@/lib/presets/share";
 import { SavedPreset, shortcutForIndex } from "@/lib/presets/types";
@@ -31,6 +33,17 @@ export default function PresetBar() {
     revert,
     clearApplied,
   } = usePresets();
+
+  const router = useRouter();
+
+  // The new design manages presets in a panel over the picker, and a link can
+  // name it. Here the same work is done on a page of its own, so a link that
+  // asks for the panel goes there instead.
+  useEffect(() => {
+    if (readPanel(window.location.search) === "presets") {
+      router.replace("/presets");
+    }
+  }, [router]);
 
   const [collapsed, setCollapsed] = useState(true);
   const [menuId, setMenuId] = useState<string | null>(null);
