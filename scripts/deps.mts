@@ -153,29 +153,38 @@ function checkVitePlusAlignment(): boolean {
   const required = requiredSpec?.slice(requiredSpec.lastIndexOf("@") + 1);
   const hoisted = packages["node_modules/vite"]?.version;
   const nested = packages["node_modules/vite-plus/node_modules/vite"]?.version;
-  const resolved = hoisted ?? nested;
-
-  const aligned = !!required && resolved === required;
-  const ok = aligned && !!hoisted;
+  // The CLI resolves its own nested copy first; project code and `vp test`
+  // only see the hoisted one. Both must be the build vite-plus requires.
+  const cliCore = nested ?? hoisted;
+  const cliOk = !!required && cliCore === required;
+  const rootOk = !!required && hoisted === required;
+  const ok = cliOk && rootOk;
 
   console.log(`\n${bold("Vite+")}`);
   console.log(
-    `  ${aligned ? green("✓") : red("!")} ${"vite-plus".padEnd(28)} ${cli?.version ?? red("not installed")} ${dim(`(requires core ${required ?? "?"})`)}`,
+    `  ${ok ? green("✓") : red("!")} ${"vite-plus".padEnd(28)} ${cli?.version ?? red("not installed")} ${dim(`(requires core ${required ?? "?"})`)}`,
   );
   console.log(
-    `  ${ok ? green("✓") : red("!")} ${"vite (vite-plus-core)".padEnd(28)} ${resolved ?? red("not installed")}${hoisted ? "" : red(" (not hoisted)")}`,
+    `  ${rootOk ? green("✓") : red("!")} ${"vite (vite-plus-core)".padEnd(28)} ${hoisted ?? red("not hoisted")}`,
   );
-
-  if (!aligned) {
+  if (nested !== undefined) {
     console.log(
-      `\n  ${red("Mismatch.")} Set the ${bold("vite")} devDependency and override in package.json to\n` +
-        `  ${bold(`npm:@voidzero-dev/vite-plus-core@^${required ?? "<version>"}`)} and run ${bold("vp install")}.\n` +
-        `  ${dim("`npm view vite-plus@<version> dependencies.vite` shows the core a release needs.")}`,
+      `  ${cliOk ? green("✓") : red("!")} ${"  nested under vite-plus".padEnd(28)} ${nested}`,
     );
-  } else if (!hoisted) {
+  }
+
+  if (!ok && hoisted === undefined && cliOk) {
     console.log(
       `\n  ${red("vite is nested under vite-plus.")} Declare it as a direct devDependency with\n` +
         `  the same alias as the override, then run ${bold("vp install")}.`,
+    );
+  } else if (!ok) {
+    const exact = `npm:@voidzero-dev/vite-plus-core@${required ?? "<version>"}`;
+    console.log(
+      `\n  ${red("Mismatch.")} Set the ${bold("vite")} devDependency and override to ${bold(exact)}\n` +
+        `  and run ${bold("vp install")}. Then put the ${bold("^")} back on both and run ${bold("vp install")} again;\n` +
+        `  the lockfile keeps the exact version. ${dim("(`npm view vite-plus@<version> dependencies.vite`")}\n` +
+        `  ${dim("shows the core a release needs.)")}`,
     );
   }
 
@@ -233,8 +242,9 @@ function checkDependencies(): boolean {
       );
     }
     console.log(
-      `\n  Review each changelog, then ${bold("npm run deps:update:major")} to pick them\n` +
-        `  interactively. Validate with ${bold("vp check")} and ${bold("npm run build")} before committing.`,
+      `\n  Review each changelog, then take them one at a time with\n` +
+        `  ${bold("vp add <name>@latest")} (${bold("-D")} for a devDependency). Validate with ${bold("vp check")}\n` +
+        `  and the build before committing.`,
     );
   }
 

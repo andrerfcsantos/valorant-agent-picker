@@ -14,8 +14,7 @@
     "deploy:preview": "next build && wrangler preview",
     "upload": "next build && wrangler versions upload",
     "deps:check": "node scripts/deps.mts",
-    "deps:update": "vp update && node scripts/deps.mts",
-    "deps:update:major": "vp update --latest --interactive && node scripts/deps.mts"
+    "deps:update": "vp update && node scripts/deps.mts"
   },
   "dependencies": {
     "next": "^16.1.6",
