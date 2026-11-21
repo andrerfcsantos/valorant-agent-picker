@@ -5,6 +5,7 @@ import { track } from "@/lib/analytics";
 import { useDesign } from "@/context/DesignContext";
 import { DESIGN_INVITE_DISMISSED_KEY } from "@/lib/design";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
+import { focusPageHeading } from "@/lib/pageHeading";
 
 /**
  * Tells visitors on the classic design that a new one exists. It goes away
@@ -38,9 +39,7 @@ export default function DesignInvite() {
             // This button goes away with the invitation, which would drop
             // keyboard focus on <body>. Hand it to the new page's heading
             // once that page has rendered.
-            requestAnimationFrame(() =>
-              document.querySelector<HTMLElement>("main h1")?.focus(),
-            );
+            focusPageHeading();
           }}
         >
           Try the new design
@@ -48,7 +47,11 @@ export default function DesignInvite() {
         <button
           type="button"
           className="design-invite-dismiss"
-          onClick={() => {
+          onClick={(event) => {
+            // Same as above: the invitation goes, and this button with it.
+            if (document.activeElement === event.currentTarget) {
+              focusPageHeading();
+            }
             setDismissed(true);
             setBoolToLS(DESIGN_INVITE_DISMISSED_KEY, true);
             track("design_invite_dismissed", {});

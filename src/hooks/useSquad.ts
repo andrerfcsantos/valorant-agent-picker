@@ -58,6 +58,7 @@ export function useSquad() {
   const [agents, setAgents] = useState<(Agent | null)[]>([]);
   const [copied, setCopied] = useState(false);
   const [rollCount, setRollCount] = useState(0);
+  const [squadRollCount, setSquadRollCount] = useState(0);
   const [sharedPresetApplied, setSharedPresetApplied] = useState(false);
   const setupBeforeShare = useRef<SquadSetup | null>(null);
   const pendingFilterEvents = useRef(new Map<number, PendingFilterEvent>());
@@ -132,6 +133,7 @@ export function useSquad() {
   const randomizeAll = useCallback(() => {
     setAgents(computeSquad(configs, squadSize));
     setRollCount((count) => count + 1);
+    setSquadRollCount((count) => count + 1);
     track("squad_randomized", {
       source: "generator",
       squad_size: squadSize,
@@ -328,6 +330,8 @@ export function useSquad() {
     agents,
     /** Rolls the visitor asked for, whole squad or one player. */
     rollCount,
+    /** Rolls of the whole squad only. */
+    squadRollCount,
     copied,
     sharedPresetApplied,
     randomizeAll,

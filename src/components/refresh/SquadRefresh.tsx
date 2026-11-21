@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { getAllAgents } from "@/data/agents";
 import { MAX_SLOTS, emptySlotConfig } from "@/lib/squadService";
 import type { Squad } from "@/hooks/useSquad";
@@ -8,6 +8,7 @@ import ShareButton from "@/components/ShareButton";
 import SharedPresetNotice from "@/components/SharedPresetNotice";
 import FeedbackBanner from "./FeedbackBanner";
 import { handOffFocus } from "./focus";
+import { bringResultIntoView } from "./scroll";
 import SquadSlotRefresh from "./SquadSlotRefresh";
 import ui from "./ui.module.css";
 import styles from "./SquadRefresh.module.css";
@@ -26,6 +27,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
     configs,
     agents,
     rollCount,
+    squadRollCount,
     copied,
     sharedPresetApplied,
     randomizeAll,
@@ -42,6 +44,13 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
     handleDismissShared,
   } = squad;
   const rollButton = useRef<HTMLButtonElement>(null);
+  // A whole-squad roll from the fixed bar, made while editing a pool further
+  // down, changes every row above. A single player's reroll is made from
+  // that player's own row, which is already in view.
+  const slotList = useRef<HTMLOListElement>(null);
+  useEffect(() => {
+    if (squadRollCount > 0) bringResultIntoView(slotList.current);
+  }, [squadRollCount]);
 
   // Counted against the agents that exist. A saved pool can still name an
   // agent that has since been removed, which leaves nothing to add back.
@@ -164,9 +173,14 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
           </button>
         </div>
 
-        <ol className={styles.slots}>
+        <ol ref={slotList} className={styles.slots}>
           {Array.from({ length: squadSize }, (_, index) => {
             const config = configs[index] || emptySlotConfig();
+            const takenByOthers = new Set(
+              rolled.flatMap((other, i) =>
+                other && i !== index ? [other.key] : [],
+              ),
+            );
             return (
               <SquadSlotRefresh
                 key={index}
@@ -174,6 +188,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
                 agent={agents[index] || null}
                 name={config.name}
                 disabledAgents={config.disabledAgents}
+                takenByOthers={takenByOthers}
                 onNameChange={handleNameChange}
                 onDisabledChange={handleDisabledChange}
                 onResetFilters={resetSlotFilters}

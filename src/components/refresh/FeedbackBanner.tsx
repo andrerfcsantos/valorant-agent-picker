@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
 import { DESIGN_FEEDBACK_DISMISSED_KEY, FEEDBACK_URL } from "@/lib/design";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
+import { focusPageHeading } from "@/lib/pageHeading";
 import styles from "./FeedbackBanner.module.css";
 
 /**
@@ -44,7 +45,12 @@ export default function FeedbackBanner() {
         className={styles.close}
         aria-label="Dismiss the feedback request"
         title="Dismiss"
-        onClick={() => {
+        onClick={(event) => {
+          // The banner goes, and this button with it: keep keyboard focus on
+          // the page rather than letting it fall to <body>.
+          if (document.activeElement === event.currentTarget) {
+            focusPageHeading();
+          }
           setDismissed(true);
           setBoolToLS(DESIGN_FEEDBACK_DISMISSED_KEY, true);
           track("design_feedback_dismissed", {});

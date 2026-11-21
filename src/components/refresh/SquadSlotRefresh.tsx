@@ -18,6 +18,8 @@ interface SquadSlotRefreshProps {
   name: string;
   /** Agents this player will not be given. */
   disabledAgents: Set<string>;
+  /** Agents the other players in the squad have now. */
+  takenByOthers: Set<string>;
   onNameChange: (index: number, name: string) => void;
   onDisabledChange: (index: number, disabled: Set<string>) => void;
   onResetFilters: (index: number) => void;
@@ -33,6 +35,7 @@ export default function SquadSlotRefresh({
   agent,
   name,
   disabledAgents,
+  takenByOthers,
   onNameChange,
   onDisabledChange,
   onResetFilters,
@@ -52,9 +55,16 @@ export default function SquadSlotRefresh({
     (candidate) => !disabledAgents.has(candidate.key),
   ).length;
   // Players never share an agent, so when the others have taken every agent
-  // selected for this one, the roll falls back to any agent left.
+  // selected for this one, the roll falls back to any agent left. A result
+  // can also be outside the selection because the selection changed since.
   const outside =
     agent !== null && inCount > 0 && disabledAgents.has(agent.key);
+  const othersHaveAll =
+    outside &&
+    ALL_AGENTS.every(
+      (candidate) =>
+        disabledAgents.has(candidate.key) || takenByOthers.has(candidate.key),
+    );
   const poolLabel = `Selected: ${inCount === total ? `all ${total}` : `${inCount} of ${total}`}`;
   const roleLabel = agent
     ? (ROLES.find((role) => role.key === agent.role)?.label ?? "")
@@ -129,8 +139,9 @@ export default function SquadSlotRefresh({
               </span>
               {outside && (
                 <span className={styles.outside}>
-                  Not from {player}&apos;s selection: other players had all of
-                  it
+                  {othersHaveAll
+                    ? `Not from ${player}'s selection: other players have all of it`
+                    : `Not in ${player}'s selection any more`}
                 </span>
               )}
             </div>
