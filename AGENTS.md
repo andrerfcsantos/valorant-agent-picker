@@ -85,6 +85,14 @@ replace a range with an exact version — that is what blocks `vp update`.
 - `npm run deps:update` - apply everything the existing ranges allow (lockfile-only, non-breaking)
 - `npm run deps:update:major` - interactively cross major boundaries; requires review and testing
 
+`vite-plus` and the `vite` alias (`npm:@voidzero-dev/vite-plus-core@...`, declared
+both as a devDependency and as an override) must resolve to the core version
+that `vite-plus` itself depends on. `npm run deps:check` verifies this from the
+lockfile. When they drift, set both `vite` entries to `^<required core>` and run
+`vp install`. If you use `vp migrate` instead, turn its exact pins back into
+caret ranges. Keep the direct `vite` devDependency: without it npm nests the
+core under `vite-plus` and `vp test` cannot resolve `vite`.
+
 Never apply a major update without reading its changelog and running `vp check`
 and `npm run build`.
 

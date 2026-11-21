@@ -92,6 +92,17 @@ stays untouched and the changes are non-breaking by semver. Run `vp check` and
 changelog for each package, take them one at a time where possible, and validate
 with `vp check` and `npm run build` before committing.
 
+`vite-plus` and the `vite` alias (`@voidzero-dev/vite-plus-core`) move as a
+pair: each Vite+ release requires one exact core build, which
+`npm view vite-plus@<version> dependencies.vite` prints. Both are caret ranges,
+so a routine update can pick a core the installed CLI rejects, and `vp build`
+then stops and asks for `vp migrate`. `npm run deps:check` compares the two in
+the lockfile and fails on a mismatch. The fix is to set the `vite`
+devDependency and the `vite` override to `^` that core version and reinstall.
+`vp migrate` does the same but writes exact pins; turn them back into caret
+ranges. The direct `vite` devDependency is there so npm hoists the core to the
+top of `node_modules`; without it `vp test` cannot resolve `vite`.
+
 Bumping `@types/node` across a major is a Node.js upgrade, not a types upgrade.
 Do it together with `vp env pin <major>` and a matching `engines.node`, in one
 commit — `npm run deps:check` fails if the three ever disagree.
