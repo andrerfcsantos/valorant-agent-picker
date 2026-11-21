@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { getAllAgents } from "@/data/agents";
 import type { Role } from "@/data/agents";
 import { track } from "@/lib/analytics";
 import { useAgents } from "@/context/AgentContext";
 import ShareButton from "@/components/ShareButton";
+import { handOffFocus } from "./focus";
 import PoolEditor from "./PoolEditor";
 import PresetToolbar from "./PresetToolbar";
 import ui from "./ui.module.css";
@@ -42,13 +43,6 @@ export default function AgentPool({
   // job, and the other is then always there: focus moves to it.
   const selectAllButton = useRef<HTMLButtonElement>(null);
   const clearButton = useRef<HTMLButtonElement>(null);
-  const focusAfter = useRef<"selectAll" | "clear" | null>(null);
-  useEffect(() => {
-    const target = focusAfter.current;
-    focusAfter.current = null;
-    if (target === "selectAll") selectAllButton.current?.focus();
-    if (target === "clear") clearButton.current?.focus();
-  }, [count]);
 
   const summary =
     count === 0
@@ -84,9 +78,8 @@ export default function AgentPool({
             <button
               type="button"
               className={ui.link}
-              ref={selectAllButton}
+              ref={handOffFocus(() => clearButton.current, selectAllButton)}
               onClick={() => {
-                focusAfter.current = "clear";
                 selectAll();
                 track("agent_filters_changed", { action: "select_all" });
               }}
@@ -98,9 +91,8 @@ export default function AgentPool({
             <button
               type="button"
               className={ui.link}
-              ref={clearButton}
+              ref={handOffFocus(() => selectAllButton.current, clearButton)}
               onClick={() => {
-                focusAfter.current = "selectAll";
                 unselectAll();
                 track("agent_filters_changed", { action: "unselect_all" });
               }}

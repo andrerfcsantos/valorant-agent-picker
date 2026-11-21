@@ -7,6 +7,7 @@ import type { Squad } from "@/hooks/useSquad";
 import ShareButton from "@/components/ShareButton";
 import SharedPresetNotice from "@/components/SharedPresetNotice";
 import FeedbackBanner from "./FeedbackBanner";
+import { handOffFocus } from "./focus";
 import SquadSlotRefresh from "./SquadSlotRefresh";
 import ui from "./ui.module.css";
 import styles from "./SquadRefresh.module.css";
@@ -64,8 +65,8 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
           Squad generator
         </h1>
         <p className={styles.intro}>
-          Every player gets a different agent, from the agents selected for
-          them.
+          Every player gets a different agent, from the agents selected for them
+          while any are left.
         </p>
 
         <fieldset className={styles.sizes}>
@@ -104,11 +105,9 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
           <button
             type="button"
             className={`${ui.link} ${styles.resetAll}`}
-            onClick={() => {
-              resetAllFilters();
-              // The link goes away with the filters it cleared.
-              rollButton.current?.focus();
-            }}
+            // The link goes away with the filters it cleared.
+            ref={handOffFocus(() => rollButton.current)}
+            onClick={resetAllFilters}
           >
             Select every agent for every player
           </button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ROLES } from "@/data/agents";
 import { SHARED_AGENT_ERRORS, type SharedAgent } from "@/hooks/useSharedAgent";
@@ -7,6 +8,7 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import { bringResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
@@ -21,6 +23,15 @@ export default function SharedAgentRefresh({
 }: {
   shared: SharedAgent;
 }) {
+  // Hooks first: the early returns below would otherwise skip them.
+  const rail = useRef<HTMLElement>(null);
+  const ready = shared.status === "ready";
+  const rolls = ready ? shared.rolls : 0;
+  const revealed = ready && shared.revealed;
+  useEffect(() => {
+    if (rolls > 0 || revealed) bringResultIntoView(rail.current);
+  }, [rolls, revealed]);
+
   if (shared.status === "loading") {
     return <main className={`${ui.page} ${styles.blank}`} />;
   }
@@ -39,7 +50,7 @@ export default function SharedAgentRefresh({
     );
   }
 
-  const { agent, pool, picker, ownRoll, rolls, handleReroll } = shared;
+  const { agent, pool, picker, ownRoll, handleReroll } = shared;
 
   // Only a roll somebody else made is sealed. An agent this version of the
   // site does not know has nothing to reveal.
@@ -68,6 +79,7 @@ export default function SharedAgentRefresh({
   return (
     <main className={`${ui.page} ${styles.app}`}>
       <section
+        ref={rail}
         className={`${styles.rail} ${picker.showPortrait && agent ? "" : styles.noPortrait}`}
         aria-labelledby="shared-heading"
       >
@@ -166,7 +178,8 @@ export default function SharedAgentRefresh({
               {shared.everyAgent
                 ? `No agents were selected, so all ${pool.length} are in play.`
                 : `${pool.length} ${pool.length === 1 ? "agent was" : "agents were"} selected.`}
-              {picker.nonRepeating
+              {/* With one agent there is no other to give. */}
+              {picker.nonRepeating && pool.length > 1
                 ? " Rolling again never gives the same agent twice in a row."
                 : ""}
             </p>

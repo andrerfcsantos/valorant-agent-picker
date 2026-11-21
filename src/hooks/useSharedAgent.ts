@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAllAgents } from "@/data/agents";
+import { useDesign } from "@/context/DesignContext";
 import { agentPoolProps, track } from "@/lib/analytics";
 import { ShareErrorReason } from "@/lib/share/binary";
 import { tryDecodeShare } from "@/lib/share/codec";
@@ -50,6 +51,16 @@ export function useSharedAgent() {
   // Kept here rather than in the new design's view, so switching design and
   // back does not seal a roll the visitor has already seen.
   const [revealed, setRevealed] = useState(false);
+  const { design, ready: designReady } = useDesign();
+  const loaded = view.status === "ready";
+
+  // The classic design shows a shared roll straight away, so once it has been
+  // on screen there is nothing left to reveal in the new one, and no reveal
+  // to report.
+  useEffect(() => {
+    // oxlint-disable-next-line react-hooks/set-state-in-effect -- the design is only known after mount
+    if (designReady && design === "classic" && loaded) setRevealed(true);
+  }, [designReady, design, loaded]);
 
   // Read straight from the URL rather than useSearchParams: the page is
   // client-only, and this keeps the static export free of a Suspense boundary.
@@ -130,7 +141,10 @@ export function useSharedAgent() {
 
   return {
     status: "ready" as const,
-    /** True once the visitor has asked to see a roll somebody sent. */
+    /**
+     * True once the visitor has asked to see a roll somebody sent, or has
+     * seen it already in the classic design.
+     */
     revealed,
     reveal: () => {
       if (revealed) return;

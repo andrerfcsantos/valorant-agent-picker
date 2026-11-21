@@ -4,7 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
@@ -44,7 +44,10 @@ export function DesignProvider({ children }: { children: React.ReactNode }) {
   });
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
+  // A layout effect, so it runs before any page's passive effects: those can
+  // send an event as they mount (a shared link being opened), and it has to
+  // carry the design registered here.
+  useLayoutEffect(() => {
     const initial = readDesignChoice();
     // The boot script and analytics read storage too, a moment earlier;
     // another tab may have switched design in between. Stamp what React is

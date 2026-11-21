@@ -5,6 +5,7 @@ import { ROLES, getAllAgents } from "@/data/agents";
 import type { Agent, Role } from "@/data/agents";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import SpriteIcon from "@/components/SpriteIcon";
+import { handOffFocus } from "./focus";
 import PoolEditor from "./PoolEditor";
 import ui from "./ui.module.css";
 import styles from "./SquadSlotRefresh.module.css";
@@ -50,6 +51,10 @@ export default function SquadSlotRefresh({
   const inCount = ALL_AGENTS.filter(
     (candidate) => !disabledAgents.has(candidate.key),
   ).length;
+  // Players never share an agent, so when the others have taken every agent
+  // selected for this one, the roll falls back to any agent left.
+  const outside =
+    agent !== null && inCount > 0 && disabledAgents.has(agent.key);
   const poolLabel = `Selected: ${inCount === total ? `all ${total}` : `${inCount} of ${total}`}`;
   const roleLabel = agent
     ? (ROLES.find((role) => role.key === agent.role)?.label ?? "")
@@ -122,6 +127,12 @@ export default function SquadSlotRefresh({
                 />
                 {roleLabel}
               </span>
+              {outside && (
+                <span className={styles.outside}>
+                  Not from {player}&apos;s selection: other players had all of
+                  it
+                </span>
+              )}
             </div>
           ) : (
             <p className={styles.none}>No agent left to give this player.</p>
@@ -165,10 +176,8 @@ export default function SquadSlotRefresh({
               <button
                 type="button"
                 className={ui.link}
-                onClick={() => {
-                  onResetFilters(index);
-                  poolToggle.current?.focus();
-                }}
+                ref={handOffFocus(() => poolToggle.current)}
+                onClick={() => onResetFilters(index)}
               >
                 Select all
               </button>

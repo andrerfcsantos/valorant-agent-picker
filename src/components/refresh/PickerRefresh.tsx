@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { ROLES } from "@/data/agents";
 import type { Picker } from "@/hooks/usePicker";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
@@ -7,6 +8,7 @@ import ShareButton from "@/components/ShareButton";
 import SharedPresetNotice from "@/components/SharedPresetNotice";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import { bringResultIntoView } from "./scroll";
 import AgentPool from "./AgentPool";
 import ui from "./ui.module.css";
 import styles from "./PickerRefresh.module.css";
@@ -32,6 +34,11 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
     handleDismissShared,
   } = picker;
 
+  const rail = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (agentCount > 0) bringResultIntoView(rail.current);
+  }, [agentCount]);
+
   const roleLabel = chosenAgent
     ? (ROLES.find((role) => role.key === chosenAgent.role)?.label ?? "")
     : "";
@@ -46,6 +53,7 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
   return (
     <main className={`${ui.page} ${styles.app}`}>
       <section
+        ref={rail}
         className={`${styles.rail} ${showPortrait ? "" : styles.noPortrait}`}
         aria-labelledby="picker-heading"
       >

@@ -90,6 +90,12 @@
   color: var(--vp-muted);
 }
 
+.outside {
+  flex-basis: 100%;
+  color: var(--vp-muted);
+  font-size: 0.875rem;
+}
+
 .actions {
   display: flex;
   grid-column: 3;
