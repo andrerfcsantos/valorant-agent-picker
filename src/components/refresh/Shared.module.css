@@ -301,7 +301,10 @@
 }
 
 .faceEmpty {
+  display: block;
+  box-sizing: border-box;
   border: 1px dashed var(--vp-line);
+  border-radius: inherit;
 }
 
 .face {

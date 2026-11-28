@@ -178,13 +178,17 @@ export default function SharedSquadRefresh({
             >
               {/* Every sealed player gets the same card, even one left without
                   a agent, so the cards say nothing until the reveal. */}
-              <span
-                className={`${styles.faceFrame} ${!sealed && !player.agent ? styles.faceEmpty : ""}`}
-              >
+              <span className={styles.faceFrame}>
                 {sealed ? (
                   <SealedCard className={styles.face} />
                 ) : (
                   <>
+                    {/* No agent left: the empty frame is the face that turns in. */}
+                    {!player.agent && (
+                      <span
+                        className={`${styles.face} ${styles.faceEmpty} ${unveiling ? styles.unveil : ""}`}
+                      />
+                    )}
                     {player.agent && (
                       <SpriteIcon
                         agentKey={player.agent.key}
