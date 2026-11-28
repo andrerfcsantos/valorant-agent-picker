@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { preload } from "react-dom";
 import Link from "next/link";
 import { ROLES } from "@/data/agents";
 import { SHARED_AGENT_ERRORS, type SharedAgent } from "@/hooks/useSharedAgent";
 import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
+import { PORTRAIT_SPRITE } from "@/data/spriteMap";
 import FeedbackBanner from "./FeedbackBanner";
 import SealedCard from "./SealedCard";
 import { useResultIntoView } from "./scroll";
@@ -24,6 +26,9 @@ export default function SharedAgentRefresh({
 }: {
   shared: SharedAgent;
 }) {
+  // Armed by the Reveal button, so only that turns the card over: not a
+  // switch back from the classic design, which shows the result straight away.
+  const [unveilArmed, setUnveilArmed] = useState(false);
   // Hooks first: the early returns below would otherwise skip them.
   const rail = useRef<HTMLElement>(null);
   const ready = shared.status === "ready";
@@ -55,7 +60,14 @@ export default function SharedAgentRefresh({
   // site does not know has nothing to reveal.
   const sealed = !ownRoll && !shared.revealed && agent !== undefined;
   // The first portrait after the reveal turns over; later rolls land.
-  const unveiling = shared.revealed && rolls === 0;
+  const unveiling = unveilArmed && rolls === 0;
+  // A line-up of one is the answer, so it waits for the reveal too.
+  const lineupHidden = sealed && pool.length === 1;
+  // Fetches the portrait sheet while the card is down, so the reveal does not
+  // turn over onto an empty frame. The whole sheet says nothing of who it is.
+  if (sealed && picker.showPortrait) {
+    preload(PORTRAIT_SPRITE.src, { as: "image" });
+  }
   const roleLabel = agent
     ? (ROLES.find((role) => role.key === agent.role)?.label ?? "")
     : "";
@@ -156,7 +168,14 @@ export default function SharedAgentRefresh({
 
         <div className={ui.rollBar} data-roll-bar>
           {sealed ? (
-            <button type="button" className={ui.roll} onClick={shared.reveal}>
+            <button
+              type="button"
+              className={ui.roll}
+              onClick={() => {
+                setUnveilArmed(true);
+                shared.reveal();
+              }}
+            >
               Reveal the agent
             </button>
           ) : (
@@ -177,9 +196,11 @@ export default function SharedAgentRefresh({
         <div className={styles.head}>
           <div className={styles.headText}>
             <h2 id="shared-pool-heading" className={styles.title}>
-              {sealed && inLineup
-                ? "It is one of these"
-                : "Rolling again picks from these"}
+              {lineupHidden
+                ? "It is the only one selected"
+                : sealed && inLineup
+                  ? "It is one of these"
+                  : "Rolling again picks from these"}
             </h2>
             <p className={styles.summary}>
               {shared.everyAgent
@@ -205,43 +226,52 @@ export default function SharedAgentRefresh({
           </Link>
         </div>
 
-        {groups.map((group) => (
-          <section
-            key={group.key}
-            className={styles.group}
-            aria-label={group.label}
-          >
-            <h3 className={styles.groupTitle}>
-              <RoleSpriteIcon
-                roleKey={group.key}
-                alt=""
-                className={`${ui.roleIcon} ${styles.groupIcon}`}
-              />
-              {group.label}
-              <span className={styles.count}>{group.agents.length}</span>
-            </h3>
-            <ul className={styles.lineup}>
-              {group.agents.map((candidate) => {
-                const rolled = !sealed && candidate.key === agent?.key;
-                return (
-                  <li
-                    key={candidate.key}
-                    className={`${styles.suspect} ${rolled ? styles.rolled : ""}`}
-                  >
-                    <SpriteIcon
-                      agentKey={candidate.key}
-                      type="icon"
-                      alt=""
-                      className={styles.suspectIcon}
-                    />
-                    <span className={styles.suspectName}>{candidate.name}</span>
-                    {rolled && <span className={ui.vh}>, the roll</span>}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
+        {lineupHidden ? (
+          <p className={styles.summary}>
+            With only one agent to pick from, the selection would give it away,
+            so it stays hidden until the reveal too.
+          </p>
+        ) : (
+          groups.map((group) => (
+            <section
+              key={group.key}
+              className={styles.group}
+              aria-label={group.label}
+            >
+              <h3 className={styles.groupTitle}>
+                <RoleSpriteIcon
+                  roleKey={group.key}
+                  alt=""
+                  className={`${ui.roleIcon} ${styles.groupIcon}`}
+                />
+                {group.label}
+                <span className={styles.count}>{group.agents.length}</span>
+              </h3>
+              <ul className={styles.lineup}>
+                {group.agents.map((candidate) => {
+                  const rolled = !sealed && candidate.key === agent?.key;
+                  return (
+                    <li
+                      key={candidate.key}
+                      className={`${styles.suspect} ${rolled ? styles.rolled : ""}`}
+                    >
+                      <SpriteIcon
+                        agentKey={candidate.key}
+                        type="icon"
+                        alt=""
+                        className={styles.suspectIcon}
+                      />
+                      <span className={styles.suspectName}>
+                        {candidate.name}
+                      </span>
+                      {rolled && <span className={ui.vh}>, the roll</span>}
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))
+        )}
       </section>
     </main>
   );

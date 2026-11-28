@@ -26,6 +26,9 @@ export default function SharedSquadRefresh({
 }: {
   shared: SharedSquad;
 }) {
+  // Armed by the Reveal button, so only that turns the card over: not a
+  // switch back from the classic design, which shows the result straight away.
+  const [unveilArmed, setUnveilArmed] = useState(false);
   // Hooks first: the early returns below would otherwise skip them. The
   // reveal and a whole-squad reroll change every row, from a button fixed to
   // the bottom of a phone's screen; one player's reroll is made from that
@@ -62,7 +65,7 @@ export default function SharedSquadRefresh({
   const { squad, agents, ownRoll, rolls, handleReroll } = shared;
   const sealed = !ownRoll && !shared.revealed;
   // The first faces after the reveal turn over; later rolls just swap them.
-  const unveiling = shared.revealed && rolls === 0;
+  const unveiling = unveilArmed && rolls === 0;
 
   const players = Array.from({ length: squad.size }, (_, index) => {
     const agentKey = agents[index] ?? null;
@@ -104,7 +107,14 @@ export default function SharedSquadRefresh({
 
         <div className={ui.rollBar} data-roll-bar>
           {sealed ? (
-            <button type="button" className={ui.roll} onClick={shared.reveal}>
+            <button
+              type="button"
+              className={ui.roll}
+              onClick={() => {
+                setUnveilArmed(true);
+                shared.reveal();
+              }}
+            >
               Reveal the squad
             </button>
           ) : (
@@ -154,7 +164,7 @@ export default function SharedSquadRefresh({
 
         <ol
           ref={playerList}
-          className={`${styles.players} ${rolls === 0 ? styles.inOrder : ""}`}
+          className={`${styles.players} ${rolls === 0 ? styles.inOrder : ""} ${unveiling ? styles.revealing : ""}`}
         >
           {players.map((player) => (
             <li
@@ -167,12 +177,20 @@ export default function SharedSquadRefresh({
                   {sealed ? (
                     <SealedCard className={styles.face} />
                   ) : (
-                    <SpriteIcon
-                      agentKey={player.agent.key}
-                      type="icon"
-                      alt=""
-                      className={`${styles.face} ${unveiling ? styles.unveil : ""}`}
-                    />
+                    <>
+                      <SpriteIcon
+                        agentKey={player.agent.key}
+                        type="icon"
+                        alt=""
+                        className={`${styles.face} ${unveiling ? styles.unveil : ""}`}
+                      />
+                      {/* The card stays a moment to turn away first. */}
+                      {unveiling && (
+                        <SealedCard
+                          className={`${styles.face} ${styles.cardOut}`}
+                        />
+                      )}
+                    </>
                   )}
                 </span>
               ) : (

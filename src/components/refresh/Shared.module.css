@@ -292,6 +292,7 @@
 }
 
 .faceFrame {
+  position: relative;
   display: block;
   width: 4.5rem;
   aspect-ratio: 1 / 1;
@@ -359,12 +360,36 @@
   grid-column: 3;
 }
 
-/* The reveal turns the players over one after another. Later rolls land
-   together, as they do in the generator. */
-.inOrder .unveil,
+/* The reveal turns the players over one after another: each card turns away,
+   then the face turns in on its back. Later rolls land together, as they do
+   in the generator. */
+.cardOut {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: cardOut 0.2s ease-in calc(var(--i) * 90ms) forwards;
+}
+
+@keyframes cardOut {
+  to {
+    opacity: 0;
+    transform: perspective(40rem) rotateY(90deg);
+  }
+}
+
+.faceFrame .unveil {
+  animation-duration: 0.3s;
+  animation-delay: calc(var(--i) * 90ms + 0.2s);
+}
+
 .inOrder .agentName {
   animation-delay: calc(var(--i) * 90ms);
   animation-fill-mode: backwards;
+}
+
+/* On the reveal, each name lands as its face turns in, not with the card. */
+.revealing .agentName {
+  animation-delay: calc(var(--i) * 90ms + 0.2s);
 }
 
 @media (max-width: 63.99rem) {
@@ -483,6 +508,11 @@
 @media (prefers-reduced-motion: reduce) {
   .unveil {
     animation: none;
+  }
+
+  /* No turn to wait for: the face is there at once. */
+  .cardOut {
+    display: none;
   }
 
   .inOrder .agentName {
