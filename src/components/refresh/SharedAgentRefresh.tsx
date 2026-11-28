@@ -61,8 +61,9 @@ export default function SharedAgentRefresh({
   const sealed = !ownRoll && !shared.revealed && agent !== undefined;
   // The first portrait after the reveal turns over; later rolls land.
   const unveiling = unveilArmed && rolls === 0;
-  // A line-up of one is the answer, so it waits for the reveal too.
-  const lineupHidden = sealed && pool.length === 1;
+  // A line-up of just the rolled agent is the answer, so it waits for the
+  // reveal too, and so does the link that would open it in the picker.
+  const lineupHidden = sealed && pool.length === 1 && pool[0].key === agent.key;
   // Fetches the portrait sheet while the card is down, so the reveal does not
   // turn over onto an empty frame. The whole sheet says nothing of who it is.
   if (sealed && picker.showPortrait) {
@@ -214,13 +215,15 @@ export default function SharedAgentRefresh({
           </div>
           {/* A full page load, not a client navigation: the picker reads a
               shared pool once, as it starts. */}
-          <a
-            className={`${ui.btn} ${ui.wrap}`}
-            href={shared.presetHref}
-            title="Open the picker with these agents selected and these roll settings"
-          >
-            Open this selection in the picker
-          </a>
+          {!lineupHidden && (
+            <a
+              className={`${ui.btn} ${ui.wrap}`}
+              href={shared.presetHref}
+              title="Open the picker with these agents selected and these roll settings"
+            >
+              Open this selection in the picker
+            </a>
+          )}
           <Link className={ui.btn} href="/" prefetch={false}>
             Use your own selection
           </Link>

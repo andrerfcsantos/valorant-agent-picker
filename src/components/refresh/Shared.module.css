@@ -387,7 +387,19 @@
   animation-fill-mode: backwards;
 }
 
-/* On the reveal, each name lands as its face turns in, not with the card. */
+/* On the reveal, each result shows as its face turns in, not before. */
+.revealing .result,
+.revealing .none {
+  animation: resultIn 0.2s ease-out backwards;
+  animation-delay: calc(var(--i) * 90ms + 0.2s);
+}
+
+@keyframes resultIn {
+  from {
+    opacity: 0;
+  }
+}
+
 .revealing .agentName {
   animation-delay: calc(var(--i) * 90ms + 0.2s);
 }
@@ -513,6 +525,11 @@
   /* No turn to wait for: the face is there at once. */
   .cardOut {
     display: none;
+  }
+
+  .revealing .result,
+  .revealing .none {
+    animation: none;
   }
 
   .inOrder .agentName {
