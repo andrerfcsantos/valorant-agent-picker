@@ -37,6 +37,13 @@ describe("isDesign", () => {
   });
 });
 
+describe("DEFAULT_DESIGN", () => {
+  test("is the new design unless the build says otherwise", () => {
+    expect(process.env.NEXT_PUBLIC_DEFAULT_DESIGN).toBeUndefined();
+    expect(DEFAULT_DESIGN).toBe("refresh");
+  });
+});
+
 describe("readDesignChoice", () => {
   test("falls back to the default, unchosen, when nothing is stored", () => {
     expect(readDesignChoice(memoryStorage())).toEqual({

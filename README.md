@@ -44,12 +44,15 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## The two designs
 
-The site ships a classic design and a new one ("refresh") side by side while
-the new one is adopted. Visitors switch between them from the navbar, and the
-choice is remembered in their browser.
+The site ships a new design ("refresh"), which is the default, and the classic
+design side by side until the classic one is discontinued. Visitors switch
+between them from the navbar, and the choice is remembered in their browser.
 
 - **Default:** `NEXT_PUBLIC_DEFAULT_DESIGN` sets what a visitor sees before
-  they choose (`classic` unless set to `refresh`). See `.env.example`.
+  they choose (`refresh` unless set to `classic`). See `.env.example`.
+- **Banners:** the new design asks for feedback on Discord, telling visitors
+  who got it by default that it is the default now. The classic design says
+  it will be discontinued, with a switch to the new one and the Discord link.
 - **Code:** each page with two designs has one hook holding its behaviour
   (`src/hooks/usePicker.ts`, `src/hooks/useSquad.ts`,
   `src/hooks/useSharedAgent.ts`, `src/hooks/useSharedSquad.ts`) and two views

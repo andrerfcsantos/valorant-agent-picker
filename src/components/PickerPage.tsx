@@ -2,7 +2,7 @@
 
 import { useDesign } from "@/context/DesignContext";
 import { usePicker } from "@/hooks/usePicker";
-import DesignInvite from "@/components/DesignInvite";
+import ClassicDesignNotice from "@/components/ClassicDesignNotice";
 import PickerContent from "@/components/PickerContent";
 import PickerRefresh from "@/components/refresh/PickerRefresh";
 
@@ -22,7 +22,7 @@ export default function PickerPage() {
   if (design === "refresh") return <PickerRefresh picker={picker} />;
   return (
     <>
-      <DesignInvite />
+      <ClassicDesignNotice />
       <PickerContent picker={picker} />
     </>
   );

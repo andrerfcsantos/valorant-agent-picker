@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDesign } from "@/context/DesignContext";
 import { track } from "@/lib/analytics";
 import { DESIGN_FEEDBACK_DISMISSED_KEY, FEEDBACK_URL } from "@/lib/design";
 import { getBoolFromLS, setBoolToLS } from "@/lib/localStorage";
@@ -8,12 +9,15 @@ import { focusPageHeading } from "@/lib/pageHeading";
 import styles from "./FeedbackBanner.module.css";
 
 /**
- * Asks visitors on the new design what they think of it, on Discord. It sits
+ * Asks visitors on the new design what they think of it, on Discord. Those
+ * who got it as the default rather than choosing it are told it is the
+ * default now, and that the classic design is still a switch away. It sits
  * at the top of a page's wide column rather than across the page, so the
  * result rail beside it keeps the full height of the window. Closed once, it
  * stays closed on every page.
  */
 export default function FeedbackBanner() {
+  const { chosen } = useDesign();
   // Hidden until storage says otherwise, so it never flashes for someone who
   // has already closed it.
   const [dismissed, setDismissed] = useState(true);
@@ -28,8 +32,18 @@ export default function FeedbackBanner() {
   return (
     <aside className={styles.banner} aria-label="Feedback on the new design">
       <p className={styles.text}>
-        You&apos;re using the new design. Tell us what works and what
-        doesn&apos;t.
+        {chosen ? (
+          <>
+            You&apos;re using the new design. Tell us what works and what
+            doesn&apos;t.
+          </>
+        ) : (
+          <>
+            You&apos;re on the new design, which is now the default. Tell us
+            what works and what doesn&apos;t, or switch back to the classic
+            design from the top bar.
+          </>
+        )}
       </p>
       <a
         className={styles.go}

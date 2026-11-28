@@ -2,7 +2,7 @@
 
 import { useDesign } from "@/context/DesignContext";
 import { useSquad } from "@/hooks/useSquad";
-import DesignInvite from "@/components/DesignInvite";
+import ClassicDesignNotice from "@/components/ClassicDesignNotice";
 import SquadContent from "@/components/SquadContent";
 import SquadRefresh from "@/components/refresh/SquadRefresh";
 
@@ -22,7 +22,7 @@ export default function SquadPage() {
   if (design === "refresh") return <SquadRefresh squad={squad} />;
   return (
     <>
-      <DesignInvite />
+      <ClassicDesignNotice />
       <SquadContent squad={squad} />
     </>
   );
