@@ -67,7 +67,7 @@ export default function SquadRefresh({ squad }: { squad: Squad }) {
     <main className={`${ui.page} ${styles.app}`}>
       <section className={styles.rail} aria-labelledby="squad-heading">
         {/* Focusable from script only: it takes focus when the design is
-            switched from the invitation, whose own button is removed. */}
+            switched from the classic design's notice, whose own button is removed. */}
         <h1 id="squad-heading" className={styles.heading} tabIndex={-1}>
           Squad generator
         </h1>

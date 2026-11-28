@@ -49,7 +49,7 @@ export type PresetApplySource = "chip" | "keyboard" | "manage_page";
 export type DesignOrigin = "default" | "chosen";
 
 /** Which control a visitor used to change design. */
-export type DesignSwitchSource = "invite" | "nav";
+export type DesignSwitchSource = "classic_notice" | "nav";
 
 interface AgentPoolProps {
   pool_size: number;
@@ -176,9 +176,13 @@ type EventMap = {
     to: Design;
     source: DesignSwitchSource;
   };
-  /** The invitation to try the new design was closed without trying it. */
-  design_invite_dismissed: Record<string, never>;
-  /** The banner asking for feedback on the new design led to Discord. */
+  /** The notice that the classic design is going away was closed. */
+  design_classic_notice_dismissed: Record<string, never>;
+  /**
+   * A design banner's feedback link led to Discord. The registered `design`
+   * and `design_origin` tell which banner it was: the classic design's
+   * notice, or the new design's for those who chose it or got it by default.
+   */
   design_feedback_clicked: Record<string, never>;
   /** The banner asking for feedback on the new design was closed. */
   design_feedback_dismissed: Record<string, never>;

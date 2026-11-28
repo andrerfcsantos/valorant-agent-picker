@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vite-plus/test";
+import { afterEach, describe, expect, test, vi } from "vite-plus/test";
 
 import {
   DEFAULT_DESIGN,
@@ -34,6 +34,57 @@ describe("isDesign", () => {
     expect(isDesign("")).toBe(false);
     expect(isDesign(null)).toBe(false);
     expect(isDesign(undefined)).toBe(false);
+  });
+});
+
+describe("the build's default design", () => {
+  // DEFAULT_DESIGN is read from the environment once, when the module loads,
+  // so each case loads a fresh copy under its own environment.
+  async function loadWith(value: string | undefined) {
+    vi.stubEnv("NEXT_PUBLIC_DEFAULT_DESIGN", value);
+    vi.resetModules();
+    return import("./design");
+  }
+
+  function bootDesign(script: string): string | undefined {
+    const dataset: Record<string, string> = {};
+    const document = {
+      documentElement: { dataset },
+      head: { appendChild: () => {} },
+      createElement: () => ({}),
+    };
+    const localStorage = { getItem: () => null };
+    // oxlint-disable-next-line typescript/no-implied-eval -- the script ships as a string for an inline <script>, so running that string is the test
+    new Function("document", "localStorage", "location", script)(
+      document,
+      localStorage,
+      new URL("https://example.test/"),
+    );
+    return dataset.design;
+  }
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  test("is the new design when the build does not set one", async () => {
+    const design = await loadWith(undefined);
+    expect(design.DEFAULT_DESIGN).toBe("refresh");
+    expect(design.readDesignChoice(null).design).toBe("refresh");
+    expect(bootDesign(design.DESIGN_BOOT_SCRIPT)).toBe("refresh");
+  });
+
+  test("is the classic design when the build asks for it", async () => {
+    const design = await loadWith("classic");
+    expect(design.DEFAULT_DESIGN).toBe("classic");
+    expect(design.readDesignChoice(null).design).toBe("classic");
+    expect(bootDesign(design.DESIGN_BOOT_SCRIPT)).toBe("classic");
+  });
+
+  test("ignores a value that is not a design", async () => {
+    const design = await loadWith("neon");
+    expect(design.DEFAULT_DESIGN).toBe("refresh");
   });
 });
 

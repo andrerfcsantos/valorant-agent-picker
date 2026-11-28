@@ -1,6 +1,7 @@
 /**
- * The site wears one of two designs while the redesign is being adopted, and
- * every visitor can move between them whenever they like. This module is the
+ * The site wears one of two designs: the new one, which is the default, and
+ * the classic one, kept for now for visitors who prefer it. Every visitor can
+ * move between them whenever they like. This module is the
  * single place that knows which design applies; nothing else reads the
  * storage key.
  */
@@ -11,8 +12,9 @@ export type Design = (typeof DESIGNS)[number];
 /** Where a visitor's own choice is kept. */
 export const DESIGN_STORAGE_KEY = "design";
 
-/** Set once the invitation to try the new design has been closed. */
-export const DESIGN_INVITE_DISMISSED_KEY = "designInviteDismissed";
+/** Set once the notice that the classic design is going away has been closed. */
+export const DESIGN_CLASSIC_NOTICE_DISMISSED_KEY =
+  "designClassicNoticeDismissed";
 
 /** Set once the request for feedback on the new design has been closed. */
 export const DESIGN_FEEDBACK_DISMISSED_KEY = "designFeedbackDismissed";
@@ -33,7 +35,7 @@ export const DEFAULT_DESIGN: Design = isDesign(
   process.env.NEXT_PUBLIC_DEFAULT_DESIGN,
 )
   ? process.env.NEXT_PUBLIC_DEFAULT_DESIGN
-  : "classic";
+  : "refresh";
 
 export interface DesignChoice {
   design: Design;

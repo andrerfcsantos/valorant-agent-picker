@@ -207,14 +207,18 @@ html[data-design="refresh"] .shortcut-popover-title {
   text-transform: uppercase;
 }
 
-/* Invitation to try the new design, shown above the classic pages. */
-.design-invite {
+/* Notice that the classic design is going away, shown above the classic
+   pages. */
+.classic-notice {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.4rem 0.9rem;
-  padding: 0.5rem 1rem;
+  position: relative;
+  /* Room for the close button, pinned to the corner so it never wraps onto
+     a line of its own. */
+  padding: 0.5rem 3rem 0.5rem 1rem;
   background: #0f1923;
   border-bottom: 1px solid rgba(255, 70, 85, 0.55);
   color: #ece8e1;
@@ -223,57 +227,85 @@ html[data-design="refresh"] .shortcut-popover-title {
   text-align: center;
 }
 
-.design-invite p {
+.classic-notice p {
   margin: 0;
   font-family: inherit;
 }
 
-.design-invite-actions {
+.classic-notice-actions {
   display: flex;
+  /* Long labels wrap inside the banner rather than pushing past a narrow or
+     zoomed-in viewport. */
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.5rem 0.9rem;
 }
 
-.design-invite-try,
-.design-invite-dismiss {
+.classic-notice-switch {
   min-height: 2rem;
   padding: 0 0.8rem;
-  font: inherit;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.design-invite-try {
   border: 1px solid #ff4655;
   background: #ff4655;
   color: #0f1923;
+  font: inherit;
   font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.design-invite-try:hover {
+.classic-notice-switch:hover {
   border-color: #ece8e1;
   background: #ece8e1;
 }
 
-.design-invite-dismiss {
-  border: 1px solid rgba(236, 232, 225, 0.3);
-  background: none;
-  color: rgba(236, 232, 225, 0.85);
+/* Discord blurple marks where the link leads, as on the new design's banner. */
+.classic-notice-feedback,
+.classic-notice-feedback:link,
+.classic-notice-feedback:visited {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  color: #ece8e1;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: #5865f2;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
 }
 
-.design-invite-dismiss:hover {
-  border-color: rgba(236, 232, 225, 0.7);
+.classic-notice-feedback:hover {
+  color: #ffffff;
+  text-decoration-color: #ffffff;
+}
+
+.classic-notice-dismiss {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  background: none;
+  color: rgba(236, 232, 225, 0.85);
+  cursor: pointer;
+}
+
+.classic-notice-dismiss:hover {
+  background: rgba(236, 232, 225, 0.12);
   color: #ece8e1;
 }
 
-.design-invite-try:focus-visible,
-.design-invite-dismiss:focus-visible {
+.classic-notice-switch:focus-visible,
+.classic-notice-feedback:focus-visible,
+.classic-notice-dismiss:focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
