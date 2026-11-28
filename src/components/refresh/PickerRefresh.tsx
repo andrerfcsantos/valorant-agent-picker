@@ -56,7 +56,7 @@ export default function PickerRefresh({ picker }: { picker: Picker }) {
         aria-labelledby="picker-heading"
       >
         {/* Focusable from script only: it takes focus when the design is
-            switched from the invitation, whose own button is removed. */}
+            switched from the classic design's notice, whose own button is removed. */}
         <h1 id="picker-heading" className={styles.lead} tabIndex={-1}>
           You should play
         </h1>

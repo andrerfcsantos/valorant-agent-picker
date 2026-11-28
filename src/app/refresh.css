@@ -234,6 +234,9 @@ html[data-design="refresh"] .shortcut-popover-title {
 
 .classic-notice-actions {
   display: flex;
+  /* Long labels wrap inside the banner rather than pushing past a narrow or
+     zoomed-in viewport. */
+  max-width: 100%;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
@@ -250,7 +253,6 @@ html[data-design="refresh"] .shortcut-popover-title {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  white-space: nowrap;
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -271,7 +273,6 @@ html[data-design="refresh"] .shortcut-popover-title {
   min-height: 2rem;
   color: #ece8e1;
   font-weight: 600;
-  white-space: nowrap;
   text-decoration: underline;
   text-decoration-color: #5865f2;
   text-decoration-thickness: 2px;
