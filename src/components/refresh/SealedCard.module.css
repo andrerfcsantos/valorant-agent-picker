@@ -1,0 +1,64 @@
+/* A face-down card: the rail's tiles with a red question mark and a cut
+   corner, sized by the frame it sits in (the portrait or a squad face). */
+.card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  container-type: inline-size;
+  background:
+    linear-gradient(
+      135deg,
+      transparent calc(100% - var(--vp-cut)),
+      var(--vp-red) calc(100% - var(--vp-cut))
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0 0.5rem,
+      rgb(255 255 255 / 0.03) 0.5rem 0.55rem
+    ),
+    linear-gradient(180deg, var(--vp-tile-hi), var(--vp-rail));
+  box-shadow: inset 0 0 0 1px rgb(255 70 85 / 0.4);
+}
+
+.mark {
+  font-family: var(--vp-font-display);
+  font-size: 70cqi;
+  line-height: 1;
+  color: var(--vp-red);
+  user-select: none;
+}
+
+/* A scan line crosses the card twice as the page opens, asking to be
+   revealed, and is done within five seconds so nothing keeps moving. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgb(255 70 85 / 0.14) 50%,
+    transparent 60%
+  );
+  transform: translateY(-100%);
+  animation: scan 2.2s ease-in-out 0.6s 2;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  50%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::after {
+    display: none;
+    animation: none;
+  }
+}
