@@ -8,15 +8,16 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import SealedCard from "./SealedCard";
 import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
 
 /**
  * The new design of the page a "Share this roll" link opens. A roll somebody
- * sent arrives sealed: the portrait out of focus, the sender's selection laid
- * out beside it as the line-up of who it could be, and one button to find
- * out. After that it is the picker's rail, rolling from the sender's pool.
+ * sent arrives sealed: a blank card where the portrait goes, the sender's
+ * selection laid out beside it as the line-up of who it could be, and one
+ * button to find out. After that it is the picker's rail, rolling from the sender's pool.
  */
 export default function SharedAgentRefresh({
   shared,
@@ -53,6 +54,8 @@ export default function SharedAgentRefresh({
   // Only a roll somebody else made is sealed. An agent this version of the
   // site does not know has nothing to reveal.
   const sealed = !ownRoll && !shared.revealed && agent !== undefined;
+  // The first portrait after the reveal turns over; later rolls land.
+  const unveiling = shared.revealed && rolls === 0;
   const roleLabel = agent
     ? (ROLES.find((role) => role.key === agent.role)?.label ?? "")
     : "";
@@ -89,14 +92,19 @@ export default function SharedAgentRefresh({
           <>
             {picker.showPortrait && (
               <div className={styles.portraitFrame}>
-                <SpriteIcon
-                  key={rolls}
-                  agentKey={agent.key}
-                  type="portrait"
-                  className={`${styles.portrait} ${sealed ? styles.sealedPortrait : ""} ${rolls > 0 ? ui.land : ""}`}
-                  // Sealed, the picture must not say who it is either.
-                  alt={sealed ? "" : `${agent.name} portrait`}
-                />
+                {sealed ? (
+                  // Not the portrait blurred: a blurred agent is still easy to
+                  // tell by its colours and shape, so nothing of it is drawn.
+                  <SealedCard className={styles.portrait} />
+                ) : (
+                  <SpriteIcon
+                    key={rolls}
+                    agentKey={agent.key}
+                    type="portrait"
+                    className={`${styles.portrait} ${unveiling ? styles.unveil : ""} ${rolls > 0 ? ui.land : ""}`}
+                    alt={`${agent.name} portrait`}
+                  />
+                )}
               </div>
             )}
 

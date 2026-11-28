@@ -9,6 +9,7 @@ import RoleSpriteIcon from "@/components/RoleSpriteIcon";
 import ShareButton from "@/components/ShareButton";
 import SpriteIcon from "@/components/SpriteIcon";
 import FeedbackBanner from "./FeedbackBanner";
+import SealedCard from "./SealedCard";
 import { useResultIntoView } from "./scroll";
 import ui from "./ui.module.css";
 import styles from "./Shared.module.css";
@@ -17,8 +18,8 @@ const agentByKey = new Map(getAllAgents().map((agent) => [agent.key, agent]));
 
 /**
  * The new design of the page a "Share this squad" link opens. A squad
- * somebody sent arrives sealed, one row per player with the agent out of
- * focus, and one button turns them over in order.
+ * somebody sent arrives sealed, one row per player with a blank card where the
+ * agent goes, and one button turns them over in order.
  */
 export default function SharedSquadRefresh({
   shared,
@@ -60,6 +61,8 @@ export default function SharedSquadRefresh({
 
   const { squad, agents, ownRoll, rolls, handleReroll } = shared;
   const sealed = !ownRoll && !shared.revealed;
+  // The first faces after the reveal turn over; later rolls just swap them.
+  const unveiling = shared.revealed && rolls === 0;
 
   const players = Array.from({ length: squad.size }, (_, index) => {
     const agentKey = agents[index] ?? null;
@@ -161,12 +164,16 @@ export default function SharedSquadRefresh({
             >
               {player.agent ? (
                 <span className={styles.faceFrame}>
-                  <SpriteIcon
-                    agentKey={player.agent.key}
-                    type="icon"
-                    alt=""
-                    className={`${styles.face} ${sealed ? styles.sealedFace : ""}`}
-                  />
+                  {sealed ? (
+                    <SealedCard className={styles.face} />
+                  ) : (
+                    <SpriteIcon
+                      agentKey={player.agent.key}
+                      type="icon"
+                      alt=""
+                      className={`${styles.face} ${unveiling ? styles.unveil : ""}`}
+                    />
+                  )}
                 </span>
               ) : (
                 <span className={`${styles.faceFrame} ${styles.faceEmpty}`} />
